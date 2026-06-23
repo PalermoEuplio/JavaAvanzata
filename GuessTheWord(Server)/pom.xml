@@ -11,4 +11,11 @@
         <exec.mainClass>it.guesstheword.GuessTheWord</exec.mainClass>
     </properties>
     <name>GuessTheWord(Server)</name>
+    <dependencies>
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.43.0.0</version>
+        </dependency>
+    </dependencies>
 </project>
