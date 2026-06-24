@@ -85,7 +85,6 @@
             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
          </padding>
          <children>
-            <Button fx:id="btnStatistiche" disable="true" mnemonicParsing="false" onAction="#showSpecs" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Statistiche Dettagliate" />
             <Button fx:id="btnBanna" disable="true" mnemonicParsing="false" onAction="#banPlayer" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="BANNA Giocatore Selezionato" />
             
             <Region HBox.hgrow="ALWAYS" />

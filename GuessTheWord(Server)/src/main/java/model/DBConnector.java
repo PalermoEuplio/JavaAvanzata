@@ -17,13 +17,16 @@ public class DBConnector <T> implements DAO<T>{
     private final String dbUsername = "";
     private final String dbPassword = "";
     
+    
+    // Metodo per la selezione di un Utente dal DB. 
+    // In particolare può essere usato per fare il login come amministratore e cercare un singolo utente a partire dal suo id
     @Override
-    public T cerca(T admin, String password) throws SQLException, IllegalArgumentException{
+    public T cerca(T user, String password) throws SQLException, IllegalArgumentException{
         
         T result = null;
         
-        if(admin instanceof Amministratore){
-            Amministratore s = (Amministratore) admin;
+        if(user instanceof Amministratore){ // Caso Amministratore (Accesso)
+            Amministratore s = (Amministratore) user;
             try( Connection c = DriverManager.getConnection(dbURL, dbUsername,dbPassword);
 
                  PreparedStatement ps = c.prepareStatement("SELECT Username, Password FROM Amministratore WHERE Username = ? AND Password = ?");
@@ -42,36 +45,59 @@ public class DBConnector <T> implements DAO<T>{
                     }
                 }
             }
+        } else if(user instanceof Player){  // Caso Player (Richiesta di informazioni)
+            Player s = (Player) user;
+            try( Connection c = DriverManager.getConnection(dbURL, dbUsername,dbPassword);
+
+                 PreparedStatement ps = c.prepareStatement("SELECT Username,Id_Utente,N_Vittorie,N_Partite,Tempo_Medio_Risposta FROM Player WHERE Id_Utente = ? ");
+
+                    ) {
+
+                ResultSet  rs = ps.executeQuery();
+
+                if (rs.next()) {
+                    result = (T) new Player(rs.getString("Username"), rs.getInt("Id_Utente"), rs.getInt("N_Partite"), rs.getInt("N_Vittorie"), rs.getDouble("Tempo_Medio_Risposta"));
+                }
+            }
+        
         } else throw new IllegalArgumentException();
+        
         return result;
            
     }
     
     
     @Override
-    public void rimuoviPlayer(T p1) throws Exception{
+    public void rimuoviPlayer(T p1) throws SQLException, IllegalArgumentException{
         if(p1 instanceof Player){
             
             Player p = (Player) p1;
             
-            try( Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword); 
+            try( Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword)){ 
 
-                    Statement stmt = c.createStatement();
-
-                ) {
-                
-                String removeStudent = String.format("DELETE FROM Player WHERE Id_Utente = '%s'", p.getId());
-
-                stmt.executeUpdate(removeStudent);
-
+                    c.setAutoCommit(false);
+                    
+                    String removeStudent = String.format("DELETE FROM Player WHERE Id_Utente = '%s'", p.getId());
+                    
+                    try(Statement stmt = c.createStatement()){
+                        
+                        stmt.executeUpdate(removeStudent);
+                        
+                        c.commit();
+                    
+                } catch (SQLException e) {
+                    c.rollback();
+                    System.err.println("Errore durante l'eliminazione. Effettuo il rollback.  "+e);
+                    throw e;
                 }
             }
+        }else throw new IllegalArgumentException();
     }
     
     
     
     @Override
-    public List<T> elencaTuttiPlayer()throws Exception{
+    public List<T> elencaTuttiPlayer() throws SQLException{
         
         List<Player> elenco = new ArrayList<>();
         

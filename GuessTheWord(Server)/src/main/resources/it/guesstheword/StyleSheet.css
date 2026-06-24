@@ -1,0 +1,59 @@
+/* * Stile moderno per gli Alert di JavaFX 
+ * Applicabile copiando questo file in src/main/resources/style.css
+ */
+
+/* Sfondo generale e font della finestra */
+.dialog-pane {
+    -fx-background-color: #ffffff;
+    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
+    -fx-font-size: 14px;
+    -fx-border-color: #cccccc;
+    -fx-border-width: 1px;
+}
+
+/* L'intestazione in alto (Header) */
+.dialog-pane .header-panel {
+    -fx-background-color: #e74c3c; /* Rosso acceso per indicare il pericolo del BAN */
+    -fx-padding: 15px;
+}
+
+/* Il testo dentro l'intestazione */
+.dialog-pane .header-panel .label {
+    -fx-text-fill: white;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+/* Il testo centrale (Content) */
+.dialog-pane .content {
+    -fx-padding: 20px;
+    -fx-text-fill: #333333;
+}
+
+/* Stile base per i pulsanti (es. Annulla) */
+.dialog-pane .button {
+    -fx-background-color: #ecf0f1;
+    -fx-text-fill: #2c3e50;
+    -fx-font-weight: bold;
+    -fx-padding: 8px 20px;
+    -fx-background-radius: 4px; /* Bordi arrotondati */
+    -fx-border-color: #bdc3c7;
+    -fx-border-radius: 4px;
+    -fx-cursor: hand;
+}
+
+/* Effetto passaggio del mouse sui pulsanti */
+.dialog-pane .button:hover {
+    -fx-background-color: #bdc3c7;
+}
+
+/* Stile specifico per il pulsante OK predefinito */
+.dialog-pane .button:default {
+    -fx-background-color: #e74c3c; /* Rosso */
+    -fx-text-fill: white;
+    -fx-border-color: #c0392b;
+}
+
+.dialog-pane .button:default:hover {
+    -fx-background-color: #c0392b;
+}
