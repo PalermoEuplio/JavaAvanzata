@@ -56,7 +56,7 @@ public class LoginController implements Initializable{
         
         try {
             
-            Amministratore adminlog = new DBConnector().cerca(new Amministratore(fieldUsername.getText()), fieldPassword.getText());
+            Amministratore adminlog = (Amministratore) new DBConnector().cerca(new Amministratore(fieldUsername.getText()), fieldPassword.getText());
             Sessione.setAdmin(adminlog);
             Main.setRoot("adminDashboard");
             
@@ -65,5 +65,7 @@ public class LoginController implements Initializable{
             System.out.println("Errore di login: " + e.getMessage());
             errormsg.setVisible(true);
         }
+        catch (IllegalArgumentException e){System.out.println("Parametri non gestiti: " + e.getMessage());}
+        
     }
 }
