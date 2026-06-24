@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.settingsController">
+
+   <top>
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+         </padding>
+         <children>
+            <Label text="Impostazioni Nuova Partita" textFill="WHITE">
+               <font>
+                  <Font name="System Bold" size="24.0" />
+               </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="startGame" mnemonicParsing="false" onAction="#avviaPartita" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" text="AVVIA LA PARTITA">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+         </children>
+      </HBox>
+   </top>
+
+   <center>
+      <SplitPane dividerPositions="0.5" BorderPane.alignment="CENTER">
+         <items>
+            
+            <VBox spacing="15.0">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               <children>
+                  <Label text="Gestione e Analisi Testo" textFill="#2980b9">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  
+                  <HBox spacing="10.0">
+                     <children>
+                        <ComboBox fx:id="comboTesti" prefWidth="250.0" promptText="Seleziona file di testo..." HBox.hgrow="ALWAYS" />
+                        <Button fx:id="analizzaTesto" mnemonicParsing="false" onAction="#analisiTesto" text="Analizza" />
+                     </children>
+                  </HBox>
+                  
+                  <Label text="Testo Selezionato / Anteprima:">
+                      <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="areaTesto" editable="false" prefHeight="150.0" wrapText="true" VBox.vgrow="ALWAYS" />
+                  
+                  <Separator prefWidth="200.0" />
+                  
+                  <Label text="Storico File Analizzati:">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <ListView fx:id="fileAnalizzati" prefHeight="100.0" VBox.vgrow="SOMETIMES" />
+                  
+                  <Label text="Risultati Analisi (Statistiche &amp; Frequenze):">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="risultatiAnalisi" editable="false" prefHeight="120.0" promptText="Carica un testo per visualizzare le statistiche delle parole..." wrapText="true" VBox.vgrow="SOMETIMES" />
+               </children>
+            </VBox>
+            
+            <VBox spacing="15.0" style="-fx-background-color: #f8f9fa;">
+               <padding>
+                  <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+               </padding>
+               <children>
+                  <Label text="Difficoltà e Cifratura" textFill="#e67e22">
+                     <font>
+                        <Font name="System Bold" size="18.0" />
+                     </font>
+                  </Label>
+                  
+                  <GridPane hgap="10.0" vgap="20.0">
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="180.0" minWidth="10.0" prefWidth="150.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="200.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        
+                        <Label text="Frequenza Parola:" />
+                        <VBox GridPane.columnIndex="1">
+                           <children>
+                              <Slider fx:id="frequenza" blockIncrement="1.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
+                              <HBox>
+                                 <children>
+                                    <Label text="Comune" textFill="#7f8c8d" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label text="Rara" textFill="#7f8c8d" />
+                                 </children>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        
+                        <Label text="Lunghezza Parola:" GridPane.rowIndex="1" />
+                        <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
+                           <children>
+                              <Slider fx:id="lunghezza" blockIncrement="1.0" majorTickUnit="2.0" max="15.0" min="4.0" showTickLabels="true" showTickMarks="true" value="6.0" />
+                           </children>
+                        </VBox>
+                        
+                        <Label text="N° Parole da Cifrare:" GridPane.rowIndex="2" />
+                        <Spinner fx:id="nParole" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        
+                        <Label text="Shift di Cesare (1-25):" GridPane.rowIndex="3" />
+                        <Spinner fx:id="shift" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                     </children>
+                  </GridPane>
+                  
+                  <Separator prefWidth="200.0">
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
+                  </Separator>
+                  
+                  <HBox alignment="CENTER_LEFT" spacing="10.0">
+                     <children>
+                        <Label text="Difficoltà Stimata:">
+                           <font>
+                              <Font name="System Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="difficoltà" text="MEDIO" textFill="#e67e22">
+                           <font>
+                              <Font name="System Bold" size="16.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  
+                  <Separator prefWidth="200.0" />
+                  
+                  <Label text="Parole Selezionate per il Gioco:">
+                     <font>
+                        <Font name="System Bold" size="14.0" />
+                     </font>
+                  </Label>
+                  <TextField fx:id="paroleScelte" promptText="Es. INFORMATICA (Auto-generate o inserite a mano)" style="-fx-font-size: 14px;" />
+                  <Button mnemonicParsing="false" onAction="#generaParole" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Genera Parole Automaticamente" />
+                  
+               </children>
+            </VBox>
+         </items>
+      </SplitPane>
+   </center>
+</BorderPane>

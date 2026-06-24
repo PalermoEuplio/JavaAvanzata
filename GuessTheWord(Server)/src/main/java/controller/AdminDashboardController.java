@@ -70,7 +70,9 @@ public class AdminDashboardController implements Initializable{
         Username.setCellValueFactory(new PropertyValueFactory<>("Username"));
         nPartite.setCellValueFactory(new PropertyValueFactory<>("nPartite"));
         nVittorie.setCellValueFactory(new PropertyValueFactory<>("nVittorie"));
+        nVittorie.setSortType(TableColumn.SortType.DESCENDING);
         tempoRisposta.setCellValueFactory(new PropertyValueFactory<>("tempoRisposta"));
+        tempoRisposta.setSortType(TableColumn.SortType.ASCENDING);
         state.setCellValueFactory(new PropertyValueFactory<>("isOn"));
         
         state.setCellFactory(column -> new TableCell<Player, Boolean>() {
@@ -100,7 +102,9 @@ public class AdminDashboardController implements Initializable{
                 }
             }
         });
-        
+        // Ordinamento dei Giocatori per nVittorie (Simulazione della Classifica)
+        tabellaGiocatori.getSortOrder().addAll(nVittorie,tempoRisposta);
+        tabellaGiocatori.sort();
         
         // Effettu il collegamento dei dati con la tabella
         tabellaGiocatori.setItems(tableList);
