@@ -12,4 +12,6 @@ public interface DAO<T> {
     
     public List<T> elencaTuttiPlayer()throws Exception;
     
+    public void aggiungiSfida(T sf) throws Exception;
+    
 }

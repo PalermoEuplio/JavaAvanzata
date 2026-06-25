@@ -117,7 +117,7 @@ public class AdminDashboardController implements Initializable{
     // Comportamento pulsante Inizia partita
     @FXML
     private void startGame() throws IOException {
-        
+        Main.setRoot("gameSettings");
     }
     
     

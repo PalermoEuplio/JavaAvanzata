@@ -116,4 +116,10 @@ public class DBConnector <T> implements DAO<T>{
         return (List<T>) elenco;
         
     }
+    
+    
+    @Override
+    public void aggiungiSfida(T sfida) throws SQLException{
+        
+    }    
 }

@@ -34,6 +34,11 @@
                </font>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
+            <Button mnemonicParsing="false" onAction="#backDashboard" prefHeight="45.0" prefWidth="144.0" text="Indietro">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
             <Button fx:id="startGame" mnemonicParsing="false" onAction="#avviaPartita" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" text="AVVIA LA PARTITA">
                <font>
                   <Font size="16.0" />
@@ -172,7 +177,7 @@
                      </font>
                   </Label>
                   <TextField fx:id="paroleScelte" promptText="Es. INFORMATICA (Auto-generate o inserite a mano)" style="-fx-font-size: 14px;" />
-                  <Button mnemonicParsing="false" onAction="#generaParole" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Genera Parole Automaticamente" />
+                  <Button mnemonicParsing="false" onAction="#generaParole" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Genera Parole " />
                   
                </children>
             </VBox>
