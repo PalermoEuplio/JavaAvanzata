@@ -72,7 +72,7 @@
                   
                   <Label text="Testo Selezionato / Anteprima:">
                       <font>
-                        <Font name="System Bold" size="12.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
                   <TextArea fx:id="areaTesto" editable="false" prefHeight="150.0" wrapText="true" VBox.vgrow="ALWAYS" />
@@ -81,17 +81,26 @@
                   
                   <Label text="Storico File Analizzati:">
                      <font>
-                        <Font name="System Bold" size="12.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <ListView fx:id="fileAnalizzati" prefHeight="112.0" prefWidth="456.0" VBox.vgrow="SOMETIMES" />
+                  <ListView fx:id="fileAnalizzati" prefHeight="91.0" prefWidth="456.0" VBox.vgrow="SOMETIMES" />
                   
-                  <Label text="Risultati Analisi (Statistiche &amp; Frequenze):">
+                  <Label text="Risultati Analisi (Statistiche &amp; Frequenze)">
                      <font>
-                        <Font name="System Bold" size="12.0" />
+                        <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="risultatoAnalisi" editable="false" prefHeight="176.0" prefWidth="456.0" promptText="Carica un testo per visualizzare le statistiche delle parole..." wrapText="true" VBox.vgrow="SOMETIMES" />
+                  <HBox spacing="125.0">
+                     <children>
+                        <Label text="Statistiche Globali:">
+                           <font>
+                              <Font name="System Bold" size="12.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </HBox>
+                  <TextArea fx:id="risultatoAnalisi" editable="false" prefHeight="162.0" prefWidth="300.0" promptText="Carica un testo per visualizzare le statistiche delle parole di tutto il file..." wrapText="true" />
                </children>
             </VBox>
             
@@ -125,9 +134,9 @@
                               <Slider fx:id="frequenza" blockIncrement="1.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
                               <HBox>
                                  <children>
-                                    <Label text="Comune" textFill="#7f8c8d" />
-                                    <Region HBox.hgrow="ALWAYS" />
                                     <Label text="Rara" textFill="#7f8c8d" />
+                                    <Region HBox.hgrow="ALWAYS" />
+                                    <Label text="Comune" textFill="#7f8c8d" />
                                  </children>
                               </HBox>
                            </children>
@@ -136,7 +145,7 @@
                         <Label text="Lunghezza Parola:" GridPane.rowIndex="1" />
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
-                              <Slider fx:id="lunghezza" blockIncrement="1.0" majorTickUnit="2.0" max="15.0" min="4.0" showTickLabels="true" showTickMarks="true" value="6.0" />
+                              <Slider fx:id="lunghezza" blockIncrement="1.0" majorTickUnit="2.0" max="15.0" min="4.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" value="6.0" />
                            </children>
                         </VBox>
                         
@@ -158,7 +167,7 @@
                      <children>
                         <Label text="Difficoltà Stimata:">
                            <font>
-                              <Font name="System Bold" size="14.0" />
+                              <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
                         <Label fx:id="difficoltà" text="MEDIO" textFill="#e67e22">
@@ -173,11 +182,17 @@
                   
                   <Label text="Parole Selezionate per il Gioco:">
                      <font>
-                        <Font name="System Bold" size="14.0" />
+                        <Font name="System Bold" size="15.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="paroleScelte" promptText="Es. INFORMATICA (Auto-generate o inserite a mano)" style="-fx-font-size: 14px;" />
+                  <TextField fx:id="paroleScelte" editable="false" promptText="Selezionare una porzione di testo e premere il pulsante per la generazione delle parole" style="-fx-font-size: 14px;" />
                   <Button mnemonicParsing="false" onAction="#generaParole" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Genera Parole " />
+                  <Label text="Statistiche Locali:">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <TextArea fx:id="risultatoAnalisiLocale" editable="false" prefHeight="164.0" prefWidth="300.0" promptText="Genera Parole per visualizzare le statistiche delle parole selezionate..." wrapText="true" />
                   
                </children>
             </VBox>

@@ -36,7 +36,7 @@
             <Font size="20.0" />
          </font>
       </Label>
-      <Button fx:id="enter" layoutX="197.0" layoutY="343.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="207.0" text="Entra" />
+      <Button fx:id="enter" defaultButton="true" layoutX="197.0" layoutY="343.0" mnemonicParsing="false" onAction="#login" prefHeight="25.0" prefWidth="207.0" text="Entra" />
       <Label fx:id="errormsg" layoutX="186.0" layoutY="315.0" prefHeight="19.0" prefWidth="243.0" text="* Errore Username o Password Errati" textFill="RED" visible="false">
          <font>
             <Font name="System Bold Italic" size="13.0" />
