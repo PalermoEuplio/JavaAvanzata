@@ -84,14 +84,14 @@
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <ListView fx:id="fileAnalizzati" prefHeight="100.0" VBox.vgrow="SOMETIMES" />
+                  <ListView fx:id="fileAnalizzati" prefHeight="112.0" prefWidth="456.0" VBox.vgrow="SOMETIMES" />
                   
                   <Label text="Risultati Analisi (Statistiche &amp; Frequenze):">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>
                   </Label>
-                  <TextArea fx:id="risultatiAnalisi" editable="false" prefHeight="120.0" promptText="Carica un testo per visualizzare le statistiche delle parole..." wrapText="true" VBox.vgrow="SOMETIMES" />
+                  <TextArea fx:id="risultatoAnalisi" editable="false" prefHeight="176.0" prefWidth="456.0" promptText="Carica un testo per visualizzare le statistiche delle parole..." wrapText="true" VBox.vgrow="SOMETIMES" />
                </children>
             </VBox>
             
