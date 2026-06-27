@@ -25,15 +25,15 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import model.Testo;
-import model.TextEditor;
+import model.game.Testo;
+import model.game.TextEditor;
 import model.Main;
 
 /**
  *
  * @author euppa
  */
-public class settingsController implements Initializable{
+public class SettingsController implements Initializable{
     
     // Collegamenti agli elementi della pagina
     @FXML
@@ -221,7 +221,7 @@ public class settingsController implements Initializable{
 
     @FXML
     private void avviaPartita() throws IOException {
-         
+         Main.setRoot("loading");
     }
      
     @FXML

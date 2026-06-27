@@ -1,4 +1,4 @@
-package model;
+package model.utility;
 
 // Classe contenente le inforamzioni relative ai player
 public class Player {

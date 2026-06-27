@@ -1,4 +1,4 @@
-package model;
+package model.db;
 
 // Classe che contiene tutta la logica di connessione al db
 
@@ -10,6 +10,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import model.utility.Amministratore;
+import model.utility.Player;
 
 public class DBConnector <T> implements DAO<T>{
     
@@ -29,19 +31,23 @@ public class DBConnector <T> implements DAO<T>{
             Amministratore s = (Amministratore) user;
             try( Connection c = DriverManager.getConnection(dbURL, dbUsername,dbPassword);
 
-                 PreparedStatement ps = c.prepareStatement("SELECT Username, Password FROM Amministratore WHERE Username = ? AND Password = ?");
+                 PreparedStatement ps = c.prepareStatement("SELECT Username, Password FROM Amministratore WHERE Username = ? ");
 
                     ) {
 
                 ps.setString(1, s.getUsername()); 
-                ps.setString(2, password);
 
                 try (ResultSet rs = ps.executeQuery()) {
 
-                    if (rs.next()) {
+                    if (rs.next()) {    // L'utente Esiste nel DB
+                        
+                        if(password!=null && !rs.getString("Password").equals(password))
+                            throw new SQLException("Password Errata");
+                        
                         result = (T) new Amministratore(rs.getString("Username"));   // Inseriti dati corretti
+                        
                     } else {
-                        throw new SQLException("Credenziali non valide o utente inesistente");  // Accesso non effettuato
+                        throw new SQLException("Username Errato");  // Accesso non effettuato (Utente non presente nel DB)
                     }
                 }
             }
@@ -53,7 +59,7 @@ public class DBConnector <T> implements DAO<T>{
 
                     ) {
 
-                ResultSet  rs = ps.executeQuery();
+                ResultSet rs = ps.executeQuery();
 
                 if (rs.next()) {
                     result = (T) new Player(rs.getString("Username"), rs.getInt("Id_Utente"), rs.getInt("N_Partite"), rs.getInt("N_Vittorie"), rs.getDouble("Tempo_Medio_Risposta"));

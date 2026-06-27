@@ -20,9 +20,9 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
-import model.Player;
-import model.DBConnector;
-import model.Sessione;
+import model.utility.Player;
+import model.db.DBConnector;
+import model.utility.Sessione;
 import model.Main;
 
 

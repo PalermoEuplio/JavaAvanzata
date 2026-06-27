@@ -1,4 +1,4 @@
-package model;
+package model.connection;
 
 import java.io.Serializable;
 import java.util.function.Consumer;

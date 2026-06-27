@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f4f6f7;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+   <children>
+      <Label text="Benvenuto in GuessTheWord" textFill="#2c3e50">
+         <font>
+            <Font name="Arial Bold" size="30.0" />
+         </font>
+      </Label>
+      <Label text="Accedi o crea un account per iniziare a giocare" textFill="#7f8c8d">
+         <font>
+            <Font size="18.0" />
+         </font>
+         <VBox.margin>
+            <Insets bottom="20.0" />
+         </VBox.margin>
+      </Label>
+      <HBox alignment="CENTER" spacing="40.0">
+         <children>
+            <VBox maxWidth="420.0" prefHeight="392.0" prefWidth="420.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 30; -fx-border-color: #bdc3c7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+               <children>
+                  <Label text="Hai già un account?" textFill="#3498db">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Username">
+                           <font>
+                              <Font name="Arial Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="loginUsername" prefHeight="35.0" promptText="Il tuo username..." style="-fx-font-size: 14px;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Password">
+                           <font>
+                              <Font name="Arial Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="loginPassword" prefHeight="35.0" promptText="La tua password..." style="-fx-font-size: 14px;" />
+                     </children>
+                  </VBox>
+                  <StackPane alignment="CENTER_LEFT">
+                     <children>
+                        <Label fx:id="loginErrorMsg" text="* Errore: Credenziali errate o account inesistente" textFill="#e74c3c" visible="false">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="banErrorMsg" text="* Errore: Questo account è stato BANNATO" textFill="#e74c3c" visible="false">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  <Region VBox.vgrow="ALWAYS" />
+                  <Button fx:id="btnLogin" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" prefHeight="40.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="ENTRA E GIOCA">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+            <VBox maxWidth="420.0" prefHeight="392.0" prefWidth="420.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 30; -fx-border-color: #bdc3c7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+               <children>
+                  <Label text="Crea un nuovo account" textFill="#27ae60">
+                     <font>
+                        <Font name="Arial Bold" size="20.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Scegli un Username">
+                           <font>
+                              <Font name="Arial Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <TextField fx:id="regUsername" prefHeight="35.0" promptText="Nuovo username..." style="-fx-font-size: 14px;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Scegli una Password">
+                           <font>
+                              <Font name="Arial Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="regPassword" prefHeight="35.0" promptText="Crea una password..." style="-fx-font-size: 14px;" />
+                     </children>
+                  </VBox>
+                  <VBox spacing="5.0">
+                     <children>
+                        <Label text="Conferma Password">
+                           <font>
+                              <Font name="Arial Bold" size="14.0" />
+                           </font>
+                        </Label>
+                        <PasswordField fx:id="regConfirmPassword" prefHeight="35.0" promptText="Ripeti la password..." style="-fx-font-size: 14px;" />
+                     </children>
+                  </VBox>
+                  <StackPane alignment="CENTER_LEFT">
+                     <children>
+                        <Label fx:id="regErrorMsg" text="* Errore: Le password non coincidono" textFill="#e74c3c" visible="false">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                        <Label fx:id="regExistMsg" text="* Errore: Username già in uso" textFill="#e74c3c" visible="false">
+                           <font>
+                              <Font name="System Bold Italic" size="13.0" />
+                           </font>
+                        </Label>
+                     </children>
+                  </StackPane>
+                  <Button fx:id="btnRegister" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#register" prefHeight="40.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="REGISTRATI">
+                     <font>
+                        <Font size="14.0" />
+                     </font>
+                  </Button>
+               </children>
+            </VBox>
+            
+         </children>
+      </HBox>
+      
+   </children>
+</VBox>

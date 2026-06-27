@@ -1,4 +1,4 @@
-package model;
+package model.utility;
 
 // Classe che tiene traccia dell'Username dell'amministratore loggato
 public class Amministratore {

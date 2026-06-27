@@ -1,4 +1,4 @@
-package model;
+package model.db;
 
 // Interfaccia per la comunicazione col db
 

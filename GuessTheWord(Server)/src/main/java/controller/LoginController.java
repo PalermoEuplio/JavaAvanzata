@@ -9,9 +9,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import model.Amministratore;
-import model.DBConnector;
-import model.Sessione;
+import model.utility.Amministratore;
+import model.db.DBConnector;
+import model.utility.Sessione;
 import model.Main;
 
 public class LoginController implements Initializable{
@@ -28,9 +28,6 @@ public class LoginController implements Initializable{
     @FXML
     private Label errormsg;
     
-    @FXML
-    private Label errormsg1;
-    
     
     public void initialize(URL location, ResourceBundle resources) {
         
@@ -44,11 +41,11 @@ public class LoginController implements Initializable{
     private void login() throws IOException {
         
         errormsg.setVisible(false);
-        errormsg1.setVisible(false);
         
 
         if(fieldUsername.getText().equals("ND")){
-            errormsg1.setVisible(true);
+            errormsg.setText("* Errore: Utente non valido");
+            errormsg.setVisible(true);
             return;
         }
            
@@ -62,7 +59,7 @@ public class LoginController implements Initializable{
             
         }
         catch (SQLException e){
-            System.out.println("Errore di login: " + e.getMessage());
+            errormsg.setText("* Errore: "+e.getMessage());
             errormsg.setVisible(true);
         }
         catch (IllegalArgumentException e){System.out.println("Parametri non gestiti: " + e.getMessage());}
