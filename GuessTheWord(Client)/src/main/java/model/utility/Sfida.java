@@ -8,12 +8,6 @@ package model.game;
  *
  * @author euppa
  */
-
-// Classe che si deve occupare di:
-//  effettuare l'analisi dei testi,
-//  estrapolazione di parte di testo,
-//  applicazione della codifica per iniziare la partita,
-//  salvataggio delle analisi su file
-public class ElaboratoreTesti {
+public class Sfida {
     
 }
