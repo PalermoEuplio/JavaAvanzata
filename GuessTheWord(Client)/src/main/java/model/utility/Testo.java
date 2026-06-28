@@ -1,15 +1,13 @@
-package model.game;
+package model.utility;
 
 public class Testo{
 
    private String titolo; 
    private int txtId; 
-   private boolean isAnalized;
 
-    public Testo(String titolo, int txtId, boolean isAnalized) {
+    public Testo(String titolo, int txtId) {
         this.titolo = titolo;
         this.txtId = txtId;
-        this.isAnalized = isAnalized;
     }
 
     public String getTitolo() {
@@ -20,10 +18,6 @@ public class Testo{
         return txtId;
     }
 
-    public boolean isAnalized() {
-        return isAnalized;
-    }
-
     public void setTitolo(String titolo) {
         this.titolo = titolo;
     }
@@ -32,15 +26,34 @@ public class Testo{
         this.txtId = txtId;
     }
 
-    public void setIsAnalized(boolean isAnalized) {
-        this.isAnalized = isAnalized;
+    @Override
+    public String toString() {
+        return titolo + ", " + txtId;
     }
 
     @Override
-    public String toString() {
-        return titolo + ", " + txtId + ", " +isAnalized;
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + this.txtId;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Testo other = (Testo) obj;
+        return this.txtId == other.txtId;
     }
 
    
+    
 
 }

@@ -9,8 +9,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import model.utility.Player;
+import model.utility.Sfida;
+import model.utility.Testo;
+import model.utility.TextEditor;
 
 public class DBConnector <T> implements DAO<T>{
     
@@ -107,6 +111,61 @@ public class DBConnector <T> implements DAO<T>{
         }
         
         return (List<T>) elenco;
-        
     } 
+    
+    @Override
+    public List<T> caricaSfide(int idPlayer) throws SQLException{
+        
+        List<Sfida> sfide = new ArrayList<>();
+        
+        try( Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+        
+            // Stesso nella query cerco le sfide effettuate dall'utente IdPlayer, raggruppo tutte le soluzioni in un'unica stringa e ricavo l'username dell'avversario
+            // Inoltre Setto il P1, i suoi tempi e il risultato della partita in funzione dell'utente loggato (Che diventa P1)
+            try (PreparedStatement ps = c.prepareStatement("SELECT S.Id_Documento, S.Durata, S.Id_P1, S.Id_P2, " +
+                         "CASE WHEN S.Id_P1 = Me.MyId THEN S.Tempo_RispostaP1 ELSE S.Tempo_RispostaP2 END AS MioTempo, " +
+                         "CASE WHEN S.Id_P1 = Me.MyId THEN S.Tempo_RispostaP2 ELSE S.Tempo_RispostaP1 END AS SuoTempo, " +
+                         "CASE WHEN S.Id_P1 = Me.MyId THEN S.Risultato " +
+                         "     WHEN S.Risultato = 0 THEN 1 WHEN S.Risultato = 1 THEN 0 ELSE S.Risultato END AS MioRisultato, " +
+                         "GROUP_CONCAT(Sol.Parola, ', ') AS ElencoSoluzioni, " +
+                         "Avversario.Username AS UsernameAvversario " +
+                         "FROM (SELECT ? AS MyId) Me " +
+                         "JOIN Sfida S ON S.Id_P1 = Me.MyId OR S.Id_P2 = Me.MyId " +
+                         "JOIN Soluzione Sol ON S.Id_Sfida = Sol.Id_Sfida " +
+                         "JOIN Player Avversario ON (Avversario.Id_Utente = S.Id_P1 OR Avversario.Id_Utente = S.Id_P2) AND Avversario.Id_Utente != Me.MyId " +
+                         "GROUP BY S.Id_Sfida");) {
+                
+                
+                ps.setInt(1, idPlayer);
+                
+                
+                try (ResultSet rs = ps.executeQuery()){
+                    
+                    while(rs.next()) {
+                        String soluzioni = rs.getString("ElencoSoluzioni");
+                        
+                        if(soluzioni==null)
+                            soluzioni="";
+                        
+                        
+                        TextEditor te = new TextEditor();
+                        
+                        te.leggiReport();
+                        HashMap<Integer,String> x = te.getTitle();
+                        
+                        Sfida s = new Sfida(rs.getInt("Id_Documento"), rs.getDouble("Durata"), rs.getDouble("MioTempo"), rs.getDouble("SuoTempo"),
+                                rs.getInt("id_P1"), rs.getInt("id_P2"), rs.getString("UsernameAvversario"), 
+                                rs.getInt("MioRisultato")==1 ? "Vittoria":"Sconfitta",soluzioni);
+                        
+                        s.setTitoloTesto(x.get(rs.getInt("Id_Documento"))); 
+                        
+                        sfide.add(s);
+                    }
+                    
+                } catch (Exception e) { System.err.println("Errore durante l'esecuzione della query: "+e);}
+            }
+        }
+        
+        return (List<T>) sfide;
+    }
 }

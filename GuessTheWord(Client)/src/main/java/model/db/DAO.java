@@ -12,6 +12,8 @@ public interface DAO<T> {
     
     public List<T> elencaTuttiPlayer()throws Exception;
     
+    public List<T> caricaSfide(int idPlayer) throws Exception;
+    
     
     
 }
