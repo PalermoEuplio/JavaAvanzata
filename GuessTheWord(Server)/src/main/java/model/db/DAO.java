@@ -8,10 +8,16 @@ public interface DAO<T> {
     
     public T cerca(T admin, String password) throws Exception;
     
+    public T registrazione(T user, String password) throws Exception;
+    
     public void rimuoviPlayer(T p1) throws Exception;
     
     public List<T> elencaTuttiPlayer()throws Exception;
     
+    public List<T> caricaSfide(int idPlayer) throws Exception;
+    
     public void aggiungiSfida(T sf) throws Exception;
+    
+    
     
 }

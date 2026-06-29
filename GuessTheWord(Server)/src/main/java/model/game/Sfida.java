@@ -4,11 +4,13 @@
  */
 package model.game;
 
+import java.io.Serializable;
+
 /**
  *
  * @author euppa
  */
-public class Sfida {
+public class Sfida implements Serializable{
     
     private String titoloTesto;
     private int idDocumento;
@@ -17,18 +19,18 @@ public class Sfida {
     private double tRisposta2;
     private int id1;
     private int id2;
-    private int idAmm;
-    private int risultato;
+    private String oppUsername;
+    private String risultato;
     private String soluzione;
 
-    public Sfida(int idDocumento, double durata, double tRisposta1, double tRisposta2, int id1, int id2, int idAmm, int risultato, String soluzione) {
+    public Sfida(int idDocumento, double durata, double tRisposta1, double tRisposta2, int id1, int id2, String oppUsername, String risultato, String soluzione) {
         this.idDocumento = idDocumento;
         this.durata = durata;
         this.tRisposta1 = tRisposta1;
         this.tRisposta2 = tRisposta2;
         this.id1 = id1;
         this.id2 = id2;
-        this.idAmm = idAmm;
+        this.oppUsername=oppUsername;
         this.risultato = risultato;
         this.soluzione = soluzione;
     }
@@ -45,11 +47,11 @@ public class Sfida {
         return durata;
     }
 
-    public double gettRisposta1() {
+    public double getTRisposta1() {
         return tRisposta1;
     }
 
-    public double gettRisposta2() {
+    public double getTRisposta2() {
         return tRisposta2;
     }
 
@@ -61,11 +63,11 @@ public class Sfida {
         return id2;
     }
 
-    public int getIdAmm() {
-        return idAmm;
+    public String getOppUsername() {
+        return oppUsername;
     }
 
-    public int getRisultato() {
+    public String getRisultato() {
         return risultato;
     }
 
@@ -101,11 +103,11 @@ public class Sfida {
         this.id2 = id2;
     }
 
-    public void setIdAmm(int idAmm) {
-        this.idAmm = idAmm;
+    public void setOppUsername(String oppUsername) {
+        this.oppUsername = oppUsername;
     }
 
-    public void setRisultato(int risultato) {
+    public void setRisultato(String risultato) {
         this.risultato = risultato;
     }
 
@@ -116,15 +118,6 @@ public class Sfida {
     @Override
     public String toString() {
         return titoloTesto + ", " + idDocumento + ", " + durata + ", " + tRisposta1 + ", " + 
-                tRisposta2 + ", " + id1 + ", " + id2 + ", " + idAmm + ", " + risultato + ", " + soluzione;
+                tRisposta2 + ", " + id1 + ", " + id2 + ", " + oppUsername + ", " + risultato + ", " + soluzione;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

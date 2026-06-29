@@ -28,7 +28,7 @@ public class LoginController implements Initializable{
     @FXML
     private Label errormsg;
     
-    
+    @Override
     public void initialize(URL location, ResourceBundle resources) {
         
         enter.disableProperty().bind(fieldUsername.textProperty().isEmpty().or(fieldPassword.textProperty().isEmpty()));

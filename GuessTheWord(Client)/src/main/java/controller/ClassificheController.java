@@ -14,7 +14,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Main;
-import model.db.DBConnector;
 import model.utility.Player;
 import model.utility.Sessione;
 
@@ -65,7 +64,7 @@ public class ClassificheController implements Initializable {
     
     @Override
      public void initialize(URL location, ResourceBundle resources) {
-         
+         /*
         List<Player> p = null;
         
         try {
@@ -133,7 +132,7 @@ public class ClassificheController implements Initializable {
             }
         }
          
-         
+         */
     }
     
     @FXML

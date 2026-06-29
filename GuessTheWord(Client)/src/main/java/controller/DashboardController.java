@@ -6,17 +6,14 @@ package controller;
 
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 import java.util.ResourceBundle;
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import model.Main;
-import model.db.DBConnector;
+import model.connection.PacchettoRisposta;
 import model.utility.Player;
 import model.utility.Sessione;
 import model.utility.Sfida;
@@ -79,7 +76,7 @@ public class DashboardController implements Initializable{
         nVittorie.setText(String.valueOf(currentP.getNVittorie()));   // Setto il numero di Vittorie
         rispostaMedia.setText(String.valueOf(currentP.getTempoRisposta()));   // Setto il tempo di risposta medio
         
-        
+        /*
         List<Sfida> s = null;
         
         try {
@@ -103,7 +100,7 @@ public class DashboardController implements Initializable{
             if (header != null) {
                 header.setMouseTransparent(true); 
             }
-        });
+        });*/
         
     }
     
@@ -118,7 +115,18 @@ public class DashboardController implements Initializable{
     }
     @FXML
     private void logout() throws IOException{
-        Sessione.logout();
+        if (model.utility.Sessione.getClient() != null) {
+            try {
+                model.utility.Sessione.getClient().send(new PacchettoRisposta("LOGOUT_REQUEST"));
+            } catch (java.io.IOException e) {
+                System.err.println("Errore nell'invio del comando di logout al server.");
+            }
+        }
+        
+        // 2. Rimuoviamo il giocatore dalla sessione locale (senza uccidere il socket!)
+        Sessione.logout(); 
+        
+        // 3. Torniamo alla pagina di login
         Main.setRoot("login");
     }
     

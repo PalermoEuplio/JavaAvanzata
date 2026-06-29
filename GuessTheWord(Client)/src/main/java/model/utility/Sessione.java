@@ -4,6 +4,8 @@
  */
 package model.utility;
 
+import model.connection.ClientConnection;
+
 /**
  *
  * @author euppa
@@ -11,6 +13,8 @@ package model.utility;
 public class Sessione {
     
     private static Player playerLoggato;
+    
+    private static ClientConnection client;
     
     // Metodo da chiamare quando si effettua il login
     public static void setPlayer(Player pl) {
@@ -20,6 +24,14 @@ public class Sessione {
     // Metodo per recuperare l'amministratore nelle altre schermate
     public static Player getPlayer() {
         return playerLoggato;
+    }
+    
+    public static void setClient(ClientConnection c) {
+        client = c;
+    }
+    
+    public static ClientConnection getClient() {
+        return client;
     }
 
     // Metodo per fare il logout

@@ -4,6 +4,8 @@
  */
 package model.utility;
 
+import model.connection.ServerConnection;
+
 /**
  *
  * @author euppa
@@ -11,6 +13,8 @@ package model.utility;
 public class Sessione {
     
     private static Amministratore adminLoggato;
+    
+    private static ServerConnection server;
     
     // Metodo da chiamare quando si effettua il login
     public static void setAdmin(Amministratore admin) {
@@ -21,10 +25,19 @@ public class Sessione {
     public static Amministratore getAdmin() {
         return adminLoggato;
     }
+    
+    public static void setServer(ServerConnection s) {
+        server = s;
+    }
+    
+    public static ServerConnection getServer() {
+        return server;
+    }    
 
     // Metodo per fare il logout
     public static void logout() {
         adminLoggato = null;
+        server=null;
     }
     
 }

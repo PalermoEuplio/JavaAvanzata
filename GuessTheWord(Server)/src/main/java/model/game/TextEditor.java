@@ -31,6 +31,8 @@ public class TextEditor {
     
     private List<Testo> title; // Lista dei titoli disponibili e se sono già analizzati
     
+    private HashMap<Integer,String> titleMap;
+    
     private HashMap<String, Integer> frequency; // Parole disponibili nel testo e con che frequenza
     
     private String selectedText;    // Contenuto del testo selezionato
@@ -38,6 +40,7 @@ public class TextEditor {
     
     public TextEditor(){
         title = new ArrayList<>();
+        titleMap = new HashMap<>();
         frequency = new HashMap<>();
         selectedText = "";
     }
@@ -47,6 +50,10 @@ public class TextEditor {
     // Metodi Get
     public List<Testo> getTitle() {
         return title;
+    }
+    
+    public HashMap<Integer,String> getTitleMap() {
+        return titleMap;
     }
 
     public HashMap<String, Integer> getFrequency() {
@@ -108,6 +115,7 @@ public class TextEditor {
                 if (campi.length >= 2) {
                     try {
                         Testo t = new Testo(campi[1].trim(), Integer.parseInt(campi[0].trim()), campi[2].trim().equals("1"));
+                        this.titleMap.put(Integer.parseInt(campi[0].trim()),campi[1].trim()); 
                         this.title.add(t);
                     } catch (NumberFormatException e) {
                         System.err.println("Errore di conversione numeri alla riga: " + linea);
