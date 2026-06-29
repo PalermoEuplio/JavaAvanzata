@@ -75,6 +75,7 @@ public class AdminDashboardController implements Initializable{
         tempoRisposta.setSortType(TableColumn.SortType.ASCENDING);
         state.setCellValueFactory(new PropertyValueFactory<>("isOn"));
         
+        // CellFactory dello stato per far comparire un cerchio verde per il loggato ed uno rosso per il non loggato
         state.setCellFactory(column -> new TableCell<Player, Boolean>() {
         @Override
         protected void updateItem(Boolean isOnline, boolean empty) {
@@ -106,8 +107,16 @@ public class AdminDashboardController implements Initializable{
         tabellaGiocatori.getSortOrder().addAll(nVittorie,tempoRisposta);
         tabellaGiocatori.sort();
         
-        // Effettu il collegamento dei dati con la tabella
+        // Effettuo il collegamento dei dati con la tabella
         tabellaGiocatori.setItems(tableList);
+        
+        // Impedisco lo spostamento delle colonne della tabella
+        tabellaGiocatori.widthProperty().addListener((obs, oldVal, newVal) -> {
+            javafx.scene.layout.Pane header = (javafx.scene.layout.Pane) tabellaGiocatori.lookup("TableHeaderRow");
+            if (header != null) {
+                header.setMouseTransparent(true); 
+            }
+        });
         
         // Comportamento pulsante Ban
         btnBanna.disableProperty().bind(tabellaGiocatori.getSelectionModel().selectedItemProperty().isNull());

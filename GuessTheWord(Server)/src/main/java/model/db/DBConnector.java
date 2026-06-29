@@ -108,7 +108,7 @@ public class DBConnector <T> implements DAO<T>{
         List<Player> elenco = new ArrayList<>();
         
         try( Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword); 
-             PreparedStatement ps = c.prepareStatement(" SELECT Username,Id_Utente,N_Vittorie,N_Partite,Tempo_Medio_Risposta FROM Player WHERE Id_Utente != 0");
+             PreparedStatement ps = c.prepareStatement(" SELECT Username,Id_Utente,N_Vittorie,N_Partite,Tempo_Medio_Risposta FROM Player WHERE Id_Utente != 0 ORDER BY N_Vittorie DESC, Tempo_Medio_Risposta ASC");
                 ) {
         
             ResultSet  rs = ps.executeQuery();

@@ -121,7 +121,7 @@
                      </font>
                   </Label>
                   
-                  <TableView fx:id="tabellaStorico" prefHeight="300.0" prefWidth="200.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
+                  <TableView fx:id="tabellaStorico" focusTraversable="false" prefHeight="300.0" prefWidth="200.0" style="-fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 5);" VBox.vgrow="ALWAYS">
                     <columns>
                       <TableColumn fx:id="titolo" prefWidth="195.0" text="Titolo Brano / Testo" />
                       <TableColumn fx:id="avversario" prefWidth="157.0" text="Avversario" />

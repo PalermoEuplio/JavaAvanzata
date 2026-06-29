@@ -3,7 +3,7 @@ package model.utility;
 // Classe contenente le inforamzioni relative ai player
 public class Player {
     
-    private String Username;
+    private String username;
     private int id;
     private int nPartite;
     private int nVittorie;
@@ -11,7 +11,7 @@ public class Player {
     private boolean isOn = false;
 
     public Player(String Username, int id, int nPartite, int nVittorie, double tempoRisposta) {
-        this.Username = Username;
+        this.username = Username;
         this.id = id;
         this.nPartite = nPartite;
         this.nVittorie = nVittorie;
@@ -19,7 +19,7 @@ public class Player {
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public int getId() {
@@ -44,6 +44,6 @@ public class Player {
 
     @Override
     public String toString() {
-        return Username+", " + id + ", " + nPartite + ", " + nVittorie + ", " + tempoRisposta;
+        return username+", " + id + ", " + nPartite + ", " + nVittorie + ", " + tempoRisposta;
     }
 }

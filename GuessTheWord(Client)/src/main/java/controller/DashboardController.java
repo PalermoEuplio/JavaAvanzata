@@ -98,11 +98,18 @@ public class DashboardController implements Initializable{
         
         tabellaStorico.setItems(FXCollections.observableArrayList(s));
         
+        tabellaStorico.widthProperty().addListener((obs, oldVal, newVal) -> {
+            javafx.scene.layout.Pane header = (javafx.scene.layout.Pane) tabellaStorico.lookup("TableHeaderRow");
+            if (header != null) {
+                header.setMouseTransparent(true); 
+            }
+        });
+        
     }
     
     @FXML
-    private void mostraClassifiche(){
-        
+    private void mostraClassifiche() throws IOException{
+        Main.setRoot("rankings");
     }
     
     @FXML
