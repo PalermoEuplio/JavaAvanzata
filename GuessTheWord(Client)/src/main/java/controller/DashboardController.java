@@ -6,16 +6,19 @@ package controller;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import model.Main;
 import model.connection.PacchettoRisposta;
 import model.utility.Player;
-import model.utility.Sessione;
+import model.connection.Sessione;
 import model.utility.Sfida;
 
 /**
@@ -76,12 +79,22 @@ public class DashboardController implements Initializable{
         nVittorie.setText(String.valueOf(currentP.getNVittorie()));   // Setto il numero di Vittorie
         rispostaMedia.setText(String.valueOf(currentP.getTempoRisposta()));   // Setto il tempo di risposta medio
         
-        /*
-        List<Sfida> s = null;
         
-        try {
-            s = new DBConnector<Sfida>().caricaSfide(Sessione.getPlayer().getId());
-        } catch (Exception e) { System.out.println("Errore durante il caricamento delle sfide: "+e);}
+        
+        // Invio la richiesta dello storico al Server
+        if (!Sessione.isConnected()) {
+            System.out.println("Errore: Connessione col server persa");
+            return;
+        }
+        
+        try{
+            Sessione.getClient().send(new PacchettoRisposta("STORICO_REQUEST"));
+        }catch (IOException e){}
+        
+        
+        Sessione.setOnServerResponse(this::gestisciRispostaServer);
+        
+       
         
         tabellaStorico.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         
@@ -93,16 +106,30 @@ public class DashboardController implements Initializable{
         soluzione.setCellValueFactory(new PropertyValueFactory<>("soluzione"));
         risultato.setCellValueFactory(new PropertyValueFactory<>("risultato"));
         
-        tabellaStorico.setItems(FXCollections.observableArrayList(s));
-        
+        // Impedisco lo spostamento delle colonne della tabella
         tabellaStorico.widthProperty().addListener((obs, oldVal, newVal) -> {
             javafx.scene.layout.Pane header = (javafx.scene.layout.Pane) tabellaStorico.lookup("TableHeaderRow");
             if (header != null) {
                 header.setMouseTransparent(true); 
             }
-        });*/
+        });
         
     }
+    
+    
+    private void gestisciRispostaServer(PacchettoRisposta pacchetto) {
+        
+        switch(pacchetto.getComando()){
+            case "STORICO_OK":
+                    List<Sfida> s = (List<Sfida>) pacchetto.getPayload();
+                    tabellaStorico.setItems(FXCollections.observableArrayList(s));
+                    break;
+            default: System.out.println("Errore: Impossibile caricare lo storico");
+        }
+        
+    }
+    
+    
     
     @FXML
     private void mostraClassifiche() throws IOException{
@@ -115,9 +142,9 @@ public class DashboardController implements Initializable{
     }
     @FXML
     private void logout() throws IOException{
-        if (model.utility.Sessione.getClient() != null) {
+        if (model.connection.Sessione.getClient() != null) {
             try {
-                model.utility.Sessione.getClient().send(new PacchettoRisposta("LOGOUT_REQUEST"));
+                model.connection.Sessione.getClient().send(new PacchettoRisposta("LOGOUT_REQUEST"));
             } catch (java.io.IOException e) {
                 System.err.println("Errore nell'invio del comando di logout al server.");
             }

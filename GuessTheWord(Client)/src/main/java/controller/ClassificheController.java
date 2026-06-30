@@ -15,7 +15,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Main;
 import model.utility.Player;
-import model.utility.Sessione;
+import model.connection.Sessione;
 
 public class ClassificheController implements Initializable {
     

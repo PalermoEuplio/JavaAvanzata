@@ -1,6 +1,8 @@
 package model.utility;
 
-public class Testo{
+import java.io.Serializable;
+
+public class Testo implements Serializable{
 
    private String titolo; 
    private int txtId; 

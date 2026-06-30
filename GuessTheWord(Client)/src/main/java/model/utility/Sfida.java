@@ -4,11 +4,13 @@
  */
 package model.utility;
 
+import java.io.Serializable;
+
 /**
  *
  * @author euppa
  */
-public class Sfida {
+public class Sfida implements Serializable{
     
     private String titoloTesto;
     private int idDocumento;

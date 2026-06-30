@@ -4,16 +4,14 @@ package controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.fxml.*;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.Main;
-import model.connection.ClientConnection;
 import model.connection.PacchettoRisposta;
+import model.connection.Sessione;
 import model.utility.Player;
-import model.utility.Sessione;
 
 public class LoginController implements Initializable{
 
@@ -49,11 +47,6 @@ public class LoginController implements Initializable{
     
     
     
-    private ClientConnection client;
-    private boolean isConnected = false;
-    private volatile boolean stopMonitor = false;
-    
-    
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
@@ -62,13 +55,9 @@ public class LoginController implements Initializable{
         btnRegister.disableProperty().bind(regUsername.textProperty().isEmpty().or(regPassword.textProperty().isEmpty().or(regConfirmPassword.textProperty().isEmpty())));
         
         
-        if (Sessione.getClient() != null) {
-            this.client = Sessione.getClient();
-            this.isConnected = true;
-        }
+        Sessione.setOnServerResponse(this::gestisciRispostaServer);
         
-        
-        avviaMonitoraggioServer();
+        Sessione.avviaConnessione();
         
     }
     
@@ -80,95 +69,25 @@ public class LoginController implements Initializable{
     
     
     
-    private void avviaMonitoraggioServer() {
-        Thread monitorThread = new Thread(() -> {
-            // Il ciclo si ferma se stopMonitor diventa true (cioè se abbiamo fatto il login e cambiato pagina)
-            while (!stopMonitor) { 
-                if (!isConnected) {
-                    try {
-                        client = new ClientConnection(messaggioRicevuto -> {
-                            Platform.runLater(() -> {
-                                if (messaggioRicevuto instanceof PacchettoRisposta) {
-                                    gestisciRispostaServer((PacchettoRisposta) messaggioRicevuto);
-                                }
-                            });
-                        });
-                        
-                        client.connect(); 
-                        isConnected = true; 
-                        
-                        Platform.runLater(this::nascondiErrori);
-                        
-                    } catch (IOException e) {
-                        Platform.runLater(() -> {
-                            nascondiErrori();
-                            if (loginErrorMsg != null) {
-                                loginErrorMsg.setText("Server offline o non raggiungibile!");
-                                loginErrorMsg.setVisible(true);
-                            }
-                            if (regErrorMsg != null) {
-                                regErrorMsg.setText("Server offline o non raggiungibile!");
-                                regErrorMsg.setVisible(true);
-                            }
-                        });
-                    }
-                } else {
-                    try {
-                        // Ping di controllo vita
-                        client.send(new PacchettoRisposta("PING"));
-                    } catch (IOException e) {
-                        isConnected = false; 
-                        Platform.runLater(() -> {
-                            nascondiErrori();
-                            if (loginErrorMsg != null) {
-                                loginErrorMsg.setText("Connessione col server interrotta!");
-                                loginErrorMsg.setVisible(true);
-                            }
-                            if (regErrorMsg != null) {
-                                regErrorMsg.setText("Connessione col server interrotta!");
-                                regErrorMsg.setVisible(true);
-                            }
-                        });
-                    }
-                }
-                
-                try { Thread.sleep(2000); } catch (InterruptedException ignored) {}
-            }
-        });
-        
-        monitorThread.setDaemon(true); 
-        monitorThread.start();
-    }
-    
     private void gestisciRispostaServer(PacchettoRisposta pacchetto) {
-        System.out.println("Dal Server è arrivato: " + pacchetto);
         
         switch (pacchetto.getComando()) {
-            
-            case "LOGIN_OK":
-                // 1. Fermiamo il ciclo while(true) del Thread!
-                stopMonitor = true; 
-                
-                // 2. Salviamo l'utente e il client a livello Globale!
-                Player pLogin = (Player) pacchetto.getPayload();
-                Sessione.setPlayer(pLogin);
-                Sessione.setClient(client); 
-                
-                try {
-                    Main.setRoot("playerDashboard");
-                } catch (IOException e) {
-                    System.err.println("Errore caricamento Dashboard: " + e.getMessage());
-                }
+            case "CONNESSIONE_OK":
+                nascondiErrori();
                 break;
                 
+            case "CONNESSIONE_PERSA":
+                nascondiErrori();
+                loginErrorMsg.setText("Server offline o non raggiungibile!");
+                loginErrorMsg.setVisible(true);
+                regErrorMsg.setText("Server offline o non raggiungibile!");
+                regErrorMsg.setVisible(true);
+                break;
+                
+            case "LOGIN_OK":
             case "REGISTER_OK":
-                // Stesse operazioni del Login
-                stopMonitor = true; 
-                
-                Player pReg = (Player) pacchetto.getPayload();
-                Sessione.setPlayer(pReg);
-                Sessione.setClient(client); 
-                
+                // Login o Reg andata a buon fine!
+                Sessione.setPlayer((Player) pacchetto.getPayload());
                 try {
                     Main.setRoot("playerDashboard");
                 } catch (IOException e) {
@@ -179,21 +98,15 @@ public class LoginController implements Initializable{
             case "LOGIN_ERR":
                 nascondiErrori();
                 String msgLogin = (String) pacchetto.getPayload();
-                if (msgLogin == null || msgLogin.isEmpty()) msgLogin = "Credenziali errate";
-                    loginErrorMsg.setText("* Errore: " + msgLogin);
-                    loginErrorMsg.setVisible(true);
-                
+                loginErrorMsg.setText("* Errore: " + (msgLogin != null ? msgLogin : "Credenziali errate"));
+                loginErrorMsg.setVisible(true);
                 break;
                 
             case "REGISTER_ERR":
                 nascondiErrori();
                 String msgReg = (String) pacchetto.getPayload();
-                if (msgReg == null || msgReg.isEmpty()) msgReg = "Impossibile completare la registrazione";
-                
-                    regErrorMsg.setText("* Errore: " + msgReg);
-                    regErrorMsg.setVisible(true);
-                    
-              
+                regErrorMsg.setText("* Errore: " + (msgReg != null ? msgReg : "Impossibile registrare"));
+                regErrorMsg.setVisible(true);
                 break;
         }
     }
@@ -205,7 +118,7 @@ public class LoginController implements Initializable{
         loginErrorMsg.setVisible(false);
         
         // Verifico di essere connesso
-        if (!isConnected) {
+        if (!Sessione.isConnected()) {
             loginErrorMsg.setText("* Errore: In attesa del Server...");
             loginErrorMsg.setVisible(true);
             return;
@@ -221,13 +134,10 @@ public class LoginController implements Initializable{
         try {
             
             String[] credenziali = {loginUsername.getText(), loginPassword.getText()};
-            PacchettoRisposta richiesta = new PacchettoRisposta("LOGIN_REQUEST", credenziali);
-            client.send(richiesta);
+            Sessione.getClient().send(new PacchettoRisposta("LOGIN_REQUEST", credenziali));
             
         }
-        catch (IOException e){
-             isConnected = false;
-        }
+        catch (IOException e){}
         catch (IllegalArgumentException e){System.out.println("Parametri non gestiti: " + e.getMessage());}
     }
     
@@ -236,7 +146,7 @@ public class LoginController implements Initializable{
         
         regErrorMsg.setVisible(false);
         
-        if (!isConnected) {
+        if (!Sessione.isConnected()) {
             regErrorMsg.setText("* Errore: In attesa del Server...");
             regErrorMsg.setVisible(true);
             return;
@@ -267,11 +177,9 @@ public class LoginController implements Initializable{
             
             // Impacchetto e invio!
             PacchettoRisposta richiesta = new PacchettoRisposta("REGISTER_REQUEST", datiRegistrazione);
-            client.send(richiesta);
+            Sessione.getClient().send(richiesta);
             
-        } catch (Exception e) {
-            isConnected = false;
-        }
+        } catch (Exception e) {}
     }
     
 }
