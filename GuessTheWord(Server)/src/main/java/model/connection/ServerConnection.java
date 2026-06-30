@@ -137,6 +137,7 @@ public class ServerConnection {
         private ObjectInputStream in;
         
         private String usernameLoggato = null;
+        private int idLoggato = -1;
 
         public ClientHandler(Socket socket) {
             this.socket = socket;
@@ -149,6 +150,14 @@ public class ServerConnection {
         }
         public void setUsernameLoggato(String username) { 
             this.usernameLoggato = username; 
+        }
+        
+        
+        public int getIdLoggato() { 
+            return idLoggato; 
+        }
+        public void setIdLoggato(int id) { 
+            this.idLoggato = id; 
         }
         
         @Override

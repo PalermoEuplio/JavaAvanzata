@@ -11,7 +11,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import model.utility.Amministratore;
 import model.db.DBConnector;
-import model.utility.Sessione;
+import model.connection.Sessione;
 import model.Main;
 
 public class LoginController implements Initializable{

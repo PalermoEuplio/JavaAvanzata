@@ -6,7 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -24,10 +23,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import model.utility.Player;
 import model.db.DBConnector;
-import model.utility.Sessione;
+import model.connection.Sessione;
 import model.Main;
-import model.connection.PacchettoRisposta;
-import model.connection.ServerConnection;
 
 
 public class AdminDashboardController implements Initializable{
@@ -63,92 +60,18 @@ public class AdminDashboardController implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
-         // Carico i giocatori
-        List<Player> l = null;
-        try {
-            
-            l = new DBConnector<Player>().elencaTuttiPlayer();
-            
-        } catch (Exception ex) {System.err.println("Errore caricamento giocatori: "+ex);}
-        
-        tableList = FXCollections.observableArrayList(l);
-        
-        
+        tableList = FXCollections.observableArrayList();    // Creo l'istanza della lista osservabile dalla tabella
         
         // Definizione del server
-         if (Sessione.getServer() == null) {
-            
-            ServerConnection server = new ServerConnection(
-                
-                // CALLBACK 1: MESSAGGI IN ARRIVO DAL CLIENT
-                (pacchettoRicevuto, mittente) -> {
-                    if (pacchettoRicevuto instanceof PacchettoRisposta) {
-                        PacchettoRisposta pacchetto = (PacchettoRisposta) pacchettoRicevuto;
-                        
-                        switch (pacchetto.getComando()) {
-                            case "PING":
-                                break;
-                                
-                            case "LOGIN_REQUEST":
-                                String[] cred = (String[]) pacchetto.getPayload();
-                                try {
-                                    Player pLog = new DBConnector<Player>().cerca(new Player(cred[0], 0, 0, 0, 0), cred[1]);
-                                    
-                                    // Salviamo l'identità nel Socket 
-                                    mittente.setUsernameLoggato(pLog.getUsername());
-                                    
-                                    mittente.send(new PacchettoRisposta("LOGIN_OK", pLog));
-                                    Platform.runLater(() -> aggiornaStatoOnline(pLog.getUsername(), true));
-                                    
-                                } catch (Exception e) {
-                                    try { mittente.send(new PacchettoRisposta("LOGIN_ERR", e.getMessage())); } catch (IOException ex) {}
-                                }
-                                break;
-                                
-                            case "REGISTER_REQUEST":
-                                String[] datiReg = (String[]) pacchetto.getPayload();
-                                try {
-                                    Player pReg = new DBConnector<Player>().registrazione(new Player(datiReg[0], 0, 0, 0, 0), datiReg[1]);
-                                    
-                                    mittente.setUsernameLoggato(pReg.getUsername());
-                                    
-                                    mittente.send(new PacchettoRisposta("REGISTER_OK", pReg));
-                                    Platform.runLater(() -> {
-                                        tableList.add(pReg);
-                                        aggiornaStatoOnline(pReg.getUsername(), true);
-                                    });
-                                } catch (Exception e) {
-                                    try { mittente.send(new PacchettoRisposta("REGISTER_ERR", e.getMessage())); } catch (IOException ex) {}
-                                }
-                                break;
-                            case "LOGOUT_REQUEST":
-                                String userSloggato = mittente.getUsernameLoggato();
-                                if (userSloggato != null) {
-                                    Platform.runLater(() -> aggiornaStatoOnline(userSloggato, false));
-                                    // Rimuovo l'associazione utente-socket, 
-                                    // così la disconnessione successiva (CALLBACK 2) non duplica l'aggiornamento
-                                    mittente.setUsernameLoggato(null);
-                                }
-                                break;
-                        }
-                    }
-                },
-                
-                // CALLBACK 2: CLIENT DISCONNESSO
-                (mittenteDisconnesso) -> {
-                    if (mittenteDisconnesso.getUsernameLoggato() != null) {
-                        Platform.runLater(() -> aggiornaStatoOnline(mittenteDisconnesso.getUsernameLoggato(), false));
-                    }
-                }
-            );
-
-            server.startServer();
-            // Salva il server così non si dealloca cambiando pagina!
-            Sessione.setServer(server); 
-        } else {
-            // Se eravamo già connessi, calcola solo il numero attuale degli online
-            aggiornaContatore();
-        }
+        if (Sessione.getServer() == null)
+            Sessione.startServer();
+        
+        // Dico alla Sessione quale funzione svolgere ogni volta che rileva un cambiamento nei player 
+        Sessione.setOnUserStatusChanged(() -> {
+            aggiornaDatiGrafica();
+        });
+         
+         aggiornaDatiGrafica(); // Primo richiamo della funzione per caricare i player nella tabella e aggiornare il playercount
        
         
         // Preparo la struttura della tabella
@@ -191,9 +114,6 @@ public class AdminDashboardController implements Initializable{
                 }
             }
         });
-        // Ordinamento dei Giocatori per nVittorie (Simulazione della Classifica)
-        tabellaGiocatori.getSortOrder().addAll(nVittorie,tempoRisposta);
-        tabellaGiocatori.sort();
         
         // Effettuo il collegamento dei dati con la tabella
         tabellaGiocatori.setItems(tableList);
@@ -211,21 +131,32 @@ public class AdminDashboardController implements Initializable{
     }
     
     
-    
-    private void aggiornaStatoOnline(String username, boolean isOnline) {
-        for (Player p : tableList) {
-            if (p.getUsername().equals(username)) {
-                p.setOn(isOnline);
-                break;
+    // Funzione che aggiorna variabili grafiche (TabellaPlayer e PlayerCount) in base agli utenti loggati e non
+    private void aggiornaDatiGrafica() {
+        try {
+            // 1. Ricarico i giocatori dal DB
+            List<Player> aggiornatiDalDb = new DBConnector<Player>().elencaTuttiPlayer();
+            
+            // 2. Chiedo al server chi è loggato
+            List<String> onlineUsers = Sessione.getServer().getUtentiOnline();
+            
+            // 3. Accendo i pallini appropriati
+            for (Player p : aggiornatiDalDb) {
+                p.setOn(onlineUsers.contains(p.getUsername()));
             }
+            // 4. Aggiorno la tabella rimpiazzando i dati
+            tableList.setAll(aggiornatiDalDb);
+            tabellaGiocatori.refresh();
+            
+            // 5. Aggiorno il contatore
+            long onlineCount = aggiornatiDalDb.stream().filter(Player::isOn).count();
+            if (playerCount != null) {
+                playerCount.setText(String.valueOf(onlineCount));
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Errore nell'aggiornamento della grafica: " + e);
         }
-        tabellaGiocatori.refresh(); // Forza l'aggiornamento dei colori
-        aggiornaContatore();
-    }
-    
-    private void aggiornaContatore() {
-        long onlineCount = tableList.stream().filter(Player::isOn).count();
-        playerCount.setText(String.valueOf(onlineCount));
     }
     
     

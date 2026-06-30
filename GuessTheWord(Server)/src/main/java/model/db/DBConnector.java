@@ -11,7 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import model.game.Sfida;
+import model.utility.Sfida;
 import model.game.TextEditor;
 import model.utility.Amministratore;
 import model.utility.Player;
