@@ -21,20 +21,20 @@
                   <Circle fx:id="dot4" fill="#3498db" radius="10.0" />
                </children>
             </HBox>
-            <Label text="In attesa dei giocatori..." textFill="#2c3e50">
+            <Label text="Preparazione Partita in corso..." textFill="#2c3e50">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label fx:id="status" alignment="CENTER" prefHeight="27.0" prefWidth="300.0" textFill="#2c3e50">
+            <Label fx:id="status" alignment="CENTER" prefHeight="45.0" prefWidth="302.0" textFill="#2c3e50">
                <font>
                   <Font name="System Bold" size="16.0" />
                </font>
-               <VBox.margin>
+               <padding>
                   <Insets bottom="20.0" />
-               </VBox.margin>
+               </padding>
             </Label>
-            <Button mnemonicParsing="false" onAction="#back" text="Back to Settings">
+            <Button mnemonicParsing="false" onAction="#back" text="Back to Dashboard">
                <font>
                   <Font name="System Bold" size="12.0" />
                </font>

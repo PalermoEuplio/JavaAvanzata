@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -37,6 +38,7 @@ public class TextEditor {
     
     private String selectedText;    // Contenuto del testo selezionato
 
+    private static String modifiedText = "";
     
     public TextEditor(){
         title = new ArrayList<>();
@@ -63,6 +65,20 @@ public class TextEditor {
     public String getSelectedText() {
         return selectedText;
     }
+
+    public void setSelectedText(String selectedText) {
+        this.selectedText = selectedText;
+    }
+
+    public static String getModifiedText() {
+        return modifiedText;
+    }
+
+    public static void setModifiedText(String modifiedText) {
+        TextEditor.modifiedText = modifiedText;
+    }
+    
+    
     
     
     // Metodi di gestione Testo
@@ -220,15 +236,49 @@ public class TextEditor {
         } catch (Exception e) { System.err.println("Errore nella scrittura del report: "+e); }
         
     }
-    /*
     
-    public String cifraTesto(Integer txtId){
+    
+    // Cifra il testo utilizzando la stream API. In particolare le parole cifrate sono nel formato [[ parola ]],
+    // in modo da essere facilmente riconoscibili dal Client.
+    public void cifraTesto(int shift, String[] parole) {
         
+        // 1. Prepariamo la lista delle parole target in minuscolo per fare controlli precisi (case-insensitive)
+        List<String> paroleDaCifrare = Arrays.stream(parole)
+                                             .map(String::toLowerCase)
+                                             .collect(Collectors.toList());
+
+        // 2. Usiamo una Regex avanzata con Stream per "tagliare" il testo preservando gli spazi e la punteggiatura.
+        // (?U) attiva il supporto Unicode (fondamentale per riconoscere lettere accentate italiane come à, è).
+        // Il pattern taglia il testo nel punto esatto di confine tra una parola e un simbolo/spazio.
+        modifiedText = Pattern.compile("(?U)(?<=\\w)(?=\\W)|(?<=\\W)(?=\\w)")
+                .splitAsStream(selectedText)
+                .map(token -> {
+                    
+                    // Se il frammento corrente è esattamente una delle parole che dobbiamo cifrare...
+                    if (paroleDaCifrare.contains(token.toLowerCase())) {
+                        
+                        // Cifriamo la singola parola carattere per carattere con lo Stream
+                        String parolaCifrata = token.chars()
+                                .map(c -> {
+                                    if (Character.isLetter(c)) {
+                                        char base = Character.isLowerCase(c) ? 'a' : 'A';
+                                        return ((c - base + shift) % 26) + base;
+                                    }
+                                    return c;
+                                })
+                                .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
+                                .toString();
+                                
+                        // MAGIA PER IL CLIENT: Aggiungiamo i delimitatori attorno alla parola cifrata
+                        // così il TextFlow del Client saprà esattamente come colorarla di giallo!
+                        return "[[" + parolaCifrata + "]]";
+                    }
+                    
+                    // Se non è nella lista, restituiamo il token originale (spazi, virgole, o parole da non toccare)
+                    return token;
+                    
+                })
+                .collect(Collectors.joining()); // Riunisce tutti i frammenti in un'unica stringa
     }
-    
-    
-    
-    */
-    
     
 }

@@ -3,9 +3,6 @@ package controller;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -17,8 +14,9 @@ import javafx.scene.control.Label;
 import javafx.scene.shape.Circle;
 import javafx.util.Duration;
 import model.Main;
+import model.connection.PacchettoRisposta;
 import model.connection.Sessione;
-import model.game.TextEditor;
+import model.utility.TextEditor;
 
 public class LoadingController implements Initializable{
     
@@ -28,36 +26,55 @@ public class LoadingController implements Initializable{
     @FXML private Circle dot4;
     @FXML private Label status;
     
-    private Timeline monitor;
+    private Timeline timerPing;
     
     @Override
     public void initialize(URL location, ResourceBundle resources){
         avviaAnimazionePallini();
+      
+        Sessione.setOnServerResponse(this::gestisciRispostaServer);
         
-        Sessione.setClientAttesa(new CopyOnWriteArrayList<>());
-        
-        // Monitoraggio del numero di utenti pronti a giocare
-        monitor = new Timeline(new KeyFrame(Duration.millis(500), e -> {
-            
-            int n = Sessione.getClientInAttesa().size();
-            status.setText("Giocatori Connessi: " + n + "/2");
-
-            if (n == 2) {
-                monitor.stop(); // appena raggiunto il numero, fermo il polling
-                try {
-                    Main.setRoot("game");
-                } catch (IOException ex) {System.out.println("Pagina non trovata");}
-            }
+        timerPing = new Timeline(new KeyFrame(Duration.seconds(2), event -> {
+            // Inviamo il comando PING al server tramite la sessione
+            try {
+                Sessione.getClient().send(new PacchettoRisposta("GAME_PING"));
+            } catch (Exception e) {}
         }));
+
+        // Impostiamo la ripetizione infinita
+        timerPing.setCycleCount(Timeline.INDEFINITE);
+        timerPing.play();
+
         
-        
-        
-        
-        monitor.setCycleCount(Timeline.INDEFINITE);
-        monitor.play();
     }
     
-    
+    private void gestisciRispostaServer(PacchettoRisposta pacchetto){
+        
+        switch(pacchetto.getComando()){
+            case "START_GAME":
+                if (timerPing != null) {
+                    timerPing.stop();
+                }
+                try {
+                    System.out.println("Inizio partita");
+                    
+                    new TextEditor().setGameText((String) pacchetto.getPayload());
+                    
+                    Main.setRoot("game");
+                    
+                } catch (Exception e) {e.printStackTrace();}
+                break;
+            case "NO_ADMIN":    
+                status.setText("In attesa di un amministratore...");
+                break;
+            case "NO_OPPONENT":
+                status.setText("Ricerca avversario...");
+                break;
+            default: System.out.println("Errore: Impossibile iniziare la partita");
+        }
+        
+    }
+        
     
     
     private void avviaAnimazionePallini() {
@@ -86,9 +103,7 @@ public class LoadingController implements Initializable{
     
     @FXML
     private void back() throws IOException{
-        Main.setRoot("gameSettings");
-        new TextEditor().setModifiedText("");
-        Sessione.setClientAttesa(null);
+        Main.setRoot("playerDashboard");
     }
     
 }

@@ -2,7 +2,6 @@ package controller;
 
 import java.io.IOException;
 import java.net.URL;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.ResourceBundle;
 import javafx.beans.property.ReadOnlyObjectWrapper;
@@ -14,8 +13,10 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import model.Main;
+import model.connection.PacchettoRisposta;
 import model.utility.Player;
 import model.connection.Sessione;
+import model.utility.Sfida;
 
 public class ClassificheController implements Initializable {
     
@@ -64,14 +65,18 @@ public class ClassificheController implements Initializable {
     
     @Override
      public void initialize(URL location, ResourceBundle resources) {
-         /*
-        List<Player> p = null;
+         
         
-        try {
-            
-            p = new DBConnector<Player>().elencaTuttiPlayer();
-            
-        } catch (SQLException ex) { System.out.println("Errore durante il caricamento dei player: "+ex);}
+         
+         try{
+            Sessione.getClient().send(new PacchettoRisposta("CLASSIFICA_REQUEST"));
+        }catch (IOException e){}
+         
+         
+         Sessione.setOnServerResponse(this::gestisciRispostaServer);
+         
+         
+         
          
         
         // Formattazione speciale per la colonna contenente il numero di posizione in classifica
@@ -84,8 +89,7 @@ public class ClassificheController implements Initializable {
         vittorie.setCellValueFactory(new PropertyValueFactory<>("nVittorie"));
         partite.setCellValueFactory(new PropertyValueFactory<>("nPartite"));
         tempoMedio.setCellValueFactory(new PropertyValueFactory<>("tempoRisposta"));
-         
-        tabellaClassifica.setItems(FXCollections.observableArrayList(p));
+        
         tabellaClassifica.setSelectionModel(null);  // Impedisco la selezione della tabella
         
         // Listner che serve per impedire che l'utente cambi l'ordine delle colonne della tabella
@@ -94,47 +98,63 @@ public class ClassificheController implements Initializable {
             if (header != null) {
                 header.setMouseTransparent(true); 
             }
-        });
-         
-        // Imposto le Lable relative alla classifica
-        if (p != null && !p.isEmpty()) {
-            // TOP 1
-            username1.setText(p.get(0).getUsername());
-            vittorie1.setText(p.get(0).getNVittorie() + " Vittorie");
-            
-            if (p.size() > 1) { // TOP 2
-                username2.setText(p.get(1).getUsername());
-                vittorie2.setText(p.get(1).getNVittorie() + " Vittorie");
-            }
-            
-            if (p.size() > 2) { // TOP3
-                username3.setText(p.get(2).getUsername());
-                vittorie3.setText(p.get(2).getNVittorie() + " Vittorie");
-            }
-            
-            int x = -1;
-
-            // Scorro la lista finché non trovo lo stesso Username
-            for (int i = 0; i < p.size(); i++) {
-                if (p.get(i).getUsername().equals(Sessione.getPlayer().getUsername())) {    // Mi salvo la posizione nella lista (Cioè nella tabella)
-                    x = i + 1; 
-                    break; 
-                }
-            }
-
-            // Aggiorno la grafica nel Footer
-            if (x != -1) {
-                miaPosizione.setText(x + "° Posto");
-                miaPosizione.setStyle("-fx-text-fill: #2ecc71;"); // Colore verde se sei in classifica
-            } else {
-                miaPosizione.setText("Non Classificato");
-                miaPosizione.setStyle("-fx-text-fill: #e74c3c;"); // Colore rosso se non hai mai giocato
-            }
-        }
-         
-         */
+        }); 
     }
     
+     
+     
+     private void gestisciRispostaServer(PacchettoRisposta pacchetto) {
+        
+        switch(pacchetto.getComando()){
+            case "CLASSIFICA_OK":
+                    List<Player> p = (List<Player>) pacchetto.getPayload();
+                    
+                    tabellaClassifica.setItems(FXCollections.observableArrayList(p));   // Collego la lista di giocatori alla tabella
+                    
+                    // Imposto le Lable relative alla classifica
+                    if (p != null && !p.isEmpty()) {
+                        // TOP 1
+                        username1.setText(p.get(0).getUsername());
+                        vittorie1.setText(p.get(0).getNVittorie() + " Vittorie");
+
+                        if (p.size() > 1) { // TOP 2
+                            username2.setText(p.get(1).getUsername());
+                            vittorie2.setText(p.get(1).getNVittorie() + " Vittorie");
+                        }
+
+                        if (p.size() > 2) { // TOP3
+                            username3.setText(p.get(2).getUsername());
+                            vittorie3.setText(p.get(2).getNVittorie() + " Vittorie");
+                        }
+
+                        int x = -1;
+
+                        // Scorro la lista finché non trovo lo stesso Username
+                        for (int i = 0; i < p.size(); i++) {
+                            if (p.get(i).getUsername().equals(Sessione.getPlayer().getUsername())) {    // Mi salvo la posizione nella lista (Cioè nella tabella)
+                                x = i + 1; 
+                                break; 
+                            }
+                        }
+
+                        // Aggiorno la grafica nel Footer
+                        if (x != -1) {
+                            miaPosizione.setText(x + "° Posto");
+                            miaPosizione.setStyle("-fx-text-fill: #2ecc71;"); // Colore verde se sei in classifica
+                        } else {
+                            miaPosizione.setText("Non Classificato");
+                            miaPosizione.setStyle("-fx-text-fill: #e74c3c;"); // Colore rosso se non hai mai giocato
+                        }
+                    }
+                    
+                    break;
+            default: System.out.println("Errore: Impossibile caricare lo storico");
+        }
+        
+    }
+     
+     
+     
     @FXML
     private void back() throws IOException{
         Main.setRoot("playerDashboard");

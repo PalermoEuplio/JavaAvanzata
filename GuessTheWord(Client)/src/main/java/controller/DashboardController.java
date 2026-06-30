@@ -137,8 +137,8 @@ public class DashboardController implements Initializable{
     }
     
     @FXML
-    private void nuovaPartita(){
-        
+    private void nuovaPartita() throws IOException{
+        Main.setRoot("loading");
     }
     @FXML
     private void logout() throws IOException{

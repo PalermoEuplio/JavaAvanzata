@@ -6,8 +6,10 @@ package model.connection;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import javafx.application.Platform;
 import model.db.DBConnector;
+import model.game.TextEditor;
 import model.utility.Sfida;
 import model.utility.Amministratore;
 import model.utility.Player;
@@ -23,6 +25,8 @@ public class Sessione {
     private static ServerConnection server;
     
     private static Runnable onUserStatusChanged;    // Variabile che permette di specificare il comportamento da adottare in base a determinate richieste del client
+    
+    private static CopyOnWriteArrayList<String> clientInAttesa;   // ArrayList threadSafe che permette l'inserimento degli id Utenti pronti a giocare
     
     
     
@@ -49,6 +53,16 @@ public class Sessione {
     public static void setOnUserStatusChanged(Runnable callback) {
         onUserStatusChanged = callback;
     }
+
+    public static void setClientAttesa(CopyOnWriteArrayList<String> cia) {
+        Sessione.clientInAttesa = cia;
+    }
+
+    public static CopyOnWriteArrayList<String> getClientInAttesa() {
+        return clientInAttesa;
+    }
+    
+    
     
     
     
@@ -117,6 +131,41 @@ public class Sessione {
                                 } catch (Exception e) {}
                                 
                                 break;
+                            case "CLASSIFICA_REQUEST":
+                                
+                                try {
+                                    
+                                    List<Player> p = new DBConnector<Player>().elencaTuttiPlayer();
+                                    mittente.send(new PacchettoRisposta("CLASSIFICA_OK",p));
+                                    
+                                } catch (Exception e) {}
+                                
+                                
+                                break;
+                                
+                            case "GAME_PING":
+                                try {
+                                    
+                                    if(clientInAttesa==null)
+                                        mittente.send(new PacchettoRisposta("NO_ADMIN"));
+                                    else { 
+                                        if(!clientInAttesa.contains(String.valueOf(mittente.getIdLoggato())))   // Evito di aggiungere doppioni
+                                            clientInAttesa.add(String.valueOf(mittente.getIdLoggato()));
+                                        
+                                        if(clientInAttesa.size()>=2){
+                                            mittente.send(new PacchettoRisposta("START_GAME",new TextEditor().getModifiedText()));
+                                        }
+                                        else mittente.send(new PacchettoRisposta("NO_OPPONENT"));
+                                    }
+                                
+                                } catch (IOException ex) {}
+                                
+                                break;
+                                
+                            default:    try{ 
+                                mittente.send((new PacchettoRisposta("Messaggio Sconosciuto")));
+                            }
+                            catch(Exception e){}
                         }
                     }
                 },

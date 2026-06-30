@@ -18,12 +18,11 @@ public class TextEditor {
     
     private HashMap<Integer,String> title; // Lista dei titoli disponibili mappati per id
     
-    private String selectedText;    // Contenuto del testo selezionato
+    private static String gameText = "";    // Contenuto del testo selezionato
 
     
     public TextEditor(){
         title = new HashMap<>();
-        selectedText = "";
     }
     
     
@@ -33,9 +32,15 @@ public class TextEditor {
         return title;
     }
 
-    public String getSelectedText() {
-        return selectedText;
+    public static String getGameText() {
+        return gameText;
     }
+
+    public static void setGameText(String gameText) {
+        TextEditor.gameText = gameText;
+    }
+
+    
     
     
     // Metodi di gestione Testo

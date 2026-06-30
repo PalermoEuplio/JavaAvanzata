@@ -72,6 +72,9 @@ public class SettingsController implements Initializable{
     @FXML
     private TextField paroleScelte;
     
+    @FXML
+    private Button startGame;
+    
     private TextEditor te;
     
     @Override
@@ -145,7 +148,7 @@ public class SettingsController implements Initializable{
         });
         
         
-        
+        startGame.disableProperty().bind(paroleScelte.textProperty().isEmpty().and(areaTesto.selectedTextProperty().isEmpty()));
         
         
     }
@@ -221,7 +224,10 @@ public class SettingsController implements Initializable{
 
     @FXML
     private void avviaPartita() throws IOException {
-         Main.setRoot("loading");
+        Main.setRoot("loading");
+        te.setSelectedText(areaTesto.getSelectedText());
+        // La cifratura salva anche il testo modificato in maniera statica
+        te.cifraTesto(shift.getValue(), paroleScelte.getText().split(", "));
     }
      
     @FXML

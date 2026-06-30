@@ -56,9 +56,6 @@ public class Sessione {
     
     
     
-    
-    
-    
     public static void avviaConnessione() {
         
         if (monitorThread != null && monitorThread.isAlive()) 
