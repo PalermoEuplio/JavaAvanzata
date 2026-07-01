@@ -11,6 +11,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
@@ -127,6 +128,16 @@ public class ServerConnection {
             .filter(nome -> nome != null)
             .collect(java.util.stream.Collectors.toList());
     }
+    
+    public ClientHandler trovaClientPerId(int idTarget) {
+        for (ClientHandler client : connectedClients) {
+            if (client.getIdLoggato() == idTarget) {
+                return client;
+            }
+        }
+        return null;
+    }
+    
 
     /**
      * Classe Interna (Inner Class): Gestisce la singola connessione di un singolo Giocatore.
@@ -208,5 +219,32 @@ public class ServerConnection {
                 System.err.println("Errore chiusura socket client: " + e.getMessage());
             }
         }
+
+        @Override
+        public int hashCode() {
+            int hash = 7;
+            hash = 97 * hash + Objects.hashCode(this.socket);
+            hash = 97 * hash + this.idLoggato;
+            return hash;
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (getClass() != obj.getClass()) {
+                return false;
+            }
+            final ClientHandler other = (ClientHandler) obj;
+            if (this.idLoggato != other.idLoggato) {
+                return false;
+            }
+            return Objects.equals(this.socket, other.socket);
+        }
+        
     }
 }

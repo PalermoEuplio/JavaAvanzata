@@ -34,7 +34,7 @@ public class LoadingController implements Initializable{
       
         Sessione.setOnServerResponse(this::gestisciRispostaServer);
         
-        timerPing = new Timeline(new KeyFrame(Duration.seconds(2), event -> {
+        timerPing = new Timeline(new KeyFrame(Duration.seconds(0.5), event -> {
             // Inviamo il comando PING al server tramite la sessione
             try {
                 Sessione.getClient().send(new PacchettoRisposta("GAME_PING"));
@@ -58,8 +58,7 @@ public class LoadingController implements Initializable{
                 try {
                     System.out.println("Inizio partita");
                     
-                    new TextEditor().setGameText((String) pacchetto.getPayload());
-                    
+                    TextEditor.setGameText((String) pacchetto.getPayload());
                     Main.setRoot("game");
                     
                 } catch (Exception e) {e.printStackTrace();}

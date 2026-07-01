@@ -18,6 +18,4 @@ public interface DAO<T> {
     
     public void aggiungiSfida(T sf) throws Exception;
     
-    
-    
 }

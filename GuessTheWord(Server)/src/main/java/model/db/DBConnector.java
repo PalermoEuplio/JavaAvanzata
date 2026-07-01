@@ -11,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import model.connection.Sessione;
 import model.utility.Sfida;
 import model.game.TextEditor;
 import model.utility.Amministratore;
@@ -35,7 +36,7 @@ public class DBConnector <T> implements DAO<T>{
         if (user instanceof Amministratore) { 
             Amministratore s = (Amministratore) user;
             try (Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
-                 PreparedStatement ps = c.prepareStatement("SELECT Username, Password FROM Amministratore WHERE Username = ?")) {
+                 PreparedStatement ps = c.prepareStatement("SELECT * FROM Amministratore WHERE Username = ?")) {
 
                 ps.setString(1, s.getUsername()); 
 
@@ -44,7 +45,7 @@ public class DBConnector <T> implements DAO<T>{
                         if (password != null && !rs.getString("Password").equals(password)) {
                             throw new SQLException("Password Errata");
                         }
-                        result = (T) new Amministratore(rs.getString("Username"));
+                        result = (T) new Amministratore(rs.getString("Username"),rs.getInt("Id_utente"));
                     } else {
                         throw new SQLException("Username Errato"); 
                     }
@@ -55,9 +56,11 @@ public class DBConnector <T> implements DAO<T>{
         } else if (user instanceof Player) {  
             Player p = (Player) user;
             try (Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
-                 PreparedStatement ps = c.prepareStatement("SELECT Username, Password, Id_Utente, N_Vittorie, N_Partite, Tempo_Medio_Risposta FROM Player WHERE Username = ?")) {
+                 PreparedStatement ps = c.prepareStatement("SELECT * FROM Player WHERE Username = ? or Id_Utente = ?")) {
                 
-                ps.setString(1, p.getUsername());   
+                
+                ps.setString(1, p.getUsername());
+                ps.setInt(2, p.getId());
                 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {    
@@ -222,7 +225,75 @@ public class DBConnector <T> implements DAO<T>{
     
     
     @Override
-    public void aggiungiSfida(T sfida) throws SQLException{
+    public void aggiungiSfida(T sfida) throws SQLException {
         
-    }    
+        if (sfida instanceof Sfida) {
+            
+            Sfida s = (Sfida) sfida;
+            
+            try (Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+                
+                c.setAutoCommit(false);
+                
+                String insertSfida = "INSERT INTO Sfida (Id_Documento, Durata, Id_P1, Id_P2, Id_Amm, Tempo_RispostaP1, Tempo_RispostaP2, Risultato) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                int idSfidaGenerato = -1;
+                
+                try (PreparedStatement psSfida = c.prepareStatement(insertSfida, java.sql.Statement.RETURN_GENERATED_KEYS)) {
+                    
+                    psSfida.setInt(1, s.getIdDocumento());
+                    psSfida.setDouble(2, s.getDurata());
+                    psSfida.setInt(3, s.getId1());
+                    psSfida.setInt(4, s.getId2());
+                    psSfida.setInt(5,Sessione.getAdmin() != null ? Sessione.getAdmin().getId() : 0); 
+                    psSfida.setDouble(6, s.getTRisposta1());
+                    psSfida.setDouble(7, s.getTRisposta2());
+                    psSfida.setInt(8, s.getRisultato().trim().equals("Vittoria") ? 1 : 0);
+                    
+                    psSfida.executeUpdate(); // Esegue l'inserimento
+                    
+                    // Recupero l'id appena generato dal db
+                    try (Statement stmtId = c.createStatement();
+                         ResultSet rsKeys = stmtId.executeQuery("SELECT last_insert_rowid()")) {
+                        
+                        if (rsKeys.next()) {
+                            idSfidaGenerato = rsKeys.getInt(1); // Prende il risultato della query
+                        } else {
+                            throw new SQLException("Creazione sfida fallita, nessun ID ottenuto.");
+                        }
+                    }
+                }
+                
+                
+                if (idSfidaGenerato != -1 && s.getSoluzione() != null && !s.getSoluzione().isEmpty()) {
+                    
+                    String insertSoluzione = "INSERT INTO Soluzione (Parola, Id_Sfida) VALUES (?, ?)";
+                    
+                    try (PreparedStatement psSoluzione = c.prepareStatement(insertSoluzione)) {
+                        
+                        String[] soluzioni = s.getSoluzione().split(",\\s*");
+                        
+                        for (String ss : soluzioni) {
+                            psSoluzione.setString(1, ss);
+                            psSoluzione.setInt(2, idSfidaGenerato);
+                            
+                            psSoluzione.addBatch(); 
+                        }
+                        
+                        // Esegue tutte le query del gruppo
+                        psSoluzione.executeBatch();
+                    }
+                }
+                
+                // Confermo le modifiche sul db
+                c.commit(); 
+                
+            } catch (SQLException e) {
+                System.err.println("Errore durante l'inserimento della sfida: " + e.getMessage());
+                throw e; // Rilanciamo l'eccezione per farla gestire al chiamante
+            }
+        } else {
+             throw new IllegalArgumentException("Tipo utente non supportato dal metodo aggiungiSfida.");
+        }
+    }
+
 }

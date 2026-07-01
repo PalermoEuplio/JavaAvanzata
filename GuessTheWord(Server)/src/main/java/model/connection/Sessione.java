@@ -5,9 +5,14 @@
 package model.connection;
 
 import java.io.IOException;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javafx.application.Platform;
+import model.connection.ServerConnection.ClientHandler;
 import model.db.DBConnector;
 import model.game.TextEditor;
 import model.utility.Sfida;
@@ -26,7 +31,14 @@ public class Sessione {
     
     private static Runnable onUserStatusChanged;    // Variabile che permette di specificare il comportamento da adottare in base a determinate richieste del client
     
-    private static CopyOnWriteArrayList<String> clientInAttesa;   // ArrayList threadSafe che permette l'inserimento degli id Utenti pronti a giocare
+    private static Runnable onGameReady;    // Runnable per il reindirizzamento dell'admin alla pagina d'attesa fine partita
+    
+    private static CopyOnWriteArrayList<Integer> clientInAttesa;   // ArrayList threadSafe che permette l'inserimento degli id Utenti pronti a giocare
+    
+    private static Sfida currentGame;   // Variabile contenente i dati della sfida attualmente preparata/in corso
+    
+    private static HashMap<ClientHandler, PacchettoRisposta> answers;
+    
     
     
     
@@ -54,16 +66,25 @@ public class Sessione {
         onUserStatusChanged = callback;
     }
 
-    public static void setClientAttesa(CopyOnWriteArrayList<String> cia) {
+    public static void setClientAttesa(CopyOnWriteArrayList<Integer> cia) {
         Sessione.clientInAttesa = cia;
     }
 
-    public static CopyOnWriteArrayList<String> getClientInAttesa() {
+    public static CopyOnWriteArrayList<Integer> getClientInAttesa() {
         return clientInAttesa;
     }
+
+    public static void setCurrentGame(Sfida currentGame) {
+        Sessione.currentGame = currentGame;
+    }
+
+    public static Sfida getCurrentGame() {
+        return currentGame;
+    }
     
-    
-    
+    public static void setOnGameReady(Runnable callback) {
+        onGameReady = callback;
+    }
     
     
     // Metodo necessario all'avvio del server e alla definizione di alcuni dei suoi comportamenti principali
@@ -149,20 +170,187 @@ public class Sessione {
                                     if(clientInAttesa==null)
                                         mittente.send(new PacchettoRisposta("NO_ADMIN"));
                                     else { 
-                                        if(!clientInAttesa.contains(String.valueOf(mittente.getIdLoggato())))   // Evito di aggiungere doppioni
-                                            clientInAttesa.add(String.valueOf(mittente.getIdLoggato()));
+                                        if(!clientInAttesa.contains(mittente.getIdLoggato()))   // Evito di aggiungere doppioni
+                                            clientInAttesa.add(mittente.getIdLoggato());
                                         
-                                        if(clientInAttesa.size()>=2){
-                                            mittente.send(new PacchettoRisposta("START_GAME",new TextEditor().getModifiedText()));
-                                        }
-                                        else mittente.send(new PacchettoRisposta("NO_OPPONENT"));
+                                        if(clientInAttesa.size()==2){
+                                            
+                                            try {
+                                                int idGiocatore1 = clientInAttesa.get(0);
+                                                int idGiocatore2 = clientInAttesa.get(1);
+
+
+                                                clientInAttesa = null;
+
+                                                ClientHandler socketP1 = server.trovaClientPerId(idGiocatore1);
+                                                ClientHandler socketP2 = server.trovaClientPerId(idGiocatore2);
+
+
+                                                String userP1 = new DBConnector<Player>().cerca(new Player("", idGiocatore1, 0, 0, 0), null).getUsername();
+                                                String userP2 = new DBConnector<Player>().cerca(new Player("", idGiocatore2, 0, 0, 0), null).getUsername();
+
+                                                int nSoluzioni = TextEditor.getRisposte().length;   // Agli utenti arriva solo il numero di parole da indovinare
+                                                String testoModificato = TextEditor.getModifiedText();
+                                                
+                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0.0, 0.0, idGiocatore1, idGiocatore2, userP2, "", String.valueOf(nSoluzioni));
+                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0.0, 0.0, idGiocatore1, idGiocatore2, userP1, "", String.valueOf(nSoluzioni));
+
+                                                // 5. INVIAMO I DATI A ENTRAMBI CONTEMPORANEAMENTE (Zero Delay!)
+                                                if (socketP1 != null) {
+                                                    socketP1.send(new PacchettoRisposta("START_GAME", testoModificato));
+                                                    socketP1.send(new PacchettoRisposta("GAME_INFO", sfidaP1));
+                                                }
+
+                                                if (socketP2 != null) {
+                                                    socketP2.send(new PacchettoRisposta("START_GAME", testoModificato));
+                                                    socketP2.send(new PacchettoRisposta("GAME_INFO", sfidaP2));
+                                                }
+                                                
+                                                sfidaP1.setSoluzione(Arrays.stream(TextEditor.getRisposte()).collect(java.util.stream.Collectors.joining(", ")));
+                                                currentGame = sfidaP1;
+                                                notificaAvvioPartita();
+                                                
+                                            } catch (Exception e) {System.out.println("Errore nella ricerca dell'username Avversario");}
+                                            
+                                        } else mittente.send(new PacchettoRisposta("NO_OPPONENT"));
                                     }
                                 
                                 } catch (IOException ex) {}
                                 
                                 break;
                                 
-                            default:    try{ 
+                            case "RESIGN_REQUEST":
+                                
+                                ClientHandler socketP1 = server.trovaClientPerId(currentGame.getId1());
+                                ClientHandler socketP2 = server.trovaClientPerId(currentGame.getId2());
+                                
+                                try {
+                                
+                                    if (socketP1 != null) {
+                                        if( mittente.equals(socketP1) ){
+                                            socketP1.send(new PacchettoRisposta("RESIGN_OK"));
+                                        } else socketP1.send(new PacchettoRisposta("OPP_RESIGN"));
+                                    }
+
+                                    if (socketP2 != null) {
+                                        if( mittente.equals(socketP2) ){
+                                            socketP2.send(new PacchettoRisposta("RESIGN_OK"));
+                                        } else socketP2.send(new PacchettoRisposta("OPP_RESIGN"));
+                                    }
+                                    
+                                    new DBConnector<Sfida>().aggiungiSfida(currentGame);
+                                
+                                    notificaAvvioPartita();
+                                
+                                } catch (IOException e) {}
+                                    catch (SQLException ex) {}
+                                
+                                break;
+                            
+                            case "VALIDATION_REQUEST":
+                                
+                                
+                                if(pacchetto.getPayload()!=null){
+                                    
+                                    List<String> answer = (List<String>) pacchetto.getPayload();
+                                    
+                                    if(answers==null)
+                                        answers = new HashMap<>();
+                                    
+                                    answers.put(mittente, pacchetto);
+                                    
+                                    if(answers.keySet().size()==2){
+                                        
+                                        PacchettoRisposta[] pachList = new PacchettoRisposta[2];
+                                        int i=0;
+                                        
+                                        ClientHandler[] ch0 = new ClientHandler[2];
+                                        
+                                        for(ClientHandler ch : answers.keySet()){
+                                            ch0[i] = ch;
+                                            pachList[i] = answers.get(ch);
+                                            i++;
+                                        }
+                                        
+                                        String[] risposteVere = currentGame.getSoluzione().split(",\\s*");
+                                        
+                                        int nCorrette1 = 0;
+                                        int nCorrette2 = 0;
+                                        int tempo1 = Integer.parseInt( ((List<String>)pachList[0].getPayload()).get(risposteVere.length) );
+                                        int tempo2 = Integer.parseInt( ((List<String>)pachList[1].getPayload()).get(risposteVere.length) );
+                                        
+                                        // Controllo le risposte
+                                        for(String temp : risposteVere){
+                                            if( ((List<String>)pachList[0].getPayload()).contains(temp) )
+                                                nCorrette1++;
+                                            if( ((List<String>)pachList[1].getPayload()).contains(temp) )
+                                                nCorrette2++;
+                                        }
+                                        
+                                        try {
+                                            
+                                            if(nCorrette1>nCorrette2){    
+                                                ch0[0].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
+                                                ch0[1].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
+                                                
+                                                if(ch0[0].getIdLoggato() == currentGame.getId1()){
+                                                    currentGame.settRisposta1(tempo1);
+                                                    currentGame.settRisposta2(tempo2);
+                                                    currentGame.setRisultato("Vittoria");
+                                                }
+                                                    
+                                                else {
+                                                    currentGame.setRisultato("Sconfitta");
+                                                    currentGame.settRisposta1(tempo2);
+                                                    currentGame.settRisposta2(tempo1);
+                                                }
+                                                
+                                            }else if(nCorrette1==nCorrette2){
+                                                //  Se hanno indovinato lo stesso numero di risposte, controllo il tempo impiegato
+                                                if(tempo1<tempo2){
+                                                    
+                                                    ch0[0].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
+                                                    ch0[1].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
+                                                    
+                                                    if(ch0[0].getIdLoggato() == currentGame.getId1()){
+                                                        currentGame.settRisposta1(tempo1);
+                                                        currentGame.settRisposta2(tempo2);
+                                                        currentGame.setRisultato("Vittoria");
+                                                    }
+                                                    else currentGame.setRisultato("Sconfitta");
+
+                                                }else {
+                                                    ch0[1].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
+                                                    ch0[0].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
+                                                    
+                                                    if(ch0[1].getIdLoggato() == currentGame.getId1())
+                                                        currentGame.setRisultato("Vittoria");
+                                                    else currentGame.setRisultato("Sconfitta");
+                                                }
+                                            }else {
+                                                ch0[1].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
+                                                ch0[0].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
+                                                
+                                                if(ch0[1].getIdLoggato() == currentGame.getId1())
+                                                        currentGame.setRisultato("Vittoria");
+                                                    else currentGame.setRisultato("Sconfitta");
+                                            }
+                                            
+                                            new DBConnector<Sfida>().aggiungiSfida(currentGame);
+                                            
+                                        } catch (IOException e) {System.out.println("Errore durante l'invio dei messaggi");}
+                                            catch(SQLException ex) {System.out.println("Errore: "+ex);}
+                                        
+                                    }
+                                }
+                                
+                                
+                                
+                                
+                                break;
+                                
+                            default:    
+                                try{ 
                                 mittente.send((new PacchettoRisposta("Messaggio Sconosciuto")));
                             }
                             catch(Exception e){}
@@ -186,6 +374,12 @@ public class Sessione {
     private static void notificaGrafica() {
         if (onUserStatusChanged != null) {
             Platform.runLater(onUserStatusChanged);
+        }
+    }
+    
+    private static void notificaAvvioPartita() {
+        if (onGameReady != null) {
+            Platform.runLater(onGameReady);
         }
     }
 

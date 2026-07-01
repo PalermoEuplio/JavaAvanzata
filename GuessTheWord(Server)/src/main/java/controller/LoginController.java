@@ -53,7 +53,7 @@ public class LoginController implements Initializable{
         
         try {
             
-            Amministratore adminlog = (Amministratore) new DBConnector().cerca(new Amministratore(fieldUsername.getText()), fieldPassword.getText());
+            Amministratore adminlog = (Amministratore) new DBConnector().cerca(new Amministratore(fieldUsername.getText(),-1), fieldPassword.getText());
             Sessione.setAdmin(adminlog);
             Main.setRoot("adminDashboard");
             

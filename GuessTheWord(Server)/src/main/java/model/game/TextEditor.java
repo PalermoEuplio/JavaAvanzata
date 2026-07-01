@@ -40,6 +40,8 @@ public class TextEditor {
 
     private static String modifiedText = "";
     
+    private static String[] risposte = null;
+    
     public TextEditor(){
         title = new ArrayList<>();
         titleMap = new HashMap<>();
@@ -76,6 +78,10 @@ public class TextEditor {
 
     public static void setModifiedText(String modifiedText) {
         TextEditor.modifiedText = modifiedText;
+    }
+
+    public static String[] getRisposte() {
+        return risposte;
     }
     
     
@@ -241,6 +247,8 @@ public class TextEditor {
     // Cifra il testo utilizzando la stream API. In particolare le parole cifrate sono nel formato [[ parola ]],
     // in modo da essere facilmente riconoscibili dal Client.
     public void cifraTesto(int shift, String[] parole) {
+        
+        risposte = parole;
         
         // 1. Prepariamo la lista delle parole target in minuscolo per fare controlli precisi (case-insensitive)
         List<String> paroleDaCifrare = Arrays.stream(parole)

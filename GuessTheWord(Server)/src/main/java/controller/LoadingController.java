@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -36,18 +34,19 @@ public class LoadingController implements Initializable{
         
         Sessione.setClientAttesa(new CopyOnWriteArrayList<>());
         
+        Sessione.setOnGameReady(() -> {
+            if (monitor != null) monitor.stop();
+            try {
+                Main.setRoot("gameWait");
+            } catch (IOException ex) { System.out.println("Pagina non trovata"); }
+        });
+        
         // Monitoraggio del numero di utenti pronti a giocare
         monitor = new Timeline(new KeyFrame(Duration.millis(500), e -> {
-            
+            if (Sessione.getClientInAttesa() == null) 
+                return;
             int n = Sessione.getClientInAttesa().size();
             status.setText("Giocatori Connessi: " + n + "/2");
-
-            if (n == 2) {
-                monitor.stop(); // appena raggiunto il numero, fermo il polling
-                try {
-                    Main.setRoot("game");
-                } catch (IOException ex) {System.out.println("Pagina non trovata");}
-            }
         }));
         
         

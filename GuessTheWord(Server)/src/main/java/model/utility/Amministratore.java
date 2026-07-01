@@ -4,9 +4,11 @@ package model.utility;
 public class Amministratore {
     
     private String username;
+    private int id;
 
-    public Amministratore(String username) {
+    public Amministratore(String username, int id) {
         this.username = username;
+        this.id = id;
     }
     
 
@@ -16,6 +18,14 @@ public class Amministratore {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

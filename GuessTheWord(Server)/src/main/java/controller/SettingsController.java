@@ -28,6 +28,8 @@ import javafx.scene.control.TextField;
 import model.game.Testo;
 import model.game.TextEditor;
 import model.Main;
+import model.connection.Sessione;
+import model.utility.Sfida;
 
 /**
  *
@@ -76,6 +78,10 @@ public class SettingsController implements Initializable{
     private Button startGame;
     
     private TextEditor te;
+    
+    private String testoSelezionato = "";
+    
+    private final double durataPartita = 5.0;   // Variabile per cambiare la durata della partita
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -224,10 +230,27 @@ public class SettingsController implements Initializable{
 
     @FXML
     private void avviaPartita() throws IOException {
-        Main.setRoot("loading");
-        te.setSelectedText(areaTesto.getSelectedText());
+        String testoDaUsare = areaTesto.getSelectedText();
+        
+        // 2. Se è vuoto (l'utente ha perso la selezione), uso quello salvato
+        if (testoDaUsare == null || testoDaUsare.trim().isEmpty()) {
+            testoDaUsare = testoSelezionato;
+        }
+        
+        // 3. Se è ancora vuoto, prendo tutto il testo di default
+        if (testoDaUsare == null || testoDaUsare.trim().isEmpty()) {
+            testoDaUsare = areaTesto.getText();
+        }
+        
+        te.setSelectedText(testoDaUsare);
+        
+        Testo t = te.getTitle().stream().filter(t0 -> t0.getTitolo().equals(comboTesti.getValue())).findFirst().orElse(null);
+        
+        Sessione.setCurrentGame(new Sfida(t.getTxtId(),durataPartita,0,0,0,0,"","",""));
+        
         // La cifratura salva anche il testo modificato in maniera statica
-        te.cifraTesto(shift.getValue(), paroleScelte.getText().split(", "));
+        te.cifraTesto(shift.getValue(), paroleScelte.getText().split(",\\s*"));
+        Main.setRoot("loading");
     }
      
     @FXML
@@ -246,6 +269,8 @@ public class SettingsController implements Initializable{
         if (estratto == null || estratto.trim().isEmpty()) {
             estratto = areaTesto.getText(); // Fallback se non evidenzia nulla
         }
+        
+        this.testoSelezionato = estratto;
 
         int targetLunghezza = (int) lunghezza.getValue();
         int livelloFrequenza = (int) frequenza.getValue();
