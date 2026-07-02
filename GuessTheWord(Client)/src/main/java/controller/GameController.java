@@ -8,7 +8,10 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
+import javafx.animation.SequentialTransition;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -20,6 +23,7 @@ import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
@@ -75,6 +79,17 @@ public class GameController implements Initializable {
     private Label oppParole;
     
     
+    @FXML
+    private VBox overlayAttesa;
+    
+    @FXML private Circle dot1;
+    @FXML private Circle dot2;
+    @FXML private Circle dot3;
+    @FXML private Circle dot4;
+    
+    
+    private Timeline timerPing; // Per i pallini d'attesa
+    
     private Sfida currentGame;
     
     private Timeline timelineTimer;
@@ -89,11 +104,7 @@ public class GameController implements Initializable {
      public void initialize(URL location, ResourceBundle resources){
          caricaTesto();
          
-         
          Sessione.setOnServerResponse(this::gestisciRispostaServer);
-         
-         
-         
          
      }
      
@@ -120,31 +131,58 @@ public class GameController implements Initializable {
                 
                 break;
             case "RESIGN_OK":
-                    
-                    overlayFinePartita.setVisible(true);
-                    esito.setText("Sconfitta");
-                    
-                    mioTempo.setText("0");
-                    oppTempo.setText("0");
-                    
-                    
-                    mieParole.setText("0/"+nRisposte);
-                    oppParole.setText("0/"+nRisposte);
-                    
-                break;
             case "OPP_RESIGN":  
                 
-                overlayFinePartita.setVisible(true);
-                esito.setText("Vittoria");
+                    if (timerPing != null) {
+                        timerPing.stop();
+                        overlayAttesa.setVisible(false);
+                    }
+                    
+                    overlayFinePartita.setVisible(true);
+                    esito.setText((pacchetto.getComando().equals("OPP_RESIGN")) ? "Vittoria" : "Sconfitta");
 
-                mioTempo.setText("0");
-                oppTempo.setText("0");
+                    mioTempo.setText("0");
+                    oppTempo.setText("0");
 
-                nRisposte = currentGame.getSoluzione().split(",\\s*").length;
-                mieParole.setText("0/"+nRisposte);
-                oppParole.setText("0/"+nRisposte);
+                    risposte.setText((pacchetto.getComando().equals("OPP_RESIGN")) ? 
+                            "L'Avversario si è arreso; Parole da Indovinare: "+ (String) pacchetto.getPayload() :
+                            "Ti sei arreso; Parole da Indovinare: "+ (String) pacchetto.getPayload());
+                    mieParole.setText("0/"+nRisposte);
+                    oppParole.setText("0/"+nRisposte);
                 
                
+                break;
+                
+            case "YOU_WON":
+            case "YOU_LOST":
+                
+                    if (timerPing != null) {
+                        timerPing.stop();
+                        overlayAttesa.setVisible(false);
+                    }
+                
+                    Object[] ob = (Object[]) pacchetto.getPayload();
+                    
+                    String paroleVere = (String) ob[0];
+                    int mieR = (int) ob[3];
+                    int oppR = (int) ob[4];
+                    
+                    
+                    
+                    overlayFinePartita.setVisible(true);
+                    
+                    esito.setText((pacchetto.getComando().equals("YOU_WON")) ? "Vittoria" : "Sconfitta");
+                    
+                    risposte.setText( (mieR == nRisposte) ? "Hai indovinato tutte le parole cifrate!" : 
+                            "Parole da Indovinare: "+paroleVere );
+                    
+                    
+                    mioTempo.setText((String)ob[1]);
+                    oppTempo.setText((String) ob[2]);
+                    
+                    mieParole.setText(mieR+"/"+nRisposte);
+                    oppParole.setText(oppR+"/"+nRisposte);
+                
                 break;
             default: System.out.println("Errore: Messaggio Sconosciuto");
         }
@@ -212,7 +250,7 @@ public class GameController implements Initializable {
      
      
      
-     private void caricaTesto() {
+    private void caricaTesto() {
         
         testo.getChildren().clear(); // Pulisce eventuali testi precedenti
         
@@ -254,7 +292,27 @@ public class GameController implements Initializable {
     }
      
      
-     
+    private void avviaAnimazionePallini() {
+        Circle[] dots = {dot1, dot2, dot3, dot4};
+        SequentialTransition sequenza = new SequentialTransition();
+
+        // Creiamo una transizione di "Fade" (Scomparsa/Comparsa) per ogni pallino
+        for (Circle dot : dots) {
+            dot.setOpacity(0.2); // Partono tutti semitrasparenti
+            
+            FadeTransition ft = new FadeTransition(Duration.millis(250), dot);
+            ft.setFromValue(0.2);
+            ft.setToValue(1.0);
+            ft.setAutoReverse(true); // Dopo essersi illuminato, torna trasparente
+            ft.setCycleCount(2);     // Un ciclo di andata e uno di ritorno
+            
+            sequenza.getChildren().add(ft);
+        }
+
+        // Diciamo all'animazione intera di ripetersi all'infinito
+        sequenza.setCycleCount(Animation.INDEFINITE);
+        sequenza.play();
+    } 
      
      
      @FXML
@@ -297,10 +355,20 @@ public class GameController implements Initializable {
             Optional<ButtonType> result = alert.showAndWait();
 
             if (result.isPresent() && result.get() == ButtonType.OK) {
-                timelineTimer.stop();
-                ss.add(String.valueOf(durataIniziale-secondiRimanenti));
                 
-                Sessione.getClient().send(new PacchettoRisposta("VALIDATION_REQUEST",ss));
+                timelineTimer.stop();   // Fermo lo scorrere del tempo
+                ss.add(String.valueOf(durataIniziale-secondiRimanenti));    // Salvo il tempo impiegato ad inviare la risposta
+                
+                Sessione.getClient().send(new PacchettoRisposta("VALIDATION_REQUEST",ss));  // Mando il messaggio di validazione al server
+                
+                //Avvio l'animazione dei pallini d'attesa
+                avviaAnimazionePallini();
+                overlayAttesa.setVisible(true);
+                timerPing = new Timeline(new KeyFrame(Duration.seconds(0.5)));
+         
+                timerPing.setCycleCount(Timeline.INDEFINITE);
+                timerPing.play();
+                
             }
             
         } catch (IOException ex) {System.out.println("Errore nella convalida delle risposte");}

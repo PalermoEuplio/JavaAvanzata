@@ -12,6 +12,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -77,7 +78,8 @@ public class DashboardController implements Initializable{
         username.setText(currentP.getUsername());   // Setto l'Username
         nPartite.setText(String.valueOf(currentP.getNPartite()));   // Setto il numero di Partite
         nVittorie.setText(String.valueOf(currentP.getNVittorie()));   // Setto il numero di Vittorie
-        rispostaMedia.setText(String.valueOf(currentP.getTempoRisposta()));   // Setto il tempo di risposta medio
+        int mediaSecondi = (int) currentP.getTempoRisposta();
+        rispostaMedia.setText(String.format("%02d:%02d", mediaSecondi / 60, mediaSecondi % 60));
         
         
         
@@ -100,11 +102,22 @@ public class DashboardController implements Initializable{
         
         titolo.setCellValueFactory(new PropertyValueFactory<>("titoloTesto"));
         avversario.setCellValueFactory(new PropertyValueFactory<>("oppUsername"));
-        durata.setCellValueFactory(new PropertyValueFactory<>("durata"));
-        tempo1.setCellValueFactory(new PropertyValueFactory<>("tRisposta1"));
-        tempo2.setCellValueFactory(new PropertyValueFactory<>("tRisposta2"));
         soluzione.setCellValueFactory(new PropertyValueFactory<>("soluzione"));
         risultato.setCellValueFactory(new PropertyValueFactory<>("risultato"));
+        
+        
+        // Formatto le colonne legate al tempo in modo da far comparire minuti:secondi
+        durata.setCellValueFactory(new PropertyValueFactory<>("durata"));
+        formattaColonnaTempo(durata);
+        
+        tempo1.setCellValueFactory(new PropertyValueFactory<>("tRisposta1"));
+        formattaColonnaTempo(tempo1);
+        
+        tempo2.setCellValueFactory(new PropertyValueFactory<>("tRisposta2"));
+        formattaColonnaTempo(tempo2);
+        
+        
+        
         
         // Impedisco lo spostamento delle colonne della tabella
         tabellaStorico.widthProperty().addListener((obs, oldVal, newVal) -> {
@@ -114,6 +127,24 @@ public class DashboardController implements Initializable{
             }
         });
         
+    }
+    
+    
+    private void formattaColonnaTempo(TableColumn<Sfida, Double> colonna) {
+        colonna.setCellFactory(column -> new TableCell<Sfida, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    int totalSeconds = item.intValue();
+                    int min = totalSeconds / 60;
+                    int sec = totalSeconds % 60;
+                    setText(String.format("%02d:%02d", min, sec));
+                }
+            }
+        });
     }
     
     

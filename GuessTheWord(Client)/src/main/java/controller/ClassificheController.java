@@ -9,6 +9,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -89,6 +90,20 @@ public class ClassificheController implements Initializable {
         vittorie.setCellValueFactory(new PropertyValueFactory<>("nVittorie"));
         partite.setCellValueFactory(new PropertyValueFactory<>("nPartite"));
         tempoMedio.setCellValueFactory(new PropertyValueFactory<>("tempoRisposta"));
+        tempoMedio.setCellFactory(column -> new TableCell<Player, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    int totalSeconds = item.intValue();
+                    int min = totalSeconds / 60;
+                    int sec = totalSeconds % 60;
+                    setText(String.format("%02d:%02d", min, sec));
+                }
+            }
+        });
         
         tabellaClassifica.setSelectionModel(null);  // Impedisco la selezione della tabella
         

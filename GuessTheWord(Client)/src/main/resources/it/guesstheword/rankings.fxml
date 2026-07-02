@@ -124,7 +124,7 @@
                   <TableColumn fx:id="username" prefWidth="300.0" sortable="false" text="Username Giocatore" />
                   <TableColumn fx:id="vittorie" prefWidth="150.0" sortable="false" text="🏆 Vittorie Totali" />
                   <TableColumn fx:id="partite" prefWidth="150.0" sortable="false" text="🎮 Partite Giocate" />
-                  <TableColumn fx:id="tempoMedio" prefWidth="200.0" sortable="false" text="⏱ Tempo Medio (sec)" />
+                  <TableColumn fx:id="tempoMedio" prefWidth="200.0" sortable="false" text="⏱ Tempo Medio (min)" />
                </columns>
                <columnResizePolicy>
                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
