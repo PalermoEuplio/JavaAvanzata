@@ -112,6 +112,12 @@ public class Sessione {
                                 String[] cred = (String[]) pacchetto.getPayload();
                                 try {
                                     Player pLog = new DBConnector<Player>().cerca(new Player(cred[0], 0, 0, 0, 0), cred[1]);
+                                    
+                                    ClientHandler giaConnesso = server.trovaClientPerId(pLog.getId());
+                                    if (giaConnesso != null && giaConnesso != mittente) {
+                                        mittente.send(new PacchettoRisposta("LOGIN_ERR", "Account già connesso in un'altra sessione."));
+                                        break;
+                                    }
 
                                     // Salviamo l'identità nel Socket 
                                     mittente.setUsernameLoggato(pLog.getUsername());
