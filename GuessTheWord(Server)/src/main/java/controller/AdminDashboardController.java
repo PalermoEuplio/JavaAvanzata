@@ -83,6 +83,20 @@ public class AdminDashboardController implements Initializable{
         nVittorie.setCellValueFactory(new PropertyValueFactory<>("nVittorie"));
         nVittorie.setSortType(TableColumn.SortType.DESCENDING);
         tempoRisposta.setCellValueFactory(new PropertyValueFactory<>("tempoRisposta"));
+        tempoRisposta.setCellFactory(column -> new TableCell<Player, Double>() {
+            @Override
+            protected void updateItem(Double item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    int totalSeconds = item.intValue();
+                    int min = totalSeconds / 60;
+                    int sec = totalSeconds % 60;
+                    setText(String.format("%02d:%02d", min, sec));
+                }
+            }
+        });
         tempoRisposta.setSortType(TableColumn.SortType.ASCENDING);
         state.setCellValueFactory(new PropertyValueFactory<>("on"));
         

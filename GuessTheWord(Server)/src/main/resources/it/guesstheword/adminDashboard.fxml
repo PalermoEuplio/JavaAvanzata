@@ -69,7 +69,7 @@
                 <TableColumn fx:id="Username" prefWidth="200.0" text="Username" />
                   <TableColumn fx:id="nPartite" prefWidth="120.0" text="Partite Giocate" />
                   <TableColumn fx:id="nVittorie" prefWidth="100.0" text="Vittorie" />
-                  <TableColumn fx:id="tempoRisposta" prefWidth="150.0" text="Tempo Medio (sec)" />
+                  <TableColumn fx:id="tempoRisposta" prefWidth="150.0" text="Tempo Medio (min)" />
                   <TableColumn fx:id="state" prefWidth="100.0" text="Stato" />
               </columns>
                <columnResizePolicy>

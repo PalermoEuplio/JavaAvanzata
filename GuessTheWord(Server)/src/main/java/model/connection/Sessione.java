@@ -6,11 +6,11 @@ package model.connection;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.Consumer;
 import javafx.application.Platform;
 import model.connection.ServerConnection.ClientHandler;
 import model.db.DBConnector;
@@ -32,6 +32,8 @@ public class Sessione {
     private static Runnable onUserStatusChanged;    // Variabile che permette di specificare il comportamento da adottare in base a determinate richieste del client
     
     private static Runnable onGameReady;    // Runnable per il reindirizzamento dell'admin alla pagina d'attesa fine partita
+    
+    private static Consumer<Integer> onAnswerReceived;  // Consumer utilizzato principalmente per l'aggiornamento in tempo reale del numero di player che hanno risposto 
     
     private static CopyOnWriteArrayList<Integer> clientInAttesa;   // ArrayList threadSafe che permette l'inserimento degli id Utenti pronti a giocare
     
@@ -85,6 +87,12 @@ public class Sessione {
     public static void setOnGameReady(Runnable callback) {
         onGameReady = callback;
     }
+
+    public static void setOnAnswerReceived(Consumer<Integer> onAnswerReceived) {
+        Sessione.onAnswerReceived = onAnswerReceived;
+    }
+    
+    
     
     
     // Metodo necessario all'avvio del server e alla definizione di alcuni dei suoi comportamenti principali
@@ -228,19 +236,19 @@ public class Sessione {
                                 
                                     if (socketP1 != null) {
                                         if( mittente.equals(socketP1) ){
-                                            socketP1.send(new PacchettoRisposta("RESIGN_OK"));
-                                        } else socketP1.send(new PacchettoRisposta("OPP_RESIGN"));
+                                            socketP1.send(new PacchettoRisposta("RESIGN_OK",currentGame.getSoluzione()));
+                                        } else socketP1.send(new PacchettoRisposta("OPP_RESIGN",currentGame.getSoluzione()));
                                     }
 
                                     if (socketP2 != null) {
                                         if( mittente.equals(socketP2) ){
-                                            socketP2.send(new PacchettoRisposta("RESIGN_OK"));
-                                        } else socketP2.send(new PacchettoRisposta("OPP_RESIGN"));
+                                            socketP2.send(new PacchettoRisposta("RESIGN_OK",currentGame.getSoluzione()));
+                                        } else socketP2.send(new PacchettoRisposta("OPP_RESIGN",currentGame.getSoluzione()));
                                     }
                                     
                                     new DBConnector<Sfida>().aggiungiSfida(currentGame);
                                 
-                                    notificaAvvioPartita();
+                                    notifyAnswerReceived(2);
                                 
                                 } catch (IOException e) {}
                                     catch (SQLException ex) {}
@@ -252,23 +260,22 @@ public class Sessione {
                                 
                                 if(pacchetto.getPayload()!=null){
                                     
-                                    List<String> answer = (List<String>) pacchetto.getPayload();
-                                    
                                     if(answers==null)
                                         answers = new HashMap<>();
                                     
                                     answers.put(mittente, pacchetto);
                                     
+                                    notifyAnswerReceived(answers.size());
+                                    
                                     if(answers.keySet().size()==2){
                                         
-                                        PacchettoRisposta[] pachList = new PacchettoRisposta[2];
+                                        List<String>[] pachList = new List[2];
                                         int i=0;
-                                        
                                         ClientHandler[] ch0 = new ClientHandler[2];
                                         
                                         for(ClientHandler ch : answers.keySet()){
                                             ch0[i] = ch;
-                                            pachList[i] = answers.get(ch);
+                                            pachList[i] = (List<String>) answers.get(ch).getPayload();
                                             i++;
                                         }
                                         
@@ -276,77 +283,87 @@ public class Sessione {
                                         
                                         int nCorrette1 = 0;
                                         int nCorrette2 = 0;
-                                        int tempo1 = Integer.parseInt( ((List<String>)pachList[0].getPayload()).get(risposteVere.length) );
-                                        int tempo2 = Integer.parseInt( ((List<String>)pachList[1].getPayload()).get(risposteVere.length) );
+                                        double tempo1 = Double.parseDouble(pachList[0].get(pachList[0].size() - 1));
+                                        double tempo2 = Double.parseDouble(pachList[1].get(pachList[1].size() - 1));
                                         
                                         // Controllo le risposte
-                                        for(String temp : risposteVere){
-                                            if( ((List<String>)pachList[0].getPayload()).contains(temp) )
+                                        for (int j = 0; j < risposteVere.length; j++) {
+                                            String rispostaVera = risposteVere[j].trim();
+
+                                            // Verifichiamo che l'indice j sia valido (escludendo l'ultimo elemento che è il tempo)
+                                            if (j < pachList[0].size() - 1 && pachList[0].get(j).trim().toUpperCase().equalsIgnoreCase(rispostaVera)) {
                                                 nCorrette1++;
-                                            if( ((List<String>)pachList[1].getPayload()).contains(temp) )
+                                            }
+                                            if (j < pachList[1].size() - 1 && pachList[1].get(j).trim().toUpperCase().equalsIgnoreCase(rispostaVera)) {
                                                 nCorrette2++;
+                                            }
                                         }
                                         
                                         try {
                                             
-                                            if(nCorrette1>nCorrette2){    
-                                                ch0[0].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
-                                                ch0[1].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
-                                                
-                                                if(ch0[0].getIdLoggato() == currentGame.getId1()){
-                                                    currentGame.settRisposta1(tempo1);
-                                                    currentGame.settRisposta2(tempo2);
-                                                    currentGame.setRisultato("Vittoria");
+                                                boolean vinceCh0 = false;
+                                                if (nCorrette1 > nCorrette2) {
+                                                    vinceCh0 = true;
+                                                } else if (nCorrette1 == nCorrette2) {
+                                                    if (tempo1 < tempo2) vinceCh0 = true;
                                                 }
-                                                    
-                                                else {
-                                                    currentGame.setRisultato("Sconfitta");
-                                                    currentGame.settRisposta1(tempo2);
-                                                    currentGame.settRisposta2(tempo1);
-                                                }
-                                                
-                                            }else if(nCorrette1==nCorrette2){
-                                                //  Se hanno indovinato lo stesso numero di risposte, controllo il tempo impiegato
-                                                if(tempo1<tempo2){
-                                                    
-                                                    ch0[0].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
-                                                    ch0[1].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
-                                                    
-                                                    if(ch0[0].getIdLoggato() == currentGame.getId1()){
+
+                                                // 2. Capiamo chi è il P1 rispetto al DB
+                                                boolean ch0EilP1 = (ch0[0].getIdLoggato() == currentGame.getId1());
+
+                                                // 3. Compiliamo i campi del DB in base a chi ha vinto
+                                                if (vinceCh0) { // Ha vinto ch0[0]
+                                                    if (ch0EilP1) {
                                                         currentGame.settRisposta1(tempo1);
                                                         currentGame.settRisposta2(tempo2);
-                                                        currentGame.setRisultato("Vittoria");
+                                                        currentGame.setRisultato("Vittoria"); // Vince P1
+                                                    } else {
+                                                        currentGame.settRisposta1(tempo2);
+                                                        currentGame.settRisposta2(tempo1);
+                                                        currentGame.setRisultato("Sconfitta"); // Vince P2
                                                     }
-                                                    else currentGame.setRisultato("Sconfitta");
-
-                                                }else {
-                                                    ch0[1].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
-                                                    ch0[0].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
-                                                    
-                                                    if(ch0[1].getIdLoggato() == currentGame.getId1())
-                                                        currentGame.setRisultato("Vittoria");
-                                                    else currentGame.setRisultato("Sconfitta");
+                                                } else { // Ha vinto ch0[1]
+                                                    if (ch0EilP1) {
+                                                        currentGame.settRisposta1(tempo1);
+                                                        currentGame.settRisposta2(tempo2);
+                                                        currentGame.setRisultato("Sconfitta"); // Vince P2
+                                                    } else {
+                                                        currentGame.settRisposta1(tempo2);
+                                                        currentGame.settRisposta2(tempo1);
+                                                        currentGame.setRisultato("Vittoria"); // Vince P1
+                                                    }
                                                 }
-                                            }else {
-                                                ch0[1].send(new PacchettoRisposta("YOU_WON",currentGame.getSoluzione()));
-                                                ch0[0].send(new PacchettoRisposta("YOU_LOST",currentGame.getSoluzione()));
                                                 
-                                                if(ch0[1].getIdLoggato() == currentGame.getId1())
-                                                        currentGame.setRisultato("Vittoria");
-                                                    else currentGame.setRisultato("Sconfitta");
-                                            }
+                                                
+                                            String strTempo1 = String.format("%02d:%02d", (int)tempo1 / 60, (int)tempo1 % 60);
+                                            String strTempo2 = String.format("%02d:%02d", (int)tempo2 / 60, (int)tempo2 % 60);
+                                
+                                                
+                                            // Preparo la stringa di oggetti da inviare ad entrambi i giocatori per far sapere il loro esito e quello avversario 
+                                            // [soluzioni, mioTempo, oppTempo, mieRisposte, oppRisposte]
+                                            Object[] payloadVincitore = {currentGame.getSoluzione(), (vinceCh0 ? strTempo1 : strTempo2), 
+                                                (vinceCh0 ? strTempo2 : strTempo1), (vinceCh0 ? nCorrette1 : nCorrette2), (vinceCh0 ? nCorrette2 : nCorrette1)};
+                                            Object[] payloadPerdente  = {currentGame.getSoluzione(), (!vinceCh0 ? strTempo1 : strTempo2), 
+                                                (!vinceCh0 ? strTempo2 : strTempo1), (!vinceCh0 ? nCorrette1 : nCorrette2), (!vinceCh0 ? nCorrette2 : nCorrette1)};
+                                            
+                                            // Mando il messaggio dell'esito col payload calcolato
+                                            if (vinceCh0) {
+                                                ch0[0].send(new PacchettoRisposta("YOU_WON", payloadVincitore));
+                                                ch0[1].send(new PacchettoRisposta("YOU_LOST", payloadPerdente));
+                                            } else {
+                                                ch0[1].send(new PacchettoRisposta("YOU_WON", payloadVincitore));
+                                                ch0[0].send(new PacchettoRisposta("YOU_LOST", payloadPerdente));
+                                            } 
                                             
                                             new DBConnector<Sfida>().aggiungiSfida(currentGame);
+                                            
+                                            answers.clear();    // Svuoto la mappa delle risposte per prepararla ad una nuova partita
                                             
                                         } catch (IOException e) {System.out.println("Errore durante l'invio dei messaggi");}
                                             catch(SQLException ex) {System.out.println("Errore: "+ex);}
                                         
                                     }
                                 }
-                                
-                                
-                                
-                                
                                 break;
                                 
                             default:    
@@ -380,6 +397,13 @@ public class Sessione {
     private static void notificaAvvioPartita() {
         if (onGameReady != null) {
             Platform.runLater(onGameReady);
+        }
+    }
+    
+    public static void notifyAnswerReceived(int count) {
+        if (onAnswerReceived != null) {
+            // Assicuriamoci che la modifica grafica avvenga nel thread di JavaFX
+            Platform.runLater(() -> onAnswerReceived.accept(count));
         }
     }
 

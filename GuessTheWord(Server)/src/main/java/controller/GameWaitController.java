@@ -53,11 +53,19 @@ public class GameWaitController implements Initializable {
         }
         
         
-        Sessione.setOnGameReady(() -> {
-            if (timelineTimer != null) timelineTimer.stop();
-            try {
-                Main.setRoot("adminDashboard");
-            } catch (IOException ex) { System.out.println("Pagina non trovata"); }
+        Sessione.setOnAnswerReceived((x) -> {
+            if (playerCount != null) {
+                playerCount.setText(String.valueOf(x));
+            }
+            
+            if (x == 2) {
+                if (timelineTimer != null) timelineTimer.stop();
+                try {
+                    Main.setRoot("adminDashboard");
+                } catch (IOException ex) { 
+                    System.out.println("Pagina non trovata"); 
+                }
+            }
         });
         
         
