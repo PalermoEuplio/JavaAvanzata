@@ -17,7 +17,6 @@ import model.Main;
 import model.connection.PacchettoRisposta;
 import model.utility.Player;
 import model.connection.Sessione;
-import model.utility.Sfida;
 
 public class ClassificheController implements Initializable {
     

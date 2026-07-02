@@ -6,6 +6,8 @@ public class Testo implements Serializable{
 
    private String titolo; 
    private int txtId; 
+   
+   private static String gameText = "";    // Contenuto del testo selezionato
 
     public Testo(String titolo, int txtId) {
         this.titolo = titolo;
@@ -19,6 +21,10 @@ public class Testo implements Serializable{
     public int getTxtId() {
         return txtId;
     }
+    
+    public static String getGameText() {
+        return gameText;
+    }
 
     public void setTitolo(String titolo) {
         this.titolo = titolo;
@@ -26,6 +32,10 @@ public class Testo implements Serializable{
 
     public void setTxtId(int txtId) {
         this.txtId = txtId;
+    }
+
+    public static void setGameText(String gameText) {
+        Testo.gameText = gameText;
     }
 
     @Override

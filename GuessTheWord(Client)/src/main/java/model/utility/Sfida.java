@@ -1,29 +1,21 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.utility;
 
 import java.io.Serializable;
 
-/**
- *
- * @author euppa
- */
 public class Sfida implements Serializable{
     
     private String titoloTesto;
     private int idDocumento;
-    private double durata;
-    private double tRisposta1;
-    private double tRisposta2;
+    private int durata;
+    private int tRisposta1;
+    private int tRisposta2;
     private int id1;
     private int id2;
     private String oppUsername;
     private String risultato;
     private String soluzione;
 
-    public Sfida(int idDocumento, double durata, double tRisposta1, double tRisposta2, int id1, int id2, String oppUsername, String risultato, String soluzione) {
+    public Sfida(int idDocumento, int durata, int tRisposta1, int tRisposta2, int id1, int id2, String oppUsername, String risultato, String soluzione) {
         this.idDocumento = idDocumento;
         this.durata = durata;
         this.tRisposta1 = tRisposta1;
@@ -43,15 +35,15 @@ public class Sfida implements Serializable{
         return idDocumento;
     }
 
-    public double getDurata() {
+    public int getDurata() {
         return durata;
     }
 
-    public double getTRisposta1() {
+    public int getTRisposta1() {
         return tRisposta1;
     }
 
-    public double getTRisposta2() {
+    public int getTRisposta2() {
         return tRisposta2;
     }
 
@@ -83,15 +75,15 @@ public class Sfida implements Serializable{
         this.idDocumento = idDocumento;
     }
 
-    public void setDurata(double durata) {
+    public void setDurata(int durata) {
         this.durata = durata;
     }
 
-    public void settRisposta1(double tRisposta1) {
+    public void settRisposta1(int tRisposta1) {
         this.tRisposta1 = tRisposta1;
     }
 
-    public void settRisposta2(double tRisposta2) {
+    public void settRisposta2(int tRisposta2) {
         this.tRisposta2 = tRisposta2;
     }
 
@@ -120,13 +112,4 @@ public class Sfida implements Serializable{
         return titoloTesto + ", " + idDocumento + ", " + durata + ", " + tRisposta1 + ", " + 
                 tRisposta2 + ", " + id1 + ", " + id2 + ", " + oppUsername + ", " + risultato + ", " + soluzione;
     }
-    
-    
-    
-    
-    
-    
-    
-    
-    
 }

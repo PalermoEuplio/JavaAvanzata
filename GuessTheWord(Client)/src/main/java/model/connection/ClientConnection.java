@@ -37,10 +37,6 @@ public class ClientConnection {
         this.onReceiveCallback = onReceiveCallback;
         caricaConfigurazione();
     }
-    
-    public void setOnMessageReceived(Consumer<Serializable> nuovaCallback) {
-        this.onReceiveCallback = nuovaCallback;
-    }
 
     /**
      * Metodo interno per leggere IP e Porta dal file .properties.
@@ -49,7 +45,7 @@ public class ClientConnection {
         Properties props = new Properties();
         
         // Cerca il file "config_client.properties" nella cartella principale del progetto
-        try (InputStream input = new FileInputStream("config_client.properties")) {
+        try (InputStream input = new FileInputStream("client.properties")) {
             props.load(input);
             
             // Legge i valori, se non li trova usa localhost e 55555 come fallback
@@ -91,6 +87,10 @@ public class ClientConnection {
                 }
             } catch (Exception e) {
                 System.out.println("Connessione col server interrotta: " + e.getMessage());
+                
+                if (onReceiveCallback != null) {
+                    onReceiveCallback.accept(new PacchettoRisposta("SERVER_DISCONNECTED"));
+                }
             }
         });
         

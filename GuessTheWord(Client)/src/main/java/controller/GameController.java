@@ -6,8 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
@@ -32,7 +30,7 @@ import model.Main;
 import model.connection.PacchettoRisposta;
 import model.connection.Sessione;
 import model.utility.Sfida;
-import model.utility.TextEditor;
+import model.utility.Testo;
 
 public class GameController implements Initializable {
     
@@ -126,7 +124,7 @@ public class GameController implements Initializable {
                     creaSlotRisposte(nRisposte);
                     
                     // 2. Avviamo il timer convertendo la durata in interi (secondi)
-                    avviaTimer((int) currentGame.getDurata()*60);
+                    avviaTimer((int) currentGame.getDurata());
                 });
                 
                 break;
@@ -256,7 +254,7 @@ public class GameController implements Initializable {
         
         // Il metodo split taglia la stringa ogni volta che trova [[ oppure ]]
         // In questo modo, l'array risultante alternerà SEMPRE: Testo Normale -> Parola Cifrata -> Testo Normale...
-        String[] frammenti = TextEditor.getGameText().split("\\[\\[|\\]\\]");
+        String[] frammenti = Testo.getGameText().split("\\[\\[|\\]\\]");
         
         boolean isCifrata = false; // Il primo frammento (all'indice 0) è SEMPRE testo normale, anche se vuoto.
         

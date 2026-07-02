@@ -92,7 +92,7 @@ public class TextEditor {
     // Metodo per caricare tutto il testo nella stringa selectedText
     public String caricaTesto(String fileName){
         
-        File file = new File("../testi/"+fileName+".txt");
+        File file = new File("testi/"+fileName+".txt");
         
         if (!file.exists()) {
             return "Attenzione: Il file non è stato trovato nel percorso specificato.";
@@ -119,7 +119,7 @@ public class TextEditor {
     // Metodo per leggere il Report e caricare i dati nella lista title
     public void leggiReport() {
         
-        File fileCsv = new File("../analisiTesti/report.csv"); 
+        File fileCsv = new File("analisiTesti/report.csv"); 
         
         if (!fileCsv.exists()) {
             System.err.println("File CSV non trovato!");
@@ -151,7 +151,7 @@ public class TextEditor {
     // Metodo per il solo caricamento dell'analisi del testo specificato
     public void caricaAnalisi(Integer txtId){
         
-        String filename = "../analisiTesti/"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
+        String filename = "analisiTesti/"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
         try (ObjectInputStream ob = new ObjectInputStream(
                 new BufferedInputStream(
                         new FileInputStream(filename)))){
@@ -165,7 +165,7 @@ public class TextEditor {
     public boolean analizzaTesto(Integer txtId){
         
         // Salvo il nome che il file d'analisi dovrà avere
-        String filename = "../analisiTesti/"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
+        String filename = "analisiTesti/"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
         
         
         
@@ -175,7 +175,7 @@ public class TextEditor {
             List<String> stopwords = new ArrayList<>();
             
             // Leggo il file contenente le stopword
-            try (BufferedReader br = new BufferedReader( new FileReader("../analisiTesti/stopwords.txt"))){
+            try (BufferedReader br = new BufferedReader( new FileReader("analisiTesti/stopwords.txt"))){
                 
                 String word;
                 while((word = br.readLine())!=null)
@@ -214,7 +214,7 @@ public class TextEditor {
         
         title.stream().filter(t -> t.getTxtId()==txtId).forEach(t -> t.setIsAnalized(true));
         
-        File fileCsv = new File("../analisiTesti/report.csv");
+        File fileCsv = new File("analisiTesti/report.csv");
         
        if (!fileCsv.exists()) {
             System.err.println("File CSV non trovato!");

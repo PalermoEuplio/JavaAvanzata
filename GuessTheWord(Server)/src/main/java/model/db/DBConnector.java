@@ -58,9 +58,8 @@ public class DBConnector <T> implements DAO<T>{
             try (Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
                  PreparedStatement ps = c.prepareStatement("SELECT * FROM Player WHERE Username = ? or Id_Utente = ?")) {
                 
-                
                 ps.setString(1, p.getUsername());
-                ps.setInt(2, p.getId());
+                ps.setInt(2, p.getId() > 0 ? p.getId() : -1);
                 
                 try (ResultSet rs = ps.executeQuery()) {
                     if (rs.next()) {    
@@ -98,6 +97,11 @@ public class DBConnector <T> implements DAO<T>{
             try(Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword)){
                 
                 String insertStatement = String.format("INSERT INTO Player (Username,Password) VALUES ('%s','%s')", p.getUsername(),password);
+                
+                // Controllo sulla lunghezza dello Username
+                if(p.getUsername().length()<3)
+                    throw new SQLException("Username troppo corto;\n    Deve avere almeno 3 caratteri");
+                
                 
                 // Verifico che l'utente non sia già presente nel DB
                 if(cerca(user, null)!=null){
@@ -207,7 +211,7 @@ public class DBConnector <T> implements DAO<T>{
                         
                         
                         
-                        Sfida s = new Sfida(rs.getInt("Id_Documento"), rs.getDouble("Durata"), rs.getDouble("MioTempo"), rs.getDouble("SuoTempo"),
+                        Sfida s = new Sfida(rs.getInt("Id_Documento"), rs.getInt("Durata"), rs.getInt("MioTempo"), rs.getInt("SuoTempo"),
                                 rs.getInt("id_P1"), rs.getInt("id_P2"), rs.getString("UsernameAvversario"), 
                                 rs.getInt("MioRisultato")==1 ? "Vittoria":"Sconfitta",soluzioni);
                         

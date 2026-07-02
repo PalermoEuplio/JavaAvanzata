@@ -200,8 +200,8 @@ public class Sessione {
                                                 int nSoluzioni = TextEditor.getRisposte().length;   // Agli utenti arriva solo il numero di parole da indovinare
                                                 String testoModificato = TextEditor.getModifiedText();
                                                 
-                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0.0, 0.0, idGiocatore1, idGiocatore2, userP2, "", String.valueOf(nSoluzioni));
-                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0.0, 0.0, idGiocatore1, idGiocatore2, userP1, "", String.valueOf(nSoluzioni));
+                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP2, "", String.valueOf(nSoluzioni));
+                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP1, "", String.valueOf(nSoluzioni));
 
                                                 // 5. INVIAMO I DATI A ENTRAMBI CONTEMPORANEAMENTE (Zero Delay!)
                                                 if (socketP1 != null) {
@@ -283,8 +283,8 @@ public class Sessione {
                                         
                                         int nCorrette1 = 0;
                                         int nCorrette2 = 0;
-                                        double tempo1 = Double.parseDouble(pachList[0].get(pachList[0].size() - 1));
-                                        double tempo2 = Double.parseDouble(pachList[1].get(pachList[1].size() - 1));
+                                        int tempo1 = Integer.parseInt(pachList[0].get(pachList[0].size() - 1));
+                                        int tempo2 = Integer.parseInt(pachList[1].get(pachList[1].size() - 1));
                                         
                                         // Controllo le risposte
                                         for (int j = 0; j < risposteVere.length; j++) {
@@ -410,6 +410,7 @@ public class Sessione {
     // Metodo per fare il logout
     public static void logout() {
         adminLoggato = null;
+        server.stopServer();
         server=null;
     }
     

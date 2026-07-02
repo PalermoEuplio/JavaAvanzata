@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
 import java.io.IOException;
@@ -31,10 +27,6 @@ import model.Main;
 import model.connection.Sessione;
 import model.utility.Sfida;
 
-/**
- *
- * @author euppa
- */
 public class SettingsController implements Initializable{
     
     // Collegamenti agli elementi della pagina
@@ -81,7 +73,7 @@ public class SettingsController implements Initializable{
     
     private String testoSelezionato = "";
     
-    private final double durataPartita = 5.0;   // Variabile per cambiare la durata della partita
+    private final int durataPartita = 300;   // Variabile per cambiare la durata della partita in secondi
     
     @Override
     public void initialize(URL location, ResourceBundle resources) {

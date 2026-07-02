@@ -39,12 +39,12 @@ public class GameWaitController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         
         if (Sessione.getCurrentGame() != null) {
-            avviaTimer((int) Sessione.getCurrentGame().getDurata() * 60);
+            avviaTimer((int) Sessione.getCurrentGame().getDurata());
         } else {
             // Attendi che il server valorizzi la sessione
             Timeline attesa = new Timeline(new KeyFrame(Duration.millis(200), e -> {
                 if (Sessione.getCurrentGame() != null) {
-                    avviaTimer((int) Sessione.getCurrentGame().getDurata() * 60);
+                    avviaTimer((int) Sessione.getCurrentGame().getDurata());
                     ((Timeline) e.getSource()).stop();
                 }
             }));
@@ -111,13 +111,5 @@ public class GameWaitController implements Initializable {
         
         timelineTimer.setCycleCount(Timeline.INDEFINITE);
         timelineTimer.play();
-    } 
-    
-    
-    
-    
-    
-    
-    
-    
+    }
 }

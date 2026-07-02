@@ -18,6 +18,9 @@ public class LoginController implements Initializable{
     // Serie di componenti grafiche
     
     @FXML
+    private Label serverError;
+    
+    @FXML
     private TextField loginUsername;
     
     @FXML
@@ -57,7 +60,7 @@ public class LoginController implements Initializable{
         
         Sessione.setOnServerResponse(this::gestisciRispostaServer);
         
-        Sessione.avviaConnessione();
+        Sessione.avviaMonitoraggio();
         
     }
     
@@ -65,6 +68,7 @@ public class LoginController implements Initializable{
     private void nascondiErrori() {
         loginErrorMsg.setVisible(false);
         regErrorMsg.setVisible(false);
+        serverError.setVisible(false);
     }
     
     
@@ -78,10 +82,8 @@ public class LoginController implements Initializable{
                 
             case "CONNESSIONE_PERSA":
                 nascondiErrori();
-                loginErrorMsg.setText("Server offline o non raggiungibile!");
-                loginErrorMsg.setVisible(true);
-                regErrorMsg.setText("Server offline o non raggiungibile!");
-                regErrorMsg.setVisible(true);
+                serverError.setText("Server offline o non raggiungibile!");
+                serverError.setVisible(true);
                 break;
                 
             case "LOGIN_OK":

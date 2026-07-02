@@ -25,6 +25,8 @@ import model.utility.Player;
 import model.db.DBConnector;
 import model.connection.Sessione;
 import model.Main;
+import model.connection.PacchettoRisposta;
+import model.connection.ServerConnection;
 
 
 public class AdminDashboardController implements Initializable{
@@ -207,6 +209,15 @@ public class AdminDashboardController implements Initializable{
             
             DBConnector<Player> db = new DBConnector<>();
             db.rimuoviPlayer(p);
+            
+            // Invio il messaggio di ban al player se questo è connesso
+            if (Sessione.getServer() != null) {
+                ServerConnection.ClientHandler socketBannato = Sessione.getServer().trovaClientPerId(p.getId());
+                if (socketBannato != null) {
+                    socketBannato.send(new PacchettoRisposta("BAN", "Il tuo account è stato bannato dall'amministratore."));
+                }
+            }
+            
             tabellaGiocatori.getItems().setAll(db.elencaTuttiPlayer());
             
         } catch (SQLException e) {System.err.println("Errore durante la rimozione: "+e);}

@@ -16,7 +16,7 @@ import javafx.util.Duration;
 import model.Main;
 import model.connection.PacchettoRisposta;
 import model.connection.Sessione;
-import model.utility.TextEditor;
+import model.utility.Testo;
 
 public class LoadingController implements Initializable{
     
@@ -58,7 +58,7 @@ public class LoadingController implements Initializable{
                 try {
                     System.out.println("Inizio partita");
                     
-                    TextEditor.setGameText((String) pacchetto.getPayload());
+                    Testo.setGameText((String) pacchetto.getPayload());
                     Main.setRoot("game");
                     
                 } catch (Exception e) {e.printStackTrace();}

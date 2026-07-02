@@ -54,13 +54,13 @@ public class DashboardController implements Initializable{
     private TableColumn<Sfida, String> avversario;
     
     @FXML
-    private TableColumn<Sfida, Double> durata;
+    private TableColumn<Sfida, Integer> durata;
     
     @FXML
-    private TableColumn<Sfida, Double> tempo1;
+    private TableColumn<Sfida, Integer> tempo1;
     
     @FXML
-    private TableColumn<Sfida, Double> tempo2;
+    private TableColumn<Sfida, Integer> tempo2;
     
     @FXML
     private TableColumn<Sfida, String> soluzione;
@@ -130,17 +130,16 @@ public class DashboardController implements Initializable{
     }
     
     
-    private void formattaColonnaTempo(TableColumn<Sfida, Double> colonna) {
-        colonna.setCellFactory(column -> new TableCell<Sfida, Double>() {
+    private void formattaColonnaTempo(TableColumn<Sfida, Integer> colonna) {
+        colonna.setCellFactory(column -> new TableCell<Sfida, Integer>() {
             @Override
-            protected void updateItem(Double item, boolean empty) {
+            protected void updateItem(Integer item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty || item == null) {
                     setText(null);
                 } else {
-                    int totalSeconds = item.intValue();
-                    int min = totalSeconds / 60;
-                    int sec = totalSeconds % 60;
+                    int min = item / 60;
+                    int sec = item % 60;
                     setText(String.format("%02d:%02d", min, sec));
                 }
             }
