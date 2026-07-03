@@ -28,10 +28,10 @@ import model.Main;
 import model.connection.PacchettoRisposta;
 import model.connection.ServerConnection;
 
-
+// Classe che specifica il comportamento della pagina principale dell'Amministratore
 public class AdminDashboardController implements Initializable{
     
-    
+    // Collegamenti agli elementi della pagina
     @FXML
     private TableView<Player> tabellaGiocatori;
     @FXML
@@ -64,7 +64,7 @@ public class AdminDashboardController implements Initializable{
         
         tableList = FXCollections.observableArrayList();    // Creo l'istanza della lista osservabile dalla tabella
         
-        // Definizione del server
+        // Se non è già attivo, creo l'istanza del server
         if (Sessione.getServer() == null)
             Sessione.startServer();
         
@@ -73,7 +73,7 @@ public class AdminDashboardController implements Initializable{
             aggiornaDatiGrafica();
         });
          
-         aggiornaDatiGrafica(); // Primo richiamo della funzione per caricare i player nella tabella e aggiornare il playercount
+        aggiornaDatiGrafica(); // Primo richiamo della funzione per caricare i player nella tabella e aggiornare il playercount
        
         
         // Preparo la struttura della tabella
@@ -85,6 +85,7 @@ public class AdminDashboardController implements Initializable{
         nVittorie.setCellValueFactory(new PropertyValueFactory<>("nVittorie"));
         nVittorie.setSortType(TableColumn.SortType.DESCENDING);
         tempoRisposta.setCellValueFactory(new PropertyValueFactory<>("tempoRisposta"));
+        // Faccio in modo che i secondi vengano visti nel formato: min:sec
         tempoRisposta.setCellFactory(column -> new TableCell<Player, Double>() {
             @Override
             protected void updateItem(Double item, boolean empty) {
@@ -142,10 +143,11 @@ public class AdminDashboardController implements Initializable{
             }
         });
         
-        // Comportamento pulsante Ban
+        // Impedisco di premere il pulsante di ban se non è stato selezionato nessun Player nella tabella
         btnBanna.disableProperty().bind(tabellaGiocatori.getSelectionModel().selectedItemProperty().isNull());
     }
     
+    // ------------- Metodi di utilità ------------------
     
     // Funzione che aggiorna variabili grafiche (TabellaPlayer e PlayerCount) in base agli utenti loggati e non
     private void aggiornaDatiGrafica() {
@@ -156,7 +158,7 @@ public class AdminDashboardController implements Initializable{
             // 2. Chiedo al server chi è loggato
             List<String> onlineUsers = Sessione.getServer().getUtentiOnline();
             
-            // 3. Accendo i pallini appropriati
+            // 3. Accendo i pallini appropriati cambiando lo stato dei singoli player
             for (Player p : aggiornatiDalDb) {
                 p.setOn(onlineUsers.contains(p.getUsername()));
             }
@@ -164,22 +166,23 @@ public class AdminDashboardController implements Initializable{
             tableList.setAll(aggiornatiDalDb);
             tabellaGiocatori.refresh();
             
-            // 5. Aggiorno il contatore
+            // 5. Aggiorno il contatore player online
             long onlineCount = aggiornatiDalDb.stream().filter(Player::isOn).count();
             if (playerCount != null) {
                 playerCount.setText(String.valueOf(onlineCount));
             }
             
         } catch (Exception e) {
-            System.err.println("Errore nell'aggiornamento della grafica: " + e);
+            System.err.println("Errore nell'aggiornamento della grafica: " + e);    // Stampo su terminale un'eventuale errore 
         }
     }
     
+    // ------------- Metodi per l'interfaccia grafica ------------------
     
     // Comportamento pulsante Inizia partita
     @FXML
     private void startGame() throws IOException {
-        Main.setRoot("gameSettings");
+        Main.setRoot("gameSettings");   // Cambio schermata alle impostazioni partita
     }
     
     
@@ -187,13 +190,13 @@ public class AdminDashboardController implements Initializable{
     @FXML
     private void banPlayer() throws IOException {
         
-        Player p = tabellaGiocatori.getSelectionModel().getSelectedItem();
+        Player p = tabellaGiocatori.getSelectionModel().getSelectedItem();  // Identifico il player da eliminare
         
-        if(p==null){
+        if(p==null){    // Controllo aggiuntivo per evitare errori
             return;
         }
         
-        
+        // Inizializzo la finestra di aller per richiedere conferma dell'eliminazione giocatore
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle("Conferma Ban Giocatore");
         alert.setHeaderText("Stai per bannare: " + p.getUsername());
@@ -203,12 +206,11 @@ public class AdminDashboardController implements Initializable{
         
         Optional<ButtonType> result = alert.showAndWait();
         
-        
+        // Specifico il comportamento nel caso in cui venga premuto ok
         if (result.isPresent() && result.get() == ButtonType.OK) {
         try {
-            
-            DBConnector<Player> db = new DBConnector<>();
-            db.rimuoviPlayer(p);
+            //  Mi collego al database e rimuovo il player selezionato
+            new DBConnector<>().rimuoviPlayer(p);
             
             // Invio il messaggio di ban al player se questo è connesso
             if (Sessione.getServer() != null) {
@@ -218,7 +220,7 @@ public class AdminDashboardController implements Initializable{
                 }
             }
             
-            tabellaGiocatori.getItems().setAll(db.elencaTuttiPlayer());
+            tabellaGiocatori.getItems().setAll(new DBConnector<Player>().elencaTuttiPlayer());
             
         } catch (SQLException e) {System.err.println("Errore durante la rimozione: "+e);}
     }
@@ -227,8 +229,8 @@ public class AdminDashboardController implements Initializable{
     // Comportamento pulsante di logout
     @FXML
     private void logout() throws IOException {
-        Sessione.logout();
-        Main.setRoot("login");
+        Sessione.logout();  // Elimino l'admin dalla sessione
+        Main.setRoot("login");  // Ritorno alla pagina di login
     }
     
     

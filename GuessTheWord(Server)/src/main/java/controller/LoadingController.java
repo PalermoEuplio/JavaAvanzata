@@ -18,52 +18,61 @@ import model.Main;
 import model.connection.Sessione;
 import model.game.TextEditor;
 
+
+// Classe che specifica il comportamento della pagina d'attesa fra la selezione delle impostazioni e l'inizio della partita
 public class LoadingController implements Initializable{
     
+    // Collegamenti agli elementi della pagina
     @FXML private Circle dot1;
     @FXML private Circle dot2;
     @FXML private Circle dot3;
     @FXML private Circle dot4;
     @FXML private Label status;
     
-    private Timeline monitor;
+    private Timeline monitor;   // Timeline per l'animazione d'attesa
     
     @Override
     public void initialize(URL location, ResourceBundle resources){
-        avviaAnimazionePallini();
         
-        Sessione.setClientAttesa(new CopyOnWriteArrayList<>());
+        avviaAnimazionePallini();   // Richiamo l'avvio dell'animazione d'attesa
         
-        Sessione.setOnGameReady(() -> {
-            if (monitor != null) monitor.stop();
+        Sessione.setClientAttesa(new CopyOnWriteArrayList<>()); // Inizializzo la lista che conterrà le socket dei player collegati alla partita
+        
+        Sessione.setOnGameReady(() -> { // Specifico il comportamento dell'oggetto Runnable che permetterà di far cambiare l'interfaccia all'Admin quando il server rileva i 2 giocatori 
+            
+            if (monitor != null) monitor.stop();    // Fermo la timeline
             try {
-                Main.setRoot("gameWait");
+                Main.setRoot("gameWait");   // Mi sposto alla pagina d'attesa fine gioco
             } catch (IOException ex) { System.out.println("Pagina non trovata"); }
+            
         });
         
-        // Monitoraggio del numero di utenti pronti a giocare
+        // Inizializzo la timeline
         monitor = new Timeline(new KeyFrame(Duration.millis(500), e -> {
-            if (Sessione.getClientInAttesa() == null) 
+            
+            if (Sessione.getClientInAttesa() == null) // Se non è stata allocata la lista d'attesa non far nulla
                 return;
+            
+            // Stampo a video il numero di giocatori attualmente connessi per la partita
             int n = Sessione.getClientInAttesa().size();
             status.setText("Giocatori Connessi: " + n + "/2");
+            
         }));
         
-        
-        
-        
-        monitor.setCycleCount(Timeline.INDEFINITE);
-        monitor.play();
+        monitor.setCycleCount(Timeline.INDEFINITE); // La timeline si ripete all'infinito fino a quando non cambio la pagina
+        monitor.play(); // Faccio partire la timeline
     }
     
     
+    // ------------- Metodi di utilità ------------------
     
-    
+    // Metodo che specifica come deve comportarsi l'animazione
     private void avviaAnimazionePallini() {
-        Circle[] dots = {dot1, dot2, dot3, dot4};
-        SequentialTransition sequenza = new SequentialTransition();
+        
+        Circle[] dots = {dot1, dot2, dot3, dot4};   // Seleziono i 4 pallini a video
+        SequentialTransition sequenza = new SequentialTransition(); // Creo una nuova transizione sequenziale
 
-        // Creiamo una transizione di "Fade" (Scomparsa/Comparsa) per ogni pallino
+        // Creiamo una transizione (Scomparsa/Comparsa) per ogni pallino
         for (Circle dot : dots) {
             dot.setOpacity(0.2); // Partono tutti semitrasparenti
             
@@ -76,18 +85,20 @@ public class LoadingController implements Initializable{
             sequenza.getChildren().add(ft);
         }
 
-        // Diciamo all'animazione intera di ripetersi all'infinito
+        // L'animazione si ripete all'infinito
         sequenza.setCycleCount(Animation.INDEFINITE);
-        sequenza.play();
+        sequenza.play();    // Faccio partire l'animazione
+        
     }
     
+    // ------------- Metodi per l'interfaccia grafica ------------------
     
-    
+    // Comportamento del pulsante per tornare indietro
     @FXML
     private void back() throws IOException{
-        Main.setRoot("gameSettings");
-        new TextEditor().setModifiedText("");
-        Sessione.setClientAttesa(null);
+        Main.setRoot("gameSettings");   // Ritorno alla pagina d'impostazioni partita
+        new TextEditor().setModifiedText("");   // Cancello il testo preparato per questa partita
+        Sessione.setClientAttesa(null); // Dealloco la lista d'attesa giocatori per la partita
     }
     
 }
