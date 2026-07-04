@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 import javafx.application.Platform;
 import model.connection.ServerConnection.ClientHandler;
 import model.db.DBConnector;
+import model.utility.Esito;
 import model.game.TextEditor;
 import model.utility.Sfida;
 import model.utility.Amministratore;
@@ -206,9 +207,12 @@ public class Sessione {
                                                 int nSoluzioni = TextEditor.getRisposte().length;   // Agli utenti arriva solo il numero di parole da indovinare
                                                 String testoModificato = TextEditor.getModifiedText();
                                                 
-                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP2, "", String.valueOf(nSoluzioni));
-                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP1, "", String.valueOf(nSoluzioni));
+                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP2, Esito.None, String.valueOf(nSoluzioni));
+                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP1, Esito.None, String.valueOf(nSoluzioni));
 
+                                                sfidaP1.setTitoloTesto(currentGame.getTitoloTesto());
+                                                sfidaP2.setTitoloTesto(currentGame.getTitoloTesto());
+                                                
                                                 // 5. INVIAMO I DATI A ENTRAMBI CONTEMPORANEAMENTE (Zero Delay!)
                                                 if (socketP1 != null) {
                                                     socketP1.send(new PacchettoRisposta("START_GAME", testoModificato));
@@ -322,21 +326,21 @@ public class Sessione {
                                                     if (ch0EilP1) {
                                                         currentGame.settRisposta1(tempo1);
                                                         currentGame.settRisposta2(tempo2);
-                                                        currentGame.setRisultato("Vittoria"); // Vince P1
+                                                        currentGame.setRisultato(Esito.Vittoria); // Vince P1
                                                     } else {
                                                         currentGame.settRisposta1(tempo2);
                                                         currentGame.settRisposta2(tempo1);
-                                                        currentGame.setRisultato("Sconfitta"); // Vince P2
+                                                        currentGame.setRisultato(Esito.Sconfitta); // Vince P2
                                                     }
                                                 } else { // Ha vinto ch0[1]
                                                     if (ch0EilP1) {
                                                         currentGame.settRisposta1(tempo1);
                                                         currentGame.settRisposta2(tempo2);
-                                                        currentGame.setRisultato("Sconfitta"); // Vince P2
+                                                        currentGame.setRisultato(Esito.Sconfitta); // Vince P2
                                                     } else {
                                                         currentGame.settRisposta1(tempo2);
                                                         currentGame.settRisposta2(tempo1);
-                                                        currentGame.setRisultato("Vittoria"); // Vince P1
+                                                        currentGame.setRisultato(Esito.Vittoria); // Vince P1
                                                     }
                                                 }
                                                 

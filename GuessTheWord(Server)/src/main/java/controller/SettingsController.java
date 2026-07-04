@@ -25,6 +25,7 @@ import model.game.Testo;
 import model.game.TextEditor;
 import model.Main;
 import model.connection.Sessione;
+import model.utility.Esito;
 import model.utility.Sfida;
 
 public class SettingsController implements Initializable{
@@ -250,7 +251,8 @@ public class SettingsController implements Initializable{
         Testo t = te.getTitle().stream().filter(t0 -> t0.getTitolo().equals(comboTesti.getValue())).findFirst().orElse(null);
         
         // Inizializzo la variabile sfidaCorrente con solo l'id del testo da usare e la durata della partita
-        Sessione.setCurrentGame(new Sfida(t.getTxtId(),durataPartita,0,0,0,0,"","",""));
+        Sessione.setCurrentGame(new Sfida(t.getTxtId(),durataPartita,0,0,0,0,"",Esito.None,""));
+        Sessione.getCurrentGame().setTitoloTesto(t.getTitolo());
         
         // Richiamo il metodo per la cifratura del testo. Questo metodo salva anche le parole selezionate
         te.cifraTesto(shift.getValue(), paroleScelte.getText().split(",\\s*"));

@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import model.connection.Sessione;
+import model.utility.Esito;
 import model.utility.Sfida;
 import model.game.TextEditor;
 import model.utility.Amministratore;
@@ -213,7 +214,7 @@ public class DBConnector <T> implements DAO<T>{
                         
                         Sfida s = new Sfida(rs.getInt("Id_Documento"), rs.getInt("Durata"), rs.getInt("MioTempo"), rs.getInt("SuoTempo"),
                                 rs.getInt("id_P1"), rs.getInt("id_P2"), rs.getString("UsernameAvversario"), 
-                                rs.getInt("MioRisultato")==1 ? "Vittoria":"Sconfitta",soluzioni);
+                                rs.getInt("MioRisultato")==1 ? Esito.Vittoria:Esito.Sconfitta,soluzioni);
                         
                         s.setTitoloTesto(x.get(rs.getInt("Id_Documento"))); 
                         
@@ -251,7 +252,7 @@ public class DBConnector <T> implements DAO<T>{
                     psSfida.setInt(5,Sessione.getAdmin() != null ? Sessione.getAdmin().getId() : 0); 
                     psSfida.setDouble(6, s.getTRisposta1());
                     psSfida.setDouble(7, s.getTRisposta2());
-                    psSfida.setInt(8, s.getRisultato().trim().equals("Vittoria") ? 1 : 0);
+                    psSfida.setInt(8, s.getRisultato().equals(Esito.Vittoria) ? 1 : 0);
                     
                     psSfida.executeUpdate(); // Esegue l'inserimento
                     

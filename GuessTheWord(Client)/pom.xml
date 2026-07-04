@@ -11,11 +11,4 @@
         <exec.mainClass>it.guessthewordclient.GuessTheWordClient</exec.mainClass>
     </properties>
     <name>GuessTheWord(Client)</name>
-    <dependencies>
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.43.0.0</version>
-        </dependency>
-    </dependencies>
 </project>

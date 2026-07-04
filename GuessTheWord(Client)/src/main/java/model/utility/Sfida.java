@@ -12,10 +12,10 @@ public class Sfida implements Serializable{
     private int id1;
     private int id2;
     private String oppUsername;
-    private String risultato;
+    private Esito risultato;
     private String soluzione;
 
-    public Sfida(int idDocumento, int durata, int tRisposta1, int tRisposta2, int id1, int id2, String oppUsername, String risultato, String soluzione) {
+    public Sfida(int idDocumento, int durata, int tRisposta1, int tRisposta2, int id1, int id2, String oppUsername, Esito risultato, String soluzione) {
         this.idDocumento = idDocumento;
         this.durata = durata;
         this.tRisposta1 = tRisposta1;
@@ -59,7 +59,7 @@ public class Sfida implements Serializable{
         return oppUsername;
     }
 
-    public String getRisultato() {
+    public Esito getRisultato() {
         return risultato;
     }
 
@@ -99,7 +99,7 @@ public class Sfida implements Serializable{
         this.oppUsername = oppUsername;
     }
 
-    public void setRisultato(String risultato) {
+    public void setRisultato(Esito risultato) {
         this.risultato = risultato;
     }
 
