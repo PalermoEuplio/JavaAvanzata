@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.game;
 
 import java.io.BufferedInputStream;
@@ -24,10 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-/**
- *
- * @author euppa
- */
+
 public class TextEditor {
     
     private List<Testo> title; // Lista dei titoli disponibili e se sono già analizzati
@@ -106,9 +99,6 @@ public class TextEditor {
             while((line = br.readLine())!=null){
                 selectedText = selectedText.concat(" "+line);   // Leggo il testo riga per riga
             }
-                
-            
-            
             
             
         }catch (IOException io){System.err.println("Errore durante la lettura del file: "+io);}
@@ -151,7 +141,7 @@ public class TextEditor {
     // Metodo per il solo caricamento dell'analisi del testo specificato
     public void caricaAnalisi(Integer txtId){
         
-        String filename = "analisiTesti/"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
+        String filename = "analisiTesti/"+String.valueOf(txtId)+"_"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
         try (ObjectInputStream ob = new ObjectInputStream(
                 new BufferedInputStream(
                         new FileInputStream(filename)))){
@@ -165,9 +155,7 @@ public class TextEditor {
     public boolean analizzaTesto(Integer txtId){
         
         // Salvo il nome che il file d'analisi dovrà avere
-        String filename = "analisiTesti/"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
-        
-        
+        String filename = "analisiTesti/"+String.valueOf(txtId)+"_"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
         
         try (ObjectOutputStream ob = new ObjectOutputStream(new BufferedOutputStream( new FileOutputStream(filename)))){
             
@@ -194,7 +182,7 @@ public class TextEditor {
             frequency = Arrays.stream(this.selectedText.toLowerCase().split("\\W+")) // minuscolo e divido per non-lettere (spazi, virgole, punti)
                 .filter(w -> !w.isEmpty())                               // scarto eventuali stringhe vuote
                 .filter(w -> !stopwords.contains(w))                     // scarto le stopword
-                .collect(Collectors.groupingBy(                                // 4. Raggruppo le parole identiche e conto le occorrenze (Di base restituisce solo Map)
+                .collect(Collectors.groupingBy(                                // Raggruppo le parole identiche e conto le occorrenze (Di base restituisce solo Map)
                         w -> w,
                         HashMap::new,           // Richiamo il costruttore di hashMap per ricavare la collezione specifica
                         Collectors.summingInt(w -> 1)
@@ -255,7 +243,7 @@ public class TextEditor {
                                              .map(String::toLowerCase)
                                              .collect(Collectors.toList());
 
-        // 2. Usiamo una Regex avanzata con Stream per "tagliare" il testo preservando gli spazi e la punteggiatura.
+        // Usiamo una Regex avanzata con Stream per "tagliare" il testo preservando gli spazi e la punteggiatura.
         // (?U) attiva il supporto Unicode (fondamentale per riconoscere lettere accentate italiane come à, è).
         // Il pattern taglia il testo nel punto esatto di confine tra una parola e un simbolo/spazio.
         modifiedText = Pattern.compile("(?U)(?<=\\w)(?=\\W)|(?<=\\W)(?=\\w)")

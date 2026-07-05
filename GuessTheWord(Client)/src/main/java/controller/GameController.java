@@ -108,7 +108,7 @@ public class GameController implements Initializable {
      
      
      
-     private void gestisciRispostaServer(PacchettoRisposta pacchetto){
+    private void gestisciRispostaServer(PacchettoRisposta pacchetto){
         
         switch(pacchetto.getComando()){
             case "GAME_INFO":

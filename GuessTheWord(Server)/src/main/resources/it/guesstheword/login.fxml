@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #f4f6f7;" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #f4f6f7;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
       <Label text="Bentornato in GuessTheWord" textFill="#2c3e50">
          <font>
@@ -49,11 +49,6 @@
             <StackPane alignment="CENTER_LEFT">
                <children>
                   <Label fx:id="errormsg" text="* Errore: Username o Password Errati" textFill="#e74c3c" visible="false">
-                     <font>
-                        <Font name="System Bold Italic" size="13.0" />
-                     </font>
-                  </Label>
-                  <Label fx:id="errormsg1" text="* Errore: Utente non valido" textFill="#e74c3c" visible="false">
                      <font>
                         <Font name="System Bold Italic" size="13.0" />
                      </font>

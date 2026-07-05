@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DAO<T> {
     
-    public T cerca(T admin, String password) throws Exception;
+    public T cerca(T user, String password) throws Exception;
     
     public T registrazione(T user, String password) throws Exception;
     

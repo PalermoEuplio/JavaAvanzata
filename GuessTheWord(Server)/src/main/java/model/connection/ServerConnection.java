@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * Classe che gestisce la connessione di rete lato SERVER.
@@ -126,7 +127,7 @@ public class ServerConnection {
         return connectedClients.stream()
             .map(ClientHandler::getUsernameLoggato)
             .filter(nome -> nome != null)
-            .collect(java.util.stream.Collectors.toList());
+            .collect(Collectors.toList());
     }
     
     public ClientHandler trovaClientPerId(int idTarget) {

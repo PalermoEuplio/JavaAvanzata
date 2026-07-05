@@ -19,6 +19,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import model.utility.Player;
@@ -137,7 +138,7 @@ public class AdminDashboardController implements Initializable{
         
         // Impedisco lo spostamento delle colonne della tabella
         tabellaGiocatori.widthProperty().addListener((obs, oldVal, newVal) -> {
-            javafx.scene.layout.Pane header = (javafx.scene.layout.Pane) tabellaGiocatori.lookup("TableHeaderRow");
+            Pane header = (javafx.scene.layout.Pane) tabellaGiocatori.lookup("TableHeaderRow");
             if (header != null) {
                 header.setMouseTransparent(true); 
             }

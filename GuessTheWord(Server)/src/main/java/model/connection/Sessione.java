@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.connection;
 
 import java.io.IOException;
@@ -388,7 +384,7 @@ public class Sessione {
                 // CALLBACK 2: CLIENT DISCONNESSO
                 (mittenteDisconnesso) -> {
                     if (mittenteDisconnesso.getUsernameLoggato() != null) {
-                        notificaGrafica(); // Fa comparire in tabella il nuovo utente!
+                        notificaGrafica();
                     }
                 }
             );
