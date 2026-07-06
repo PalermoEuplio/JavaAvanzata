@@ -9,9 +9,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" style="-fx-background-color: #f4f6f7;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="800.0" spacing="20.0" stylesheets="@StyleSheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
-      <Label text="Bentornato in GuessTheWord" textFill="#2c3e50">
+      <Label text="Bentornato in GuessTheWord" textFill="#00f0ff">
          <font>
             <Font name="Arial Bold" size="30.0" />
          </font>
@@ -24,26 +24,26 @@
             <Insets bottom="20.0" />
          </VBox.margin>
       </Label>
-      <VBox maxWidth="350.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 30; -fx-border-color: #bdc3c7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+      <VBox maxWidth="350.0" spacing="15.0" >
          <children>
             <VBox spacing="5.0">
                <children>
-                  <Label text="Username">
+                  <Label text="Username" textFill="#00f0ff">
                      <font>
                         <Font name="Arial Bold" size="14.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="fieldUsername" prefHeight="35.0" promptText="Inserisci username..." style="-fx-font-size: 14px;" />
+                  <TextField fx:id="fieldUsername" prefHeight="35.0" promptText="Inserisci username..." />
                </children>
             </VBox>
             <VBox spacing="5.0">
                <children>
-                  <Label text="Password">
+                  <Label text="Password" textFill="#00f0ff">
                      <font>
                         <Font name="Arial Bold" size="14.0" />
                      </font>
                   </Label>
-                  <PasswordField fx:id="fieldPassword" prefHeight="35.0" promptText="Inserisci password..." style="-fx-font-size: 14px;" />
+                  <PasswordField fx:id="fieldPassword" prefHeight="35.0" promptText="Inserisci password..." />
                </children>
             </VBox>
             <StackPane alignment="CENTER_LEFT">
@@ -55,7 +55,7 @@
                   </Label>
                </children>
             </StackPane>
-            <Button fx:id="enter" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" prefHeight="40.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="ENTRA">
+            <Button fx:id="enter" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" prefHeight="40.0" text="ENTRA">
                <font>
                   <Font size="14.0" />
                </font>

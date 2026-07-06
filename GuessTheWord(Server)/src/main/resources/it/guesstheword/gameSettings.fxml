@@ -20,26 +20,26 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="700.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
+<BorderPane prefHeight="700.0" prefWidth="1000.0" stylesheets="@StyleSheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.SettingsController">
 
    <top>
-      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" style="-fx-background-color: #2c3e50;" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER_LEFT" prefHeight="70.0" spacing="20.0" BorderPane.alignment="CENTER">
          <padding>
             <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
          </padding>
          <children>
-            <Label text="Impostazioni Nuova Partita" textFill="WHITE">
+            <Label text="Impostazioni Nuova Partita" textFill="#00f0ff">
                <font>
                   <Font name="System Bold" size="24.0" />
                </font>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#backDashboard" prefHeight="45.0" prefWidth="144.0" text="Indietro">
+            <Button fx:id="backToDash" mnemonicParsing="false" onAction="#backDashboard" prefHeight="45.0" prefWidth="144.0" text="Indietro">
                <font>
                   <Font size="16.0" />
                </font>
             </Button>
-            <Button fx:id="startGame" mnemonicParsing="false" onAction="#avviaPartita" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 10 20;" text="AVVIA LA PARTITA">
+            <Button fx:id="startGame" mnemonicParsing="false" onAction="#avviaPartita" text="AVVIA LA PARTITA">
                <font>
                   <Font size="16.0" />
                </font>
@@ -57,7 +57,7 @@
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
                <children>
-                  <Label text="Gestione e Analisi Testo" textFill="#2980b9">
+                  <Label text="Gestione e Analisi Testo" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -70,7 +70,7 @@
                      </children>
                   </HBox>
                   
-                  <Label text="Testo Selezionato / Anteprima:">
+                  <Label text="Testo Selezionato / Anteprima:" textFill="#ffffff">
                       <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
@@ -79,21 +79,21 @@
                   
                   <Separator prefWidth="200.0" />
                   
-                  <Label text="Storico File Analizzati:">
+                  <Label text="Storico File Analizzati:" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
                   <ListView fx:id="fileAnalizzati" prefHeight="91.0" prefWidth="456.0" VBox.vgrow="SOMETIMES" />
                   
-                  <Label text="Risultati Analisi (Statistiche &amp; Frequenze)">
+                  <Label text="Risultati Analisi (Statistiche &amp; Frequenze)" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="14.0" />
                      </font>
                   </Label>
                   <HBox spacing="125.0">
                      <children>
-                        <Label text="Statistiche Globali:">
+                        <Label text="Statistiche Globali:" textFill="#ffffff">
                            <font>
                               <Font name="System Bold" size="12.0" />
                            </font>
@@ -104,12 +104,12 @@
                </children>
             </VBox>
             
-            <VBox spacing="15.0" style="-fx-background-color: #f8f9fa;">
+            <VBox spacing="15.0">
                <padding>
                   <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                </padding>
                <children>
-                  <Label text="Difficoltà e Cifratura" textFill="#e67e22">
+                  <Label text="Difficoltà e Cifratura" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="18.0" />
                      </font>
@@ -128,7 +128,7 @@
                     </rowConstraints>
                      <children>
                         
-                        <Label text="Frequenza Parola:" />
+                        <Label text="Frequenza Parola:" textFill="#ffd700"/>
                         <VBox GridPane.columnIndex="1">
                            <children>
                               <Slider fx:id="frequenza" blockIncrement="1.0" majorTickUnit="1.0" max="3.0" min="1.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" />
@@ -142,17 +142,17 @@
                            </children>
                         </VBox>
                         
-                        <Label text="Lunghezza Parola:" GridPane.rowIndex="1" />
+                        <Label text="Lunghezza Parola:" GridPane.rowIndex="1" textFill="#ffd700" />
                         <VBox GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <children>
                               <Slider fx:id="lunghezza" blockIncrement="1.0" majorTickUnit="2.0" max="15.0" min="4.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" value="6.0" />
                            </children>
                         </VBox>
                         
-                        <Label text="N° Parole da Cifrare:" GridPane.rowIndex="2" />
+                        <Label text="N° Parole da Cifrare:" GridPane.rowIndex="2" textFill="#ffd700"/>
                         <Spinner fx:id="nParole" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         
-                        <Label text="Shift di Cesare (1-25):" GridPane.rowIndex="3" />
+                        <Label text="Shift di Cesare (1-25):" GridPane.rowIndex="3" textFill="#ffd700" />
                         <Spinner fx:id="shift" prefWidth="100.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                      </children>
                   </GridPane>
@@ -165,12 +165,12 @@
                   
                   <HBox alignment="CENTER_LEFT" spacing="10.0">
                      <children>
-                        <Label text="Difficoltà Stimata:">
+                        <Label text="Difficoltà Stimata:" textFill="#ffffff">
                            <font>
                               <Font name="System Bold" size="15.0" />
                            </font>
                         </Label>
-                        <Label fx:id="difficoltà" text="MEDIO" textFill="#e67e22">
+                        <Label fx:id="difficoltà" text="MEDIO">
                            <font>
                               <Font name="System Bold" size="16.0" />
                            </font>
@@ -180,14 +180,14 @@
                   
                   <Separator prefWidth="200.0" />
                   
-                  <Label text="Parole Selezionate per il Gioco:">
+                  <Label text="Parole Selezionate per il Gioco:" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="15.0" />
                      </font>
                   </Label>
-                  <TextField fx:id="paroleScelte" editable="false" promptText="Selezionare una porzione di testo e premere il pulsante per la generazione delle parole" style="-fx-font-size: 14px;" />
-                  <Button mnemonicParsing="false" onAction="#generaParole" style="-fx-background-color: #3498db; -fx-text-fill: white;" text="Genera Parole " />
-                  <Label text="Statistiche Locali:">
+                  <TextField fx:id="paroleScelte" editable="false" promptText="Selezionare una porzione di testo e premere il pulsante per la generazione delle parole" />
+                  <Button fx:id="generaParole" mnemonicParsing="false" onAction="#generaParole" text="Genera Parole " />
+                  <Label text="Statistiche Locali:" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="12.0" />
                      </font>

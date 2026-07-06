@@ -2,58 +2,439 @@
  * Applicabile copiando questo file in src/main/resources/style.css
  */
 
-/* Sfondo generale e font della finestra */
-.dialog-pane {
-    -fx-background-color: #ffffff;
-    -fx-font-family: "Segoe UI", Helvetica, Arial, sans-serif;
-    -fx-font-size: 14px;
-    -fx-border-color: #cccccc;
-    -fx-border-width: 1px;
+/* ==========================================================================
+   TEMA GENERALE ARCADE
+   ========================================================================== */
+.root {
+    -fx-background-color: #0b0e14 !important; /* Nero profondissimo */
+    -fx-font-family: "Segoe UI Bold", "Roboto", sans-serif;
 }
 
-/* L'intestazione in alto (Header) */
-.dialog-pane .header-panel {
-    -fx-background-color: #e74c3c; /* Rosso acceso per indicare il pericolo del BAN */
-    -fx-padding: 15px;
+/* Titoli e scritte importanti (Giallo Arcade) */
+.label-highlight {
+    -fx-text-fill: #ffcc00 !important; /* Giallo acceso tipico dei coin-op */
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 204, 0, 0.3), 10, 0, 0, 0);
 }
 
-/* Il testo dentro l'intestazione */
-.dialog-pane .header-panel .label {
-    -fx-text-fill: white;
-    -fx-font-size: 18px;
+/* ==========================================================================
+    SCHERMATA DI LOGIN (login.fxml)
+    ========================================================================== */
+
+/* 1. IL TITOLO PRINCIPALE "Bentornato in GuessTheWord" */
+VBox[style*="#f4f6f7"] > .label {
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 255, 0.6), 12, 0.4, 0, 0) !important;
+    -fx-font-weight: bold !important;
+}
+
+/* 2. IL SOTTOTITOLO "Inserisci le credenziali..." */
+VBox[style*="#f4f6f7"] .label[textFill="#7f8c8d"] {
+    -fx-effect: dropshadow(three-pass-box, #8b5cf6, 15, 0.6, 0, 0) !important; /* Glow viola intenso */}
+
+/* Il rettangolo centrale che contiene i campi di testo (Card) */
+VBox[style*="max-width: 350.0"] {
+    -fx-background-color: #11161d !important; 
+    -fx-border-color: #6b46c1 !important; /* Bordo Viola della card */
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.6), 15, 0, 0, 8) !important; 
+}
+
+/* Etichette interne alla card (Username e Password) */
+VBox[style*="max-width: 350.0"] .label {
+    -fx-effect: dropshadow(two-pass-box, rgba(0, 210, 211, 0.4), 6, 0, 0, 0) !important;
     -fx-font-weight: bold;
 }
 
-/* Il testo centrale (Content) */
-.dialog-pane .content {
-    -fx-padding: 20px;
-    -fx-text-fill: #333333;
-}
-
-/* Stile base per i pulsanti (es. Annulla) */
-.dialog-pane .button {
-    -fx-background-color: #ecf0f1;
-    -fx-text-fill: #2c3e50;
-    -fx-font-weight: bold;
-    -fx-padding: 8px 20px;
-    -fx-background-radius: 4px; /* Bordi arrotondati */
-    -fx-border-color: #bdc3c7;
+/* Campi di input (TextField e PasswordField) */
+.text-field, .password-field {
+    -fx-background-color: #1e252f;
+    -fx-text-fill: #ffffff;
+    -fx-highlight-fill: #00d2d3;
+    -fx-border-color: #2a3547;
     -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-prompt-text-fill: #57606f;
+}
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #00d2d3 !important; 
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 210, 211, 0.4), 8, 0, 0, 0);
+}
+
+/* Messaggio d'errore */
+#errormsg { 
+    -fx-effect: dropshadow(two-pass-box, rgba(255, 118, 117, 0.6), 5, 0, 0, 0);
+}
+
+/* Pulsante ENTRA */
+#enter {
+    -fx-background-color: linear-gradient(to right, #6b46c1, #00d2d3) !important; 
+    -fx-text-fill: #ffffff !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+#enter:hover {
+    -fx-background-color: linear-gradient(to right, #805ad5, #4cd137) !important; 
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(three-pass-box, #00d2d3, 12, 0.5, 0, 0) !important;
+}
+
+
+/*DASHBOARD*/
+/* Barra Top (Header) */
+.border-pane > .top, HBox[style*="#2c3e50"] {
+    -fx-background-color: linear-gradient(to bottom, #1a1c2c, #0b0e14) !important;
+    -fx-border-color: #3d44b4; /* Bordo blu/viola */
+    -fx-border-width: 0 0 2px 0;
+}
+
+/* Barra Bottom (Footer) */
+.border-pane > .bottom, HBox[style*="#ecf0f1"] {
+    -fx-background-color: #0f111a !important;
+    -fx-border-color: #6b46c1; /* Bordo violaceo */
+    -fx-border-width: 2px 0 0 0;
+}
+
+/* ==========================================================================
+   TABELLA GIOCATORI
+   ========================================================================== */
+.table-view {
+    -fx-background-color: #1a202c; /* Grigio bluastro più chiaro del fondo */
+    -fx-background-radius: 10px;
+    -fx-border-color: #4a5568;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #2d3748; /* Testata ancora più chiara */
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #6b46c1 transparent;
+    -fx-size: 45px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffcc00; /* Scritte testata GIALLE */
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-background-color: #1e2533;
+    -fx-text-fill: white;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #242b3d; /* Alternanza per leggibilità */
+}
+
+.table-row-cell:filled:hover {
+    -fx-background-color: #3d44b4; /* Hover blu elettrico */
+}
+
+.table-row-cell:filled:selected {
+    -fx-background-color: #6b46c1; /* Selezione viola */
+    -fx-background-insets: 0;
+}
+
+.table-cell {
+    -fx-text-fill: white;
+    -fx-alignment: CENTER;
+}
+
+/* ==========================================================================
+   PULSANTI ARCADE ANIMATI
+   ========================================================================== */
+
+/* 1. Pulsante AVVIA NUOVA PARTITA (Neon Blue/Purple) */
+#btnAvviaPartita {
+    -fx-background-color: linear-gradient(to right, #6b46c1, #3498db) !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 20px;
+    -fx-padding: 10 25;
     -fx-cursor: hand;
 }
 
-/* Effetto passaggio del mouse sui pulsanti */
-.dialog-pane .button:hover {
-    -fx-background-color: #bdc3c7;
+#btnAvviaPartita:hover {
+    -fx-background-color: linear-gradient(to right, #805ad5, #5dade2) !important;
+    -fx-scale-x: 1.1; /* Ingrandimento 10% */
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
 }
 
-/* Stile specifico per il pulsante OK predefinito */
-.dialog-pane .button:default {
-    -fx-background-color: #e74c3c; /* Rosso */
-    -fx-text-fill: white;
-    -fx-border-color: #c0392b;
+/* 2. Pulsante LOGOUT (Rosso Arcade) */
+#btnLogout {
+    -fx-background-color: #c0392b !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
 }
 
-.dialog-pane .button:default:hover {
-    -fx-background-color: #c0392b;
+#btnLogout:hover {
+    -fx-background-color: #e74c3c !important;
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #e74c3c, 10, 0, 0, 0);
+}
+
+/* 3. Pulsante BANNA (Si attiva alla selezione) */
+#btnBanna {
+    -fx-background-color: #34495e !important; /* Colore spento quando disabilitato */
+    -fx-text-fill: #bdc3c7 !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+/* Quando abilitato (grazie al controller) il CSS reagisce così: */
+#btnBanna:enabled {
+    -fx-background-color: #2a20b6 !important; /* Diventa Rosso */
+    -fx-text-fill: white !important;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(three-pass-box, rgba(231, 76, 60, 0.5), 10, 0, 0, 0);
+}
+
+#btnBanna:enabled:hover {
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+
+/* ==========================================================================
+   SCROLLBAR STILE ARCADE (Dettaglio estetico)
+   ========================================================================== */
+.table-view .scroll-bar:vertical .thumb, 
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #6b46c1;
+    -fx-background-radius: 5px;
+}
+
+/* ==========================================================================
+   SCHERMATA DI LOADING (loading.fxml) e ATTESA (gameWait.fxml)
+   ========================================================================== */
+/* Cerchietti del Loading animato (i 4 dot) */
+.circle {
+    -fx-fill: #6b46c1 !important; /* Diventano viola arcade di base */
+    -fx-effect: dropshadow(three-pass-box, #3498db, 10, 0, 0, 0); /* Glow azzurro */
+}
+
+#btnBack {
+    -fx-background-color: linear-gradient(to right, #6b46c1, #3498db) !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 20px;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+}
+
+#btnBack:hover {
+    -fx-background-color: linear-gradient(to right, #805ad5, #5dade2) !important;
+    -fx-scale-x: 1.1; /* Ingrandimento 10% */
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+/* Card centrale di GameWait (ex rettangolo bianco) */
+StackPane > VBox[style*="max-width: 550.0"] {
+    -fx-background-color: #161b22 !important; /* Grigio-bluastro coerente con la tabella */
+    -fx-border-color: #6b46c1 !important;     /* Bordo viola */
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(107, 70, 193, 0.3), 20, 0, 0, 0) !important;
+}
+
+/* Box interno dei giocatori conclusi (ex grigio chiaro) */
+VBox[style*="#ecf0f1"] {
+    -fx-background-color: #0b0e14 !important; /* Sfondo scuro incassato */
+    -fx-border-color: #2a3547;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+}
+
+/* ProgressBar del Timer */
+.progress-bar {
+    -fx-box-border: transparent;
+    -fx-background-radius: 10px;
+    -fx-padding: 2px;
+}
+.progress-bar .track {
+    -fx-background-color: #1e2533;
+    -fx-background-radius: 10px;
+}
+.progress-bar .bar {
+    -fx-background-color: linear-gradient(to right, #f1c40f, #e67e22) !important; /* Gradiente giallo/arancio neon */
+    -fx-background-radius: 10px;
+    -fx-effect: dropshadow(three-pass-box, #f1c40f, 8, 0, 0, 0);
+}
+
+/* Sovrascrittura dei testi colorati inline nelle due schermate */
+.label[textFill="#2c3e50"], .label[textFill="#34495e"], .label[textFill="#7f8c8d"] {
+    -fx-text-fill: #cbd5e0 !important; /* Grigio chiaro pulito */
+}
+.label[textFill="#2980b9"] {
+    -fx-text-fill: #ffcc00 !important; /* Il titolone "La Partita è Iniziata" diventa Giallo Arcade */
+    -fx-effect: dropshadow(three-pass-box, rgba(255, 204, 0, 0.2), 8, 0, 0, 0);
+}
+.label[textFill="#f39c12"] {
+    -fx-text-fill: #ff3366 !important; /* Il countdown del timer diventa rosso/rosa neon */
+    -fx-effect: dropshadow(three-pass-box, #ff3366, 10, 0, 0, 0);
+}
+
+/* ==========================================================================
+   IMPOSTAZIONI NUOVA PARTITA (gameSetting.fxml)
+   ========================================================================== */
+/* SplitPane divisione centrale */
+.split-pane {
+    -fx-background-color: #0b0e14;
+    -fx-border-color: transparent;
+}
+.split-pane *.split-pane-divider {
+    -fx-background-color: #2a3547;
+    -fx-padding: 0 2px;
+}
+
+/* Colonna di destra delle impostazioni (ex sfondo bianco/grigio #f8f9fa) */
+.split-pane > VBox{
+    -fx-background-color: #11161d !important; /* Scuro armonizzato */
+}
+
+#analizzaTesto {
+    -fx-background-color: #2a20b6 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#analizzaTesto:hover {
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+#generaParole {
+    -fx-background-color: #2a20b6 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#generaParole:hover {
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+#backToDash {
+    -fx-background-color: #2a20b6 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#backToDash:hover {
+    -fx-background-color: #2c3e50 !important;
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+#startGame {
+    -fx-background-color: linear-gradient(to right, #6b46c1, #3498db) !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 20px;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+}
+
+#startGame:hover {
+    -fx-background-color: linear-gradient(to right, #805ad5, #5dade2) !important;
+    -fx-scale-x: 1.1; /* Ingrandimento 10% */
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+
+
+/* Aree di testo (TextArea) e Liste (ListView) */
+.text-area, .list-view {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #2a3547;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+}
+.text-area .content, .list-view .list-cell {
+    -fx-background-color: #2c3e50;
+    -fx-text-fill: #ffffff;
+}
+
+.list-view .list-cell:filled:selected {
+    -fx-background-color: #4a6780;
+    -fx-text-fill: #ffffff;
+}
+/* ComboBox (Menu a tendina) */
+.combo-box {
+    -fx-background-color: #1e2533;
+    -fx-border-color: #2a3547;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+}
+.combo-box .label {
+    -fx-text-fill: #ffffff;
+}
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+.combo-box .arrow {
+    -fx-background-color: #6b46c1; /* Freccia Viola */
+}
+.combo-box-popup .list-view {
+    -fx-background-color: #1e2533;
+    -fx-border-color: #6b46c1;
+}
+
+/* Componente Slider (Difficoltà e Lunghezza) */
+.slider .track {
+    -fx-background-color: #1a202c;
+    -fx-background-radius: 4px;
+    -fx-pref-height: 6px;
+}
+.slider .thumb {
+    -fx-background-color: #6b46c1; /* Pomello Viola */
+    -fx-background-radius: 10px;
+    -fx-cursor: hand;
+}
+.slider .thumb:hover {
+    -fx-background-color: #3498db; /* Diventa azzurro al passaggio */
+}
+.slider .axis {
+    -fx-tick-label-fill: #a0aec0; /* Numeri e scritte dello slider */
+}
+
+/* Componente Spinner (Numeri parole e Shift) */
+.spinner {
+    -fx-background-color: #1e2533;
+    -fx-border-color: #2a3547;
+    -fx-border-radius: 4px;
+}
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-text-fill: #ffffff;
+}
+.spinner .increment-arrow-button, .spinner .decrement-arrow-button {
+    -fx-background-color: #161b22;
+}
+.spinner .arrow {
+    -fx-background-color: #6b46c1;
+}
+
+/* Separatori orizzontali */
+.separator *.line {
+    -fx-border-color: #2a3547 transparent transparent transparent;
+}
+
+/* Applica il Giallo Arcade (#ffd700) a tutte le label dentro il GridPane delle impostazioni */
+.grid-pane .label {
+    -fx-text-fill: #ffd700 !important;
+}
+
+/* Forza le label generiche dei VBox (tranne i titoli principali) ad essere bianche */
+.split-pane .vbox .label {
+    -fx-text-fill: #ffffff;
 }
