@@ -1,0 +1,465 @@
+
+/*PAGINA DI LOGIN CLIENT*/
+/* Sfondo principale della schermata di Login */
+.root {
+    -fx-background-color: #0b0e14 !important;
+}
+
+/* Box dei due moduli (Login a sinistra, Registrazione a destra) */
+.hbox > .vbox {
+    -fx-background-color: #11161d !important; /* Scuro armonizzato */
+    -fx-border-color: #2a3547 !important;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 15, 0, 0, 8) !important;
+}
+
+/* Titoli interni ai moduli */
+.hbox > .vbox > .label {
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+}
+
+/* Campi di input (Username, Password, Confirm Password) */
+.text-field, .password-field {
+    -fx-background-color: #1e2533;
+    -fx-text-fill: #ffffff;
+    -fx-border-color: #2a3547;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px;
+    -fx-prompt-text-fill: #718096;
+}
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #6b46c1; /* Evidenziato in viola quando scrivi */
+    -fx-background-color: #242c3e;
+}
+
+/* --- PULSANTI --- */
+
+/* Pulsante Accedi (Blu Elettrico -> Viola) */
+#btnLogin {
+    -fx-background-color: #3d44b4 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+#btnLogin:hover {
+    -fx-background-color: #6b46c1 !important;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+/* Pulsante Registrati (Verde Cyber -> Verde Smeraldo Scuro) */
+#btnRegister {
+    -fx-background-color: #27ae60 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+#btnRegister:hover {
+    -fx-background-color: #2ecc71 !important;
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+/* --- MESSAGGI DI ERRORE --- */
+#serverError, #loginErrorMsg, #regErrorMsg {
+    -fx-text-fill: #e74c3c !important;
+    -fx-font-weight: bold;
+}
+
+/* ==========================================================================
+   STRUTTURA PRINCIPALE (ROOT & DASHBOARD CLIENT)
+   ========================================================================== */
+
+/* Sfondo della dashboard client (sovrascrive il grigio chiaro #f4f6f7) */
+.border-pane {
+    -fx-background-color: #0b0e14 !important;
+}
+
+/* Titoli delle sezioni (es. "Le tue Statistiche", "Cronologia Partite") */
+.border-pane .center .vbox > .label {
+    -fx-text-fill: #ffffff !important;
+    -fx-font-family: "System";
+    -fx-font-weight: bold;
+}
+
+/* --- BARRA TOP (HEADER) --- */
+/* Gestisce l'header preesistente del server e si adatta a quello del client */
+.border-pane > .top, HBox[style*="#2c3e50"] {
+    -fx-background-color: linear-gradient(to bottom, #1a1c2c, #0b0e14) !important;
+    -fx-border-color: #3d44b4; /* Bordo blu/viola */
+    -fx-border-width: 0 0 2px 0;
+}
+
+/* Sotto-testo dell'header "Bentornato," */
+.border-pane > .top .vbox .label[textFill="#bdc3c7"] {
+    -fx-text-fill: #a0aec0 !important;
+}
+
+
+/* ==========================================================================
+   CARD DELLE STATISTICHE (Partite Giocate, Vittorie, Tempo Medio)
+   ========================================================================== */
+
+/* Seleziona i tre VBox interni all'HBox delle statistiche (ex bianchi) */
+.border-pane .center HBox > .vbox[style*="white"] {
+    -fx-background-color: #11161d !important; /* Grigio scuro armonizzato */
+    -fx-border-color: #2a3547 !important;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 12, 0, 0, 6) !important;
+}
+
+/* Etichette interne alle card (i testi descrittivi in alto) */
+.border-pane .center HBox > .vbox > .label[textFill="#7f8c8d"] {
+    -fx-text-fill: #cbd5e0 !important; /* Grigio chiaro leggibile */
+}
+
+/* Valori numerici delle card */
+#nPartite {
+    -fx-text-fill: #00f0ff !important; /* Ciano al posto del blu scuro */
+}
+#nVittorie {
+    -fx-text-fill: #27ae60 !important; /* Mantiene il verde smeraldo per la vittoria */
+    -fx-effect: dropshadow(three-pass-box, rgba(39, 174, 96, 0.3), 8, 0, 0, 0);
+}
+#rispostaMedia {
+    -fx-text-fill: #f39c12 !important; /* Giallo/Arancio ambra originale ben visibile sullo scuro */
+}
+
+
+/* ==========================================================================
+   TABELLA CRONOLOGIA PARTITE
+   ========================================================================== */
+.table-view {
+    -fx-background-color: #11161d !important; /* Sfondo scuro per il container */
+    -fx-background-radius: 10px;
+    -fx-border-color: #2a3547 !important;
+    -fx-border-radius: 10px;
+    -fx-padding: 5px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.3), 10, 0, 0, 5) !important;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1e2533 !important; /* Testata leggermente più chiara dello sfondo */
+    -fx-background-radius: 10px 10px 0 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #6b46c1 transparent; /* Linea viola sotto i titoli delle colonne */
+    -fx-size: 45px;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: #ffcc00 !important; /* Scritte testata GIALLE */
+    -fx-font-weight: bold;
+}
+
+/* Righe della tabella */
+.table-row-cell {
+    -fx-background-color: #11161d;
+    -fx-text-fill: white;
+}
+.table-row-cell:odd {
+    -fx-background-color: #161b22; /* Alternanza per facilitare la lettura delle partite */
+}
+.table-row-cell:filled:hover {
+    -fx-background-color: #3d44b4 !important; /* Hover blu elettrico */
+}
+.table-row-cell:filled:selected {
+    -fx-background-color: #6b46c1 !important; /* Selezione viola */
+}
+
+.table-cell {
+    -fx-text-fill: white !important;
+    -fx-alignment: CENTER;
+}
+
+
+/* ==========================================================================
+   PULSANTI HEADER (Classifiche, Partecipa, Logout/Esci)
+   ========================================================================== */
+
+/* Pulsante CLASSIFICHE */
+
+#btnClassifica {
+    -fx-background-color: #2a20b6 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#btnClassifica:hover {
+    -fx-scale-x: 1.1; 
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+
+/* Pulsante PARTITA */
+#btnPartita {
+    -fx-background-color: linear-gradient(to right, #6b46c1, #3498db) !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 20px;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+}
+
+#btnPartita:hover {
+    -fx-background-color: linear-gradient(to right, #805ad5, #5dade2) !important;
+    -fx-scale-x: 1.1; /* Ingrandimento 10% */
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+/* 3. Pulsante ESCI/LOGOUT (Ex link testuale rosso -> Ora Rosso Arcade pieno coerente con il server) */
+#btnEsci {
+    -fx-background-color: #c0392b !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#btnEsci:hover {
+    -fx-background-color: #e74c3c !important;
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #e74c3c, 10, 0, 0, 0);
+}
+
+
+
+
+.table-view .scroll-bar:vertical .thumb, 
+.table-view .scroll-bar:horizontal .thumb {
+    -fx-background-color: #6b46c1;
+    -fx-background-radius: 5px;
+}
+
+
+/*LOADING*/
+.circle {
+    -fx-fill: #6b46c1 !important; 
+    -fx-effect: dropshadow(three-pass-box, #3498db, 10, 0, 0, 0); 
+}
+
+/*botton BACK*/
+#back {
+    -fx-background-color: linear-gradient(to right, #6b46c1, #3498db) !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 20px;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+}
+
+#back:hover {
+    -fx-background-color: linear-gradient(to right, #805ad5, #5dade2) !important;
+    -fx-scale-x: 1.1; /* Ingrandimento 10% */
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+/*RANKINGS*/
+/*Pulsante INDETRO*/
+#indietro {
+    -fx-background-color: #2a20b6 !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#indietro:hover {
+    -fx-scale-x: 1.1; 
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+/* PAGINA GAME*/
+/*Pulsante ARRENDITI*/
+#btnResa {
+    -fx-background-color: #c0392b !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#btnResa:hover {
+    -fx-background-color: #e74c3c !important;
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #e74c3c, 10, 0, 0, 0);
+}
+
+#enterAnswer {
+    -fx-background-color: #27ae60;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-cursor: hand;
+}
+
+#enterAnswer:hover {
+    -fx-scale-x: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #e74c3c, 10, 0, 0, 0);
+}
+
+/* Pannello di Gioco principale (sovrascrive #f4f6f7) */
+#gamePane {
+    -fx-background-color: #0b0e14 !important;
+}
+
+/* Header di Gioco */
+#gamePane > .top > HBox {
+    -fx-background-color: linear-gradient(to bottom, #1a1c2c, #0b0e14) !important;
+    -fx-border-color: #3d44b4;
+    -fx-border-width: 0 0 2px 0;
+}
+
+/* Username Sfidante */
+#oppUsername {
+    -fx-text-fill: #a0aec0 !important;
+}
+
+/* Pulsante Arrenditi (Rosso Arcade) */
+#btnResa {
+    -fx-background-color: #c0392b !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px;
+    -fx-font-weight: bold;
+    -fx-padding: 8 18;
+    -fx-cursor: hand;
+}
+#btnResa:hover {
+    -fx-background-color: #e74c3c !important;
+    -fx-scale-x: 1.05;
+    -fx-scale-y: 1.05;
+    -fx-effect: dropshadow(three-pass-box, #e74c3c, 10, 0, 0, 0);
+}
+
+
+/* ==========================================================================
+   AREA CENTRALE: TESTO DA DECIFRARE
+   ========================================================================== */
+
+/* Pergamena/Contenitore del testo (Ex Bianco -> Diventa scuro incassato) */
+#gamePane .scroll-pane {
+    -fx-background-color: #2c3e50;
+    -fx-border-color: #2a3547 !important;
+    -fx-border-radius: 8px;
+    -fx-background-radius: 8px;
+    -fx-padding: 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 0, 0, 0.4), 10, 0, 0, 5) !important;
+}
+
+/* Rende trasparente lo sfondo del viewport interno altrimenti resta bianco */
+#gamePane .scroll-pane > .viewport {
+    -fx-background-color: transparent !important;
+}
+
+/* Regole per il TextFlow inserito dentro lo ScrollPane */
+#testo {
+    -fx-background-color: transparent !important;
+}
+
+/* Colore standard dei nodi di testo generati dentro il TextFlow */
+#testo .text {
+    -fx-fill: #cbd5e0 !important;
+    -fx-font-size: 16px;
+}
+
+
+/* ==========================================================================
+   AREA INFERIORE: INPUT RISPOSTE
+   ========================================================================== */
+
+/* Campi di testo dinamici generati nel FlowPane */
+#contenitoreSlotRisposte .text-field {
+    -fx-background-color: #1e2533 !important;
+    -fx-text-fill: #ffffff !important;
+    -fx-border-color: #2a3547 !important;
+    -fx-border-radius: 6px;
+    -fx-background-radius: 6px;
+    -fx-prompt-text-fill: #718096 !important;
+}
+#contenitoreSlotRisposte .text-field:focused {
+    -fx-border-color: #00f0ff !important; /* Glow Ciano quando l'utente scrive */
+    -fx-background-color: #242c3e !important;
+    -fx-effect: dropshadow(three-pass-box, rgba(0, 240, 255, 0.2), 8, 0, 0, 0);
+}
+
+/* Pulsante CONFERMA (Verde Cyber Neon) */
+#gamePane > .bottom .button[text*="CONFERMA"] {
+    -fx-background-color: linear-gradient(to right, #27ae60, #2ecc71) !important;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 6px !important;
+}
+#gamePane > .bottom .button[text*="CONFERMA"]:hover {
+    -fx-scale-x: 1.04;
+    -fx-scale-y: 1.04;
+    -fx-effect: dropshadow(three-pass-box, #2ecc71, 15, 0, 0, 0);
+}
+
+
+/* ==========================================================================
+   OVERLAY DI FINE PARTITA (Vittoria / Sconfitta)
+   ========================================================================== */
+#overlayFinePartita {
+    -fx-background-color: rgba(7, 9, 13, 0.9) !important; /* Sfondo oscurato semitrasparente */
+}
+
+/* Box della scheda risultati (il VBox interno di riepilogo) */
+#overlayFinePartita > .vbox {
+    -fx-background-color: #11161d !important;
+    -fx-border-color: #6b46c1 !important; /* Bordo viola */
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-padding: 35px;
+    -fx-effect: dropshadow(three-pass-box, rgba(107, 70, 193, 0.4), 25, 0, 0, 0) !important;
+}
+
+/* Separatore verticale dei risultati */
+#overlayFinePartita .separator:vertical .line {
+    -fx-border-color: #2a3547 !important;
+}
+
+/*Pulsano TORNA ALLA BASHBOARD*/
+#dashboard {
+    -fx-background-color: #3498db;
+    -fx-text-fill: white !important;
+    -fx-background-radius: 20px;
+    -fx-padding: 10 25;
+    -fx-cursor: hand;
+}
+
+#dashboard:hover {
+    -fx-scale-x: 1.1; 
+    -fx-scale-y: 1.1;
+    -fx-effect: dropshadow(three-pass-box, #3498db, 15, 0.5, 0, 0);
+}
+
+/* ==========================================================================
+   OVERLAY DI ATTESA RISPOSTA (loading popup)
+   ========================================================================== */
+#overlayAttesa {
+    -fx-background-color: rgba(7, 9, 13, 0.85) !important;
+}
+
+/* Card centrale di attesa (Ex bianca) */
+#overlayAttesa > .vbox {
+    -fx-background-color: #161b22 !important; /* Scuro coordinato con GameWait */
+    -fx-border-color: #6b46c1 !important;
+    -fx-border-radius: 12px;
+    -fx-background-radius: 12px;
+    -fx-effect: dropshadow(three-pass-box, rgba(107, 70, 193, 0.3), 20, 0, 0, 0) !important;
+}
+
+/* Testo "Attendi la risposta dell'avversario..." */
+#overlayAttesa .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Animazione pallini (Circle) */
+#dot1, #dot2, #dot3, #dot4 {
+    -fx-fill: #00f0ff !important; /* Diventano Ciano Neon */
+    -fx-effect: dropshadow(three-pass-box, #3498db, 10, 0, 0, 0);
+}

@@ -11,9 +11,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20.0" style="-fx-background-color: #f4f6f7;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
+<VBox alignment="CENTER" prefHeight="600.0" prefWidth="900.0" spacing="20.0" stylesheets="@StyleSheet.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.LoginController">
    <children>
-      <Label text="Benvenuto in GuessTheWord" textFill="#2c3e50">
+      <Label text="Benvenuto in GuessTheWord" textFill="#00f0ff">
          <font>
             <Font name="Arial Bold" size="30.0" />
          </font>
@@ -33,9 +33,9 @@
       </Label>
       <HBox alignment="CENTER" spacing="40.0">
          <children>
-            <VBox maxWidth="440.0" prefHeight="459.0" prefWidth="442.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 30; -fx-border-color: #bdc3c7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+            <VBox maxWidth="440.0" prefHeight="459.0" prefWidth="442.0" spacing="15.0" >
                <children>
-                  <Label text="Hai già un account?" textFill="#3498db">
+                  <Label text="Hai già un account?" textFill="#00f0ff">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -45,7 +45,7 @@
                   </Label>
                   <VBox spacing="5.0">
                      <children>
-                        <Label text="Username">
+                        <Label text="Username" textFill="#ffffff">
                            <font>
                               <Font name="Arial Bold" size="14.0" />
                            </font>
@@ -55,7 +55,7 @@
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label text="Password">
+                        <Label text="Password" textFill="#ffffff">
                            <font>
                               <Font name="Arial Bold" size="14.0" />
                            </font>
@@ -73,16 +73,16 @@
                      </children>
                   </StackPane>
                   <Region VBox.vgrow="ALWAYS" />
-                  <Button fx:id="btnLogin" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" prefHeight="40.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="ENTRA E GIOCA">
+                  <Button fx:id="btnLogin" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#login" prefHeight="40.0" text="ENTRA E GIOCA">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
                </children>
             </VBox>
-            <VBox maxWidth="494.0" prefHeight="459.0" prefWidth="442.0" spacing="15.0" style="-fx-background-color: white; -fx-padding: 30; -fx-border-color: #bdc3c7; -fx-border-radius: 8; -fx-background-radius: 8; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);">
+            <VBox maxWidth="494.0" prefHeight="459.0" prefWidth="442.0" spacing="15.0" >
                <children>
-                  <Label text="Crea un nuovo account" textFill="#27ae60">
+                  <Label text="Crea un nuovo account" textFill="#00f0ff">
                      <font>
                         <Font name="Arial Bold" size="20.0" />
                      </font>
@@ -92,7 +92,7 @@
                   </Label>
                   <VBox spacing="5.0">
                      <children>
-                        <Label text="Scegli un Username">
+                        <Label text="Scegli un Username" textFill="#ffffff">
                            <font>
                               <Font name="Arial Bold" size="14.0" />
                            </font>
@@ -102,7 +102,7 @@
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label text="Scegli una Password">
+                        <Label text="Scegli una Password" textFill="#ffffff">
                            <font>
                               <Font name="Arial Bold" size="14.0" />
                            </font>
@@ -112,7 +112,7 @@
                   </VBox>
                   <VBox spacing="5.0">
                      <children>
-                        <Label text="Conferma Password">
+                        <Label text="Conferma Password" textFill="#ffffff">
                            <font>
                               <Font name="Arial Bold" size="14.0" />
                            </font>
@@ -129,7 +129,7 @@
                         </Label>
                      </children>
                   </StackPane>
-                  <Button fx:id="btnRegister" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#register" prefHeight="40.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="REGISTRATI">
+                  <Button fx:id="btnRegister" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#register" prefHeight="40.0" text="REGISTRATI">
                      <font>
                         <Font size="14.0" />
                      </font>
