@@ -1,8 +1,10 @@
 package model.utility;
 
-// Classe che tiene traccia dell'Username dell'amministratore loggato
+/**
+ * Classe che tiene traccia dell'Username dell'amministratore loggato.
+ */
 public class Amministratore {
-    
+
     private String username;
     private int id;
 
@@ -10,7 +12,6 @@ public class Amministratore {
         this.username = username;
         this.id = id;
     }
-    
 
     public String getUsername() {
         return username;

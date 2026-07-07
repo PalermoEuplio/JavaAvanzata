@@ -20,36 +20,36 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-
+/**
+ * Classe TextEditor che si occupa di gestire i testi da analizzare
+ */
 public class TextEditor {
-    
+
     private List<Testo> title; // Lista dei titoli disponibili e se sono già analizzati
-    
-    private HashMap<Integer,String> titleMap;
-    
+
+    private HashMap<Integer, String> titleMap;
+
     private HashMap<String, Integer> frequency; // Parole disponibili nel testo e con che frequenza
-    
-    private String selectedText;    // Contenuto del testo selezionato
+
+    private String selectedText; // Contenuto del testo selezionato
 
     private static String modifiedText = "";
-    
+
     private static String[] risposte = null;
-    
-    public TextEditor(){
+
+    public TextEditor() {
         title = new ArrayList<>();
         titleMap = new HashMap<>();
         frequency = new HashMap<>();
         selectedText = "";
     }
-    
-    
-    
-    // Metodi Get
+
+    // --------------- Metodi Getter ---------------
     public List<Testo> getTitle() {
         return title;
     }
-    
-    public HashMap<Integer,String> getTitleMap() {
+
+    public HashMap<Integer, String> getTitleMap() {
         return titleMap;
     }
 
@@ -76,149 +76,181 @@ public class TextEditor {
     public static String[] getRisposte() {
         return risposte;
     }
-    
-    
-    
-    
-    // Metodi di gestione Testo
-    
-    // Metodo per caricare tutto il testo nella stringa selectedText
-    public String caricaTesto(String fileName){
-        
-        File file = new File("testi/"+fileName+".txt");
-        
+
+    // --------------- Metodi di gestione Testo ---------------
+
+    /**
+     * Metodo per caricare tutto il testo nella stringa selectedText.
+     * 
+     * @param fileName Il nome del file.
+     * @return Il testo caricato.
+     */
+    public String caricaTesto(String fileName) {
+
+        File file = new File("testi/" + fileName + ".txt");
+
         if (!file.exists()) {
             return "Attenzione: Il file non è stato trovato nel percorso specificato.";
         }
-        
+
         // Forzo la lettura con UTF_8
-        try (BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)){
-            selectedText = "";  // Cancello il testo precedente
-            
+        try (BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+            selectedText = ""; // Cancello il testo precedente
+
             String line;
-            while((line = br.readLine())!=null){
-                selectedText = selectedText.concat(" "+line);   // Leggo il testo riga per riga
+            while ((line = br.readLine()) != null) {
+                selectedText = selectedText.concat(" " + line); // Leggo il testo riga per riga
             }
-            
-            
-        }catch (IOException io){System.err.println("Errore durante la lettura del file: "+io);}
-        
-        return  selectedText;
+
+        } catch (IOException io) {
+            System.err.println("Errore durante la lettura del file: " + io);
+        }
+
+        return selectedText;
     }
-    
+
+    /**
+     * Metodo per leggere il Report e caricare i dati nella lista title.
+     */
     // Metodo per leggere il Report e caricare i dati nella lista title
     public void leggiReport() {
-        
-        File fileCsv = new File("analisiTesti/report.csv"); 
-        
+
+        File fileCsv = new File("analisiTesti/report.csv");
+
         if (!fileCsv.exists()) {
             System.err.println("File CSV non trovato!");
             return;
         }
-        
+
         try (BufferedReader br = Files.newBufferedReader(fileCsv.toPath(), StandardCharsets.UTF_8)) {
-            
+
             String linea;
-            br.readLine(); 
-            
+            br.readLine();
+
             while ((linea = br.readLine()) != null) {
                 String[] campi = linea.split(";");
-                
+
                 if (campi.length >= 2) {
                     try {
-                        Testo t = new Testo(campi[1].trim(), Integer.parseInt(campi[0].trim()), campi[2].trim().equals("1"));
-                        this.titleMap.put(Integer.parseInt(campi[0].trim()),campi[1].trim()); 
+                        Testo t = new Testo(campi[1].trim(), Integer.parseInt(campi[0].trim()),
+                                campi[2].trim().equals("1"));
+                        this.titleMap.put(Integer.parseInt(campi[0].trim()), campi[1].trim());
                         this.title.add(t);
                     } catch (NumberFormatException e) {
                         System.err.println("Errore di conversione numeri alla riga: " + linea);
                     }
                 }
             }
-            
-        } catch (Exception e) { System.err.println("Errore nel caricamento del report: "+e); }
+
+        } catch (Exception e) {
+            System.err.println("Errore nel caricamento del report: " + e);
+        }
     }
-    
-    // Metodo per il solo caricamento dell'analisi del testo specificato
-    public void caricaAnalisi(Integer txtId){
-        
-        String filename = "analisiTesti/"+String.valueOf(txtId)+"_"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
+
+    /**
+     * Metodo per il solo caricamento dell'analisi del testo specificato.
+     * 
+     * @param txtId L'id del testo.
+     */
+    public void caricaAnalisi(Integer txtId) {
+
+        String filename = "analisiTesti/" + String.valueOf(txtId) + "_" + title.stream()
+                .filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto")
+                + "-Analisi.dat";
         try (ObjectInputStream ob = new ObjectInputStream(
                 new BufferedInputStream(
-                        new FileInputStream(filename)))){
-            
-            frequency = (HashMap<String, Integer>)ob.readObject();
+                        new FileInputStream(filename)))) {
+
+            frequency = (HashMap<String, Integer>) ob.readObject();
             ob.close();
-        } catch (Exception e) {System.out.println("Errore durante la lettura dell'analisi: "+e);}
+        } catch (Exception e) {
+            System.out.println("Errore durante la lettura dell'analisi: " + e);
+        }
     }
-    
-    // Metodo per effettuare l'analisi del testo selezionato
-    public boolean analizzaTesto(Integer txtId){
-        
+
+    /**
+     * Metodo per effettuare l'analisi del testo selezionato.
+     * 
+     * @param txtId L'id del testo.
+     * @return true se l'analisi va a buon fine, false altrimenti.
+     */
+    public boolean analizzaTesto(Integer txtId) {
+
         // Salvo il nome che il file d'analisi dovrà avere
-        String filename = "analisiTesti/"+String.valueOf(txtId)+"_"+title.stream().filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto") + "-Analisi.dat";
-        
-        try (ObjectOutputStream ob = new ObjectOutputStream(new BufferedOutputStream( new FileOutputStream(filename)))){
-            
-            
+        String filename = "analisiTesti/" + String.valueOf(txtId) + "_" + title.stream()
+                .filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto")
+                + "-Analisi.dat";
+
+        try (ObjectOutputStream ob = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+
             List<String> stopwords = new ArrayList<>();
-            
+
             // Leggo il file contenente le stopword
-            try (BufferedReader br = new BufferedReader( new FileReader("analisiTesti/stopwords.txt"))){
-                
+            try (BufferedReader br = new BufferedReader(new FileReader("analisiTesti/stopwords.txt"))) {
+
                 String word;
-                while((word = br.readLine())!=null)
+                while ((word = br.readLine()) != null)
                     stopwords.add(word);
-                
-            } catch (Exception e) { System.err.println("Errore durante la lettura delle stopword: "+e);}
-            
-            
-            
+
+            } catch (Exception e) {
+                System.err.println("Errore durante la lettura delle stopword: " + e);
+            }
+
             if (this.selectedText == null || this.selectedText.trim().isEmpty()) {
                 System.err.println("Nessun testo da analizzare!");
                 return false;
             }
-            
-            
-            frequency = Arrays.stream(this.selectedText.toLowerCase().split("\\W+")) // minuscolo e divido per non-lettere (spazi, virgole, punti)
-                .filter(w -> !w.isEmpty())                               // scarto eventuali stringhe vuote
-                .filter(w -> !stopwords.contains(w))                     // scarto le stopword
-                .collect(Collectors.groupingBy(                                // Raggruppo le parole identiche e conto le occorrenze (Di base restituisce solo Map)
-                        w -> w,
-                        HashMap::new,           // Richiamo il costruttore di hashMap per ricavare la collezione specifica
-                        Collectors.summingInt(w -> 1)
-                ));
-            
+
+            frequency = Arrays.stream(this.selectedText.toLowerCase().split("\\W+")) // minuscolo e divido per
+                                                                                     // non-lettere (spazi, virgole,
+                                                                                     // punti)
+                    .filter(w -> !w.isEmpty()) // scarto eventuali stringhe vuote
+                    .filter(w -> !stopwords.contains(w)) // scarto le stopword
+                    .collect(Collectors.groupingBy( // Raggruppo le parole identiche e conto le occorrenze (Di base
+                                                    // restituisce solo Map)
+                            w -> w,
+                            HashMap::new, // Richiamo il costruttore di hashMap per ricavare la collezione specifica
+                            Collectors.summingInt(w -> 1)));
+
             ob.writeObject(frequency);
-            
+
             ob.close();
-        } catch (Exception e) { System.err.println("Errore durante l'analisi: "+e); return false;}
-        
+        } catch (Exception e) {
+            System.err.println("Errore durante l'analisi: " + e);
+            return false;
+        }
+
         aggiornaReport(txtId);
         return true;
     }
-    
-    // Metodo per aggiornare il file report con la nuova analisi effettuata (Aggiorna anche il valore isAnalized del testo nella lista title)
-    public void aggiornaReport(Integer txtId){
-        
-        title.stream().filter(t -> t.getTxtId()==txtId).forEach(t -> t.setIsAnalized(true));
-        
+
+    /**
+     * Metodo per aggiornare il file report con la nuova analisi effettuata
+     * (Aggiorna anche il valore isAnalized del testo nella lista title).
+     * 
+     * @param txtId L'id del testo.
+     */
+    public void aggiornaReport(Integer txtId) {
+
+        title.stream().filter(t -> t.getTxtId() == txtId).forEach(t -> t.setIsAnalized(true));
+
         File fileCsv = new File("analisiTesti/report.csv");
-        
-       if (!fileCsv.exists()) {
+
+        if (!fileCsv.exists()) {
             System.err.println("File CSV non trovato!");
             return;
         }
-        
+
         try (BufferedWriter br = Files.newBufferedWriter(fileCsv.toPath())) {
-            
+
             br.write("Id");
             br.write(";");
             br.write("Titolo");
             br.write(";");
             br.write("Stato");
             br.write("\n");
-            
-            for(Testo x : title){
+
+            for (Testo x : title) {
                 br.write(String.valueOf(x.getTxtId()));
                 br.write(";");
                 br.write(x.getTitolo());
@@ -227,32 +259,44 @@ public class TextEditor {
                 br.write("\n");
             }
             br.close();
-        } catch (Exception e) { System.err.println("Errore nella scrittura del report: "+e); }
-        
-    }
-    
-    
-    // Cifra il testo utilizzando la stream API. In particolare le parole cifrate sono nel formato [[ parola ]],
-    // in modo da essere facilmente riconoscibili dal Client.
-    public void cifraTesto(int shift, String[] parole) {
-        
-        risposte = parole;
-        
-        // 1. Prepariamo la lista delle parole target in minuscolo per fare controlli precisi (case-insensitive)
-        List<String> paroleDaCifrare = Arrays.stream(parole)
-                                             .map(String::toLowerCase)
-                                             .collect(Collectors.toList());
+        } catch (Exception e) {
+            System.err.println("Errore nella scrittura del report: " + e);
+        }
 
-        // Usiamo una Regex avanzata con Stream per "tagliare" il testo preservando gli spazi e la punteggiatura.
-        // (?U) attiva il supporto Unicode (fondamentale per riconoscere lettere accentate italiane come à, è).
-        // Il pattern taglia il testo nel punto esatto di confine tra una parola e un simbolo/spazio.
+    }
+
+    /**
+     * Cifra il testo utilizzando la stream API. In particolare le parole cifrate
+     * sono nel formato [[ parola ]],
+     * in modo da essere facilmente riconoscibili dal Client.
+     * 
+     * @param shift  Lo shift per la cifratura.
+     * @param parole Le parole da cifrare.
+     */
+    public void cifraTesto(int shift, String[] parole) {
+
+        risposte = parole;
+
+        // 1. Prepariamo la lista delle parole target in minuscolo per fare controlli
+        // precisi (case-insensitive)
+        List<String> paroleDaCifrare = Arrays.stream(parole)
+                .map(String::toLowerCase)
+                .collect(Collectors.toList());
+
+        // Usiamo una Regex avanzata con Stream per "tagliare" il testo preservando gli
+        // spazi e la punteggiatura.
+        // (?U) attiva il supporto Unicode (fondamentale per riconoscere lettere
+        // accentate italiane come à, è).
+        // Il pattern taglia il testo nel punto esatto di confine tra una parola e un
+        // simbolo/spazio.
         modifiedText = Pattern.compile("(?U)(?<=\\w)(?=\\W)|(?<=\\W)(?=\\w)")
                 .splitAsStream(selectedText)
                 .map(token -> {
-                    
-                    // Se il frammento corrente è esattamente una delle parole che dobbiamo cifrare...
+
+                    // Se il frammento corrente è esattamente una delle parole che dobbiamo
+                    // cifrare...
                     if (paroleDaCifrare.contains(token.toLowerCase())) {
-                        
+
                         // Cifriamo la singola parola carattere per carattere con lo Stream
                         String parolaCifrata = token.chars()
                                 .map(c -> {
@@ -264,17 +308,18 @@ public class TextEditor {
                                 })
                                 .collect(StringBuilder::new, StringBuilder::appendCodePoint, StringBuilder::append)
                                 .toString();
-                                
+
                         // MAGIA PER IL CLIENT: Aggiungiamo i delimitatori attorno alla parola cifrata
                         // così il TextFlow del Client saprà esattamente come colorarla di giallo!
                         return "[[" + parolaCifrata + "]]";
                     }
-                    
-                    // Se non è nella lista, restituiamo il token originale (spazi, virgole, o parole da non toccare)
+
+                    // Se non è nella lista, restituiamo il token originale (spazi, virgole, o
+                    // parole da non toccare)
                     return token;
-                    
+
                 })
                 .collect(Collectors.joining()); // Riunisce tutti i frammenti in un'unica stringa
     }
-    
+
 }

@@ -13,7 +13,9 @@ import javafx.util.Duration;
 import model.Main;
 import model.connection.Sessione;
 
-// Classe che gestisce il comportamento della pagina d'attesa fine Partita
+/**
+ * Classe che gestisce il comportamento della pagina d'attesa fine Partita.
+ */
 public class GameWaitController implements Initializable {
     
     // Collegamenti agli elementi della pagina
@@ -32,6 +34,12 @@ public class GameWaitController implements Initializable {
     private int durataIniziale;
     
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
@@ -75,8 +83,12 @@ public class GameWaitController implements Initializable {
     
     // ------------- Metodi di utilità ------------------
     
-    // Metodo che permette di avviare il timer in base alla dua durata in secondi
-    // In particolare viene messo a video nel formato min:sec
+    /**
+     * Metodo che permette di avviare il timer in base alla dua durata in secondi.
+     * In particolare viene messo a video nel formato min:sec.
+     * 
+     * @param durataSecondi La durata in secondi.
+     */
     private void avviaTimer(int durataSecondi) {
         
         this.durataIniziale = durataSecondi;     // Mi salvo la durata iniziale

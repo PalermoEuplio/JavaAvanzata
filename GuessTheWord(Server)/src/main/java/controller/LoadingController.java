@@ -19,7 +19,9 @@ import model.connection.Sessione;
 import model.game.TextEditor;
 
 
-// Classe che specifica il comportamento della pagina d'attesa fra la selezione delle impostazioni e l'inizio della partita
+/**
+ * Classe che specifica il comportamento della pagina d'attesa fra la selezione delle impostazioni e l'inizio della partita.
+ */
 public class LoadingController implements Initializable{
     
     // Collegamenti agli elementi della pagina
@@ -31,6 +33,12 @@ public class LoadingController implements Initializable{
     
     private Timeline monitor;   // Timeline per l'animazione d'attesa
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources){
         
@@ -66,7 +74,9 @@ public class LoadingController implements Initializable{
     
     // ------------- Metodi di utilità ------------------
     
-    // Metodo che specifica come deve comportarsi l'animazione
+    /**
+     * Metodo che specifica come deve comportarsi l'animazione.
+     */
     private void avviaAnimazionePallini() {
         
         Circle[] dots = {dot1, dot2, dot3, dot4};   // Seleziono i 4 pallini a video
@@ -93,11 +103,15 @@ public class LoadingController implements Initializable{
     
     // ------------- Metodi per l'interfaccia grafica ------------------
     
-    // Comportamento del pulsante per tornare indietro
+    /**
+     * Comportamento del pulsante per tornare indietro.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void back() throws IOException{
         Main.setRoot("gameSettings");   // Ritorno alla pagina d'impostazioni partita
-        new TextEditor().setModifiedText("");   // Cancello il testo preparato per questa partita
+        TextEditor.setModifiedText("");   // Cancello il testo preparato per questa partita
         Sessione.setClientAttesa(null); // Dealloco la lista d'attesa giocatori per la partita
     }
     

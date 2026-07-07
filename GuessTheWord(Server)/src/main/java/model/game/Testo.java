@@ -1,5 +1,8 @@
 package model.game;
 
+/**
+ * Classe che rappresenta un Testo.
+ */
 public class Testo{
 
    private String titolo; 

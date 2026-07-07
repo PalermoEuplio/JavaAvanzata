@@ -16,6 +16,12 @@ public class Main extends Application {
     private static Scene scene;
     
 
+    /**
+     * Metodo di avvio dell'applicazione.
+     * 
+     * @param stage Lo stage principale.
+     * @throws IOException In caso di errori I/O.
+     */
     @Override
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("login"), 640, 480);
@@ -27,6 +33,12 @@ public class Main extends Application {
         stage.show();
     }
 
+    /**
+     * Imposta la radice della scena.
+     * 
+     * @param fxml Il nome del file fxml.
+     * @throws IOException In caso di errori I/O.
+     */
     public static void setRoot(String fxml) throws IOException {
         scene.setRoot(loadFXML(fxml));
     }

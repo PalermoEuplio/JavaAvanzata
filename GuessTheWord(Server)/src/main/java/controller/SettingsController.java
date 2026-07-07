@@ -28,6 +28,9 @@ import model.connection.Sessione;
 import model.utility.Esito;
 import model.utility.Sfida;
 
+/**
+ * Classe che specifica il comportamento della pagina delle impostazioni della partita.
+ */
 public class SettingsController implements Initializable{
     
     // Collegamenti agli elementi della pagina
@@ -80,12 +83,18 @@ public class SettingsController implements Initializable{
     
     private final int nParoleMinimo = 60;   // Variabile per cambiare il numero minimo di parole del testo per la partita per evitare l'utilizzo di testi troppo corti
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
         te = new TextEditor();  // Inizializzo l'editor di testo che dovrà essere usato in tutta la pagina
         te.leggiReport();   // Leggo il report dei testi già analizzati e lo salvo all'interno del TextEditor
-        
+
         // Forzo gli spinner a restituire solo numeri interi per evitare problemi
         if(lunghezza != null) {
             lunghezza.valueProperty().addListener((obs, oldV, newV) -> {lunghezza.setValue(newV.intValue()); 
@@ -156,7 +165,9 @@ public class SettingsController implements Initializable{
     
     // ------------- Metodi di utilità ------------------
     
-    // Metodo specializzato nel caricamento della lista dei titoli disponibili e del loro stato attuale (Analizzato e non)
+    /**
+     * Metodo specializzato nel caricamento della lista dei titoli disponibili e del loro stato attuale (Analizzato e non).
+     */
     private void aggiornaReportVideo() {
         
         // Prima di caricare a video la lista inserisco analizzato di fianco ai titoli che sono stati analizzati in precedenza
@@ -167,7 +178,12 @@ public class SettingsController implements Initializable{
     }
 
     
-    // Metodo specializzato nella formattazzione di una mappa all'interno di un textArea
+    /**
+     * Metodo specializzato nella formattazione di una mappa all'interno di un textArea.
+     * 
+     * @param mappa La mappa contenente la frequenza delle parole.
+     * @param txa L'area di testo dove formattare il risultato.
+     */
     private void formattazioneRisultatoanalisi(Map<String, Integer> mappa, TextArea txa) {
         
         if (mappa.isEmpty()) {  // Iniziale controllo sulla Mappa
@@ -189,8 +205,10 @@ public class SettingsController implements Initializable{
         txa.setText(sb.toString());    // Collegamento alla textArea
     }
     
-    // Metodo che si occupa del calcolo della difficoltà in base ai valori degli slider e spinner messi a video
-    // In particolare viene attribuito un peso ad ogni impostazione per cambiare la label difficoltà in Facile,Media,Difficile
+    /**
+     * Metodo che si occupa del calcolo della difficoltà in base ai valori degli slider e spinner messi a video.
+     * In particolare viene attribuito un peso ad ogni impostazione per cambiare la label difficoltà in Facile, Media, Difficile.
+     */
     private void calcolaDifficolta() {
         
         int numParoleVal = nParole.getValue(); // Range: 1 - 5
@@ -229,7 +247,9 @@ public class SettingsController implements Initializable{
     
     // ------------- Metodi per l'interfaccia grafica ------------------
 
-    // Comportamento del pulsante per l'avvio della partita
+    /*
+     * Comportamento del pulsante per l'avvio della partita
+     */
     @FXML
     private void avviaPartita() throws IOException {
         
@@ -259,10 +279,12 @@ public class SettingsController implements Initializable{
         Main.setRoot("loading");    // Mi sposto alla pagina d'attesa
     }
      
-    // Comportamento del pulsante per la generazione delle parole
-    // In particolare questo metodo si occupa della generazione randomica delle parole da poter usare per la partita, insieme a delle statistiche locali
-    // simili a quelle salvate nel report ma inerenti al solo testo selezionato. In questo modo è più facile per l'Admin tenere traccia di quante e quali
-    // parole utili alla partita sono state selezionate
+    /*
+     * Comportamento del pulsante per la generazione delle parole
+     * In particolare questo metodo si occupa della generazione randomica delle parole da poter usare per la partita, insieme a delle statistiche locali
+     * simili a quelle salvate nel report ma inerenti al solo testo selezionato. In questo modo è più facile per l'Admin tenere traccia di quante e quali
+     * parole utili alla partita sono state selezionate
+     */
     @FXML
     private void generaParole() {
         
@@ -370,7 +392,9 @@ public class SettingsController implements Initializable{
     }
     
     
-    // Comportamento del pulsante per l'analisi del testo selezionato
+    /*
+     * Comportamento del pulsante per l'analisi del testo selezionato
+     */
     @FXML
     private void analisiTesto() { 
         
@@ -427,7 +451,9 @@ public class SettingsController implements Initializable{
     }
     
     
-    // Comportamento del bottone per tornare alla dashboard
+    /*
+     * Comportamento del bottone per tornare alla dashboard
+     */
     @FXML
     private void backDashboard() throws IOException {
         Main.setRoot("adminDashboard"); // Cambio schermata a adminDashboard

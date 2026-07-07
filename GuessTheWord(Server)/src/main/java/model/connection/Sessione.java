@@ -17,6 +17,7 @@ import model.utility.Amministratore;
 import model.utility.Player;
 
 /**
+ * Classe che gestisce la sessione corrente, inclusi admin loggato e server.
  *
  * @author euppa
  */
@@ -41,26 +42,46 @@ public class Sessione {
     
     
     
-    // Metodo da chiamare quando si effettua il login
+    /**
+     * Metodo da chiamare quando si effettua il login.
+     * 
+     * @param admin L'amministratore da loggare.
+     */
     public static void setAdmin(Amministratore admin) {
         adminLoggato = admin;
     }
 
     
-    // Metodo per recuperare l'amministratore nelle altre schermate
+    /**
+     * Metodo per recuperare l'amministratore nelle altre schermate.
+     * 
+     * @return L'amministratore loggato.
+     */
     public static Amministratore getAdmin() {
         return adminLoggato;
     }
-    // Metodo set per il server
+    /**
+     * Metodo set per il server.
+     * 
+     * @param s Il server da impostare.
+     */
     public static void setServer(ServerConnection s) {
         server = s;
     }
-    // Metodo per recuperare l'istanza del server in tutte le schermate e tenerlo sempre attivo
+    /**
+     * Metodo per recuperare l'istanza del server in tutte le schermate e tenerlo sempre attivo.
+     * 
+     * @return Il server corrente.
+     */
     public static ServerConnection getServer() {
         return server;
     }
-    // Metodo per settare il comportamento da adottare in base a determinate richieste del server
-    // (Questo metodo verrà implementato con delle lambdaFunction che ne specificano il comportamento)
+    /**
+     * Metodo per settare il comportamento da adottare in base a determinate richieste del server.
+     * (Questo metodo verrà implementato con delle lambdaFunction che ne specificano il comportamento)
+     * 
+     * @param callback Il runnable da eseguire.
+     */
     public static void setOnUserStatusChanged(Runnable callback) {
         onUserStatusChanged = callback;
     }
@@ -92,7 +113,11 @@ public class Sessione {
     
     
     
-    // Metodo necessario all'avvio del server e alla definizione di alcuni dei suoi comportamenti principali
+    /**
+     * Metodo necessario all'avvio del server e alla definizione di alcuni dei suoi comportamenti principali.
+     * 
+     * @return L'istanza del server avviato.
+     */
     public static ServerConnection startServer(){
         server = new ServerConnection(
                 
@@ -313,32 +338,15 @@ public class Sessione {
                                                 } else if (nCorrette1 == nCorrette2) {
                                                     if (tempo1 < tempo2) vinceCh0 = true;
                                                 }
+                                                
+                                                // Trovo il P1
+                                                boolean choP1 = (ch0[0].getIdLoggato() == currentGame.getId1());
+                                                
+                                                // Setto i valori in current game dei tempi dei giocatori e l'esito
+                                                currentGame.settRisposta1(choP1 ? tempo1 : tempo2);
+                                                currentGame.settRisposta2(choP1 ? tempo2 : tempo1);
 
-                                                // 2. Capiamo chi è il P1 rispetto al DB
-                                                boolean ch0EilP1 = (ch0[0].getIdLoggato() == currentGame.getId1());
-
-                                                // 3. Compiliamo i campi del DB in base a chi ha vinto
-                                                if (vinceCh0) { // Ha vinto ch0[0]
-                                                    if (ch0EilP1) {
-                                                        currentGame.settRisposta1(tempo1);
-                                                        currentGame.settRisposta2(tempo2);
-                                                        currentGame.setRisultato(Esito.Vittoria); // Vince P1
-                                                    } else {
-                                                        currentGame.settRisposta1(tempo2);
-                                                        currentGame.settRisposta2(tempo1);
-                                                        currentGame.setRisultato(Esito.Sconfitta); // Vince P2
-                                                    }
-                                                } else { // Ha vinto ch0[1]
-                                                    if (ch0EilP1) {
-                                                        currentGame.settRisposta1(tempo1);
-                                                        currentGame.settRisposta2(tempo2);
-                                                        currentGame.setRisultato(Esito.Sconfitta); // Vince P2
-                                                    } else {
-                                                        currentGame.settRisposta1(tempo2);
-                                                        currentGame.settRisposta2(tempo1);
-                                                        currentGame.setRisultato(Esito.Vittoria); // Vince P1
-                                                    }
-                                                }
+                                                currentGame.setRisultato((vinceCh0 == choP1) ? Esito.Vittoria : Esito.Sconfitta);
                                                 
                                                 
                                             String strTempo1 = String.format("%02d:%02d", (int)tempo1 / 60, (int)tempo1 % 60);
@@ -393,27 +401,36 @@ public class Sessione {
         return server;
     }
     
-    // Metodo usato per aggiornare la grafica quando avviene una richiesta legata all'accesso dell'utente
+    /**
+     * Metodo usato per aggiornare la grafica quando avviene una richiesta legata all'accesso dell'utente.
+     */
     private static void notificaGrafica() {
         if (onUserStatusChanged != null) {
             Platform.runLater(onUserStatusChanged);
         }
     }
     
+    /**
+     * Metodo usato per notificare all'admin che la partita è pronta.
+     */
     private static void notificaAvvioPartita() {
         if (onGameReady != null) {
             Platform.runLater(onGameReady);
         }
     }
-    
+
+    /**
+     * Metodo usato per notificare all'admin che il client ha risposto.
+     */
     public static void notifyAnswerReceived(int count) {
         if (onAnswerReceived != null) {
-            // Assicuriamoci che la modifica grafica avvenga nel thread di JavaFX
             Platform.runLater(() -> onAnswerReceived.accept(count));
         }
     }
 
-    // Metodo per fare il logout
+    /**
+     * Metodo per fare il logout.
+     */
     public static void logout() {
         adminLoggato = null;
         server.stopServer();

@@ -29,7 +29,9 @@ import model.Main;
 import model.connection.PacchettoRisposta;
 import model.connection.ServerConnection;
 
-// Classe che specifica il comportamento della pagina principale dell'Amministratore
+/**
+ * Classe che specifica il comportamento della pagina principale dell'Amministratore.
+ */
 public class AdminDashboardController implements Initializable{
     
     // Collegamenti agli elementi della pagina
@@ -60,6 +62,12 @@ public class AdminDashboardController implements Initializable{
     
     private ObservableList<Player> tableList;
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
@@ -150,7 +158,9 @@ public class AdminDashboardController implements Initializable{
     
     // ------------- Metodi di utilità ------------------
     
-    // Funzione che aggiorna variabili grafiche (TabellaPlayer e PlayerCount) in base agli utenti loggati e non
+    /**
+     * Funzione che aggiorna variabili grafiche (TabellaPlayer e PlayerCount) in base agli utenti loggati e non.
+     */
     private void aggiornaDatiGrafica() {
         try {
             // 1. Ricarico i giocatori dal DB
@@ -180,14 +190,22 @@ public class AdminDashboardController implements Initializable{
     
     // ------------- Metodi per l'interfaccia grafica ------------------
     
-    // Comportamento pulsante Inizia partita
+    /**
+     * Comportamento pulsante Inizia partita.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void startGame() throws IOException {
         Main.setRoot("gameSettings");   // Cambio schermata alle impostazioni partita
     }
     
     
-    // Comportamento pulsante banPlayer
+    /**
+     * Comportamento pulsante banPlayer.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void banPlayer() throws IOException {
         
@@ -227,7 +245,11 @@ public class AdminDashboardController implements Initializable{
     }
     }
     
-    // Comportamento pulsante di logout
+    /**
+     * Comportamento pulsante di logout.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void logout() throws IOException {
         Sessione.logout();  // Elimino l'admin dalla sessione

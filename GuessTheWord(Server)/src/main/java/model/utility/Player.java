@@ -1,11 +1,12 @@
 package model.utility;
 
-// Classe contenente le inforamzioni relative ai player
-
 import java.io.Serializable;
 
-public class Player implements Serializable{
-    
+/**
+ * Classe contenente le inforamzioni relative ai player.
+ */
+public class Player implements Serializable {
+
     private String username;
     private int id;
     private int nPartite;
@@ -19,7 +20,7 @@ public class Player implements Serializable{
         this.nPartite = nPartite;
         this.nVittorie = nVittorie;
         this.tempoRisposta = tempoRisposta;
-        this.isOn=false;
+        this.isOn = false;
     }
 
     public String getUsername() {
@@ -45,13 +46,13 @@ public class Player implements Serializable{
     public boolean isOn() {
         return isOn;
     }
-    
-    public void setOn(boolean status){
-        this.isOn=status;
+
+    public void setOn(boolean status) {
+        this.isOn = status;
     }
 
     @Override
     public String toString() {
-        return username+", " + id + ", " + nPartite + ", " + nVittorie + ", " + tempoRisposta;
+        return username + ", " + id + ", " + nPartite + ", " + nVittorie + ", " + tempoRisposta;
     }
 }
