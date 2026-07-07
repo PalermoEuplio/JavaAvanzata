@@ -13,6 +13,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Properties;
 import model.connection.Sessione;
 import model.utility.Esito;
 import model.utility.Sfida;
@@ -156,8 +157,14 @@ public class DBConnector<T> implements DAO<T> {
         if (p1 instanceof Player) {
 
             Player p = (Player) p1;
+            
+            Properties props = new Properties();
+            if (dbUsername != null) props.setProperty("user", dbUsername);
+            if (dbPassword != null) props.setProperty("password", dbPassword);
+            
+            props.setProperty("foreign_keys", "true");  // Richiamo anche le foreign key altrimenti la rimozione non avviene correttamente
 
-            try (Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword)) {
+            try (Connection c = DriverManager.getConnection(dbURL, props)) {
 
                 c.setAutoCommit(false);
 

@@ -301,6 +301,7 @@ public class GameController implements Initializable {
                 
                 // Per il testo normale usiamo il classico oggetto Text
                 Text testoNormale = new Text(frammento);
+                testoNormale.setStyle("-fx-fill: #e6e6e6;");
                 testoNormale.setFont(Font.font("System", 16));
                 
                 testo.getChildren().add(testoNormale);

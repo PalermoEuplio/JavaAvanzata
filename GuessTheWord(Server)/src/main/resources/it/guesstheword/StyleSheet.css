@@ -342,6 +342,15 @@ VBox[style*="#ecf0f1"] {
     -fx-border-color: #6b46c1;
 }
 
+.combo-box-base {
+    -fx-color: #1e2533;
+}
+
+.combo-box-base .list-cell {
+    -fx-text-fill: #ffffff !important;
+    -fx-background-color: transparent;
+}
+
 /* Slider Frequenza e Lunghezza */
 .slider .track {
     -fx-background-color: #1a202c;
