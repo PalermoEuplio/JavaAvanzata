@@ -13,6 +13,9 @@ import model.connection.PacchettoRisposta;
 import model.connection.Sessione;
 import model.utility.Player;
 
+/**
+ * Controller per la pagina di login/registrazione.
+ */
 public class LoginController implements Initializable{
 
     // Serie di componenti grafiche
@@ -50,6 +53,12 @@ public class LoginController implements Initializable{
     
     
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         
@@ -65,6 +74,9 @@ public class LoginController implements Initializable{
     }
     
     
+    /**
+     * Nasconde i messaggi di errore.
+     */
     private void nascondiErrori() {
         loginErrorMsg.setVisible(false);
         regErrorMsg.setVisible(false);
@@ -73,6 +85,11 @@ public class LoginController implements Initializable{
     
     
     
+    /**
+     * Gestisce la risposta ricevuta dal server.
+     * 
+     * @param pacchetto Il pacchetto di risposta.
+     */
     private void gestisciRispostaServer(PacchettoRisposta pacchetto) {
         
         switch (pacchetto.getComando()) {
@@ -114,6 +131,11 @@ public class LoginController implements Initializable{
     }
     
     
+    /**
+     * Comportamento del pulsante di login.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     public void login() throws IOException{
         
@@ -143,6 +165,9 @@ public class LoginController implements Initializable{
         catch (IllegalArgumentException e){System.out.println("Parametri non gestiti: " + e.getMessage());}
     }
     
+    /**
+     * Comportamento del pulsante di registrazione.
+     */
     @FXML
     public void register(){
         

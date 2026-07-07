@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package controller;
 
 import java.io.IOException;
@@ -23,8 +19,7 @@ import model.connection.Sessione;
 import model.utility.Sfida;
 
 /**
- *
- * @author euppa
+ * Controller per la dashboard del player.
  */
 public class DashboardController implements Initializable{
     
@@ -71,6 +66,12 @@ public class DashboardController implements Initializable{
     
     
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     public void initialize(URL location, ResourceBundle resources) {
         
         Player currentP = Sessione.getPlayer();
@@ -130,6 +131,11 @@ public class DashboardController implements Initializable{
     }
     
     
+    /**
+     * Formatta la colonna del tempo per mostrare minuti:secondi.
+     * 
+     * @param colonna La colonna da formattare.
+     */
     private void formattaColonnaTempo(TableColumn<Sfida, Integer> colonna) {
         colonna.setCellFactory(column -> new TableCell<Sfida, Integer>() {
             @Override
@@ -147,6 +153,11 @@ public class DashboardController implements Initializable{
     }
     
     
+    /**
+     * Gestisce la risposta del server.
+     * 
+     * @param pacchetto Il pacchetto di risposta.
+     */
     private void gestisciRispostaServer(PacchettoRisposta pacchetto) {
         
         switch(pacchetto.getComando()){
@@ -161,15 +172,31 @@ public class DashboardController implements Initializable{
     
     
     
+    /**
+     * Mostra la schermata delle classifiche.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void mostraClassifiche() throws IOException{
         Main.setRoot("rankings");
     }
     
+    /**
+     * Inizia una nuova partita.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void nuovaPartita() throws IOException{
         Main.setRoot("loading");
     }
+    
+    /**
+     * Esegue il logout.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void logout() throws IOException{
         if (model.connection.Sessione.getClient() != null) {

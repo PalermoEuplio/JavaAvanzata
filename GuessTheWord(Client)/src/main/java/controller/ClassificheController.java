@@ -18,6 +18,9 @@ import model.connection.PacchettoRisposta;
 import model.utility.Player;
 import model.connection.Sessione;
 
+/**
+ * Controller per la visualizzazione delle classifiche.
+ */
 public class ClassificheController implements Initializable {
     
     @FXML
@@ -63,6 +66,12 @@ public class ClassificheController implements Initializable {
     private Label miaPosizione;
     
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
      public void initialize(URL location, ResourceBundle resources) {
          
@@ -117,6 +126,11 @@ public class ClassificheController implements Initializable {
     
      
      
+     /**
+      * Gestisce la risposta ricevuta dal server.
+      * 
+      * @param pacchetto Il pacchetto di risposta.
+      */
      private void gestisciRispostaServer(PacchettoRisposta pacchetto) {
         
         switch(pacchetto.getComando()){
@@ -169,6 +183,11 @@ public class ClassificheController implements Initializable {
      
      
      
+    /**
+     * Comportamento del pulsante per tornare indietro.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void back() throws IOException{
         Main.setRoot("playerDashboard");

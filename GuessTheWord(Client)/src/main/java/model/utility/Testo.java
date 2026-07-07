@@ -2,6 +2,9 @@ package model.utility;
 
 import java.io.Serializable;
 
+/**
+ * Classe che rappresenta un Testo.
+ */
 public class Testo implements Serializable{
 
    private String titolo; 

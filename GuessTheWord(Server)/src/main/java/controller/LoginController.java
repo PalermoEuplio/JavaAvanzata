@@ -68,7 +68,7 @@ public class LoginController implements Initializable {
 
         try {
             // Mi collego al database per la verifica delle credenziali
-            Amministratore adminlog = (Amministratore) new DBConnector()
+            Amministratore adminlog = (Amministratore) new DBConnector<Amministratore>()
                     .cerca(new Amministratore(fieldUsername.getText(), -1), fieldPassword.getText());
 
             // Se non viene sollevata un'eccezzione vuol dire che sono riuscito a collegarmi

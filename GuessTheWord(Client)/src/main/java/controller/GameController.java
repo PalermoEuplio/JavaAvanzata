@@ -32,6 +32,9 @@ import model.connection.Sessione;
 import model.utility.Sfida;
 import model.utility.Testo;
 
+/**
+ * Controller per la gestione della partita.
+ */
 public class GameController implements Initializable {
     
     @FXML
@@ -98,6 +101,12 @@ public class GameController implements Initializable {
     private List<TextField> listaInput = new ArrayList<>(); // Lista per leggere le risposte alla fine
     
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
      public void initialize(URL location, ResourceBundle resources){
          caricaTesto();
@@ -108,6 +117,11 @@ public class GameController implements Initializable {
      
      
      
+    /**
+     * Gestisce le risposte del server.
+     * 
+     * @param pacchetto Il pacchetto di risposta.
+     */
     private void gestisciRispostaServer(PacchettoRisposta pacchetto){
         
         switch(pacchetto.getComando()){
@@ -190,6 +204,11 @@ public class GameController implements Initializable {
      
      
      
+    /**
+     * Crea gli slot per le risposte.
+     * 
+     * @param nSoluzioni Il numero di soluzioni.
+     */
     private void creaSlotRisposte(int nSoluzioni) {
         contenitoreSlotRisposte.getChildren().clear();
         listaInput.clear();
@@ -248,6 +267,9 @@ public class GameController implements Initializable {
      
      
      
+    /**
+     * Carica il testo da mostrare a video.
+     */
     private void caricaTesto() {
         
         testo.getChildren().clear(); // Pulisce eventuali testi precedenti
@@ -290,6 +312,9 @@ public class GameController implements Initializable {
     }
      
      
+    /**
+     * Avvia l'animazione dei pallini di caricamento.
+     */
     private void avviaAnimazionePallini() {
         Circle[] dots = {dot1, dot2, dot3, dot4};
         SequentialTransition sequenza = new SequentialTransition();
@@ -313,6 +338,11 @@ public class GameController implements Initializable {
     } 
      
      
+     /**
+      * Gestisce l'abbandono della partita.
+      * 
+      * @throws IOException In caso di errori I/O.
+      */
      @FXML
      private void resign() throws IOException{
          
@@ -333,6 +363,9 @@ public class GameController implements Initializable {
          
      }
      
+     /**
+      * Conferma la risposta inserita dall'utente.
+      */
      @FXML
      private void confirmAnswer(){
          
@@ -373,11 +406,21 @@ public class GameController implements Initializable {
      }
      
      
+     /**
+      * Comportamento del pulsante per tornare indietro.
+      * 
+      * @throws IOException In caso di errori I/O.
+      */
      @FXML
      private void back() throws IOException{
         Main.setRoot("playerDashboard");
      }
      
+     /**
+      * Inizia una nuova partita.
+      * 
+      * @throws IOException In caso di errori I/O.
+      */
      @FXML
      private void newGame() throws IOException{
          Main.setRoot("loading");

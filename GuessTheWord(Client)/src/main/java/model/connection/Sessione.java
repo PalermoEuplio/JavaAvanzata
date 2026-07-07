@@ -8,6 +8,9 @@ import javafx.scene.control.ButtonType;
 import model.Main;
 import model.utility.Player;
 
+/**
+ * Classe che gestisce la sessione corrente, inclusi player loggato e client.
+ */
 public class Sessione {
     
     private static Player playerLoggato;
@@ -157,6 +160,11 @@ public class Sessione {
         });
     }
     
+    /**
+     * Metodo interno chiamato in automatico se la connessione col server cade o si viene bannati.
+     * 
+     * @param ban La stringa di ban.
+     */
     private static void forzaDisconnessione(String ban) {
         playerLoggato = null;
         if (client != null) {
@@ -192,6 +200,11 @@ public class Sessione {
     
     // --- UTILITY ---
     
+    /**
+     * Notifica la grafica dell'arrivo di un pacchetto.
+     * 
+     * @param pacchetto Il pacchetto arrivato.
+     */
     private static void notificaGrafica(PacchettoRisposta pacchetto) {
         if (onServerResponse != null) {
             Platform.runLater(() -> onServerResponse.accept(pacchetto));

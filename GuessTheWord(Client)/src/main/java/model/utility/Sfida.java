@@ -2,6 +2,9 @@ package model.utility;
 
 import java.io.Serializable;
 
+/**
+ * Classe che rappresenta una Sfida tra due giocatori.
+ */
 public class Sfida implements Serializable{
     
     private String titoloTesto;

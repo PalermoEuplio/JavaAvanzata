@@ -18,6 +18,9 @@ import model.connection.PacchettoRisposta;
 import model.connection.Sessione;
 import model.utility.Testo;
 
+/**
+ * Controller per la pagina di caricamento.
+ */
 public class LoadingController implements Initializable{
     
     @FXML private Circle dot1;
@@ -28,6 +31,12 @@ public class LoadingController implements Initializable{
     
     private Timeline timerPing;
     
+    /**
+     * Inizializza il controller.
+     * 
+     * @param location L'URL di location.
+     * @param resources Le risorse.
+     */
     @Override
     public void initialize(URL location, ResourceBundle resources){
         avviaAnimazionePallini();
@@ -48,6 +57,11 @@ public class LoadingController implements Initializable{
         
     }
     
+    /**
+     * Gestisce la risposta ricevuta dal server.
+     * 
+     * @param pacchetto Il pacchetto di risposta.
+     */
     private void gestisciRispostaServer(PacchettoRisposta pacchetto){
         
         switch(pacchetto.getComando()){
@@ -76,6 +90,9 @@ public class LoadingController implements Initializable{
         
     
     
+    /**
+     * Avvia l'animazione dei pallini di caricamento.
+     */
     private void avviaAnimazionePallini() {
         Circle[] dots = {dot1, dot2, dot3, dot4};
         SequentialTransition sequenza = new SequentialTransition();
@@ -100,6 +117,11 @@ public class LoadingController implements Initializable{
     
     
     
+    /**
+     * Comportamento del pulsante per tornare indietro.
+     * 
+     * @throws IOException In caso di errori I/O.
+     */
     @FXML
     private void back() throws IOException{
         Main.setRoot("playerDashboard");

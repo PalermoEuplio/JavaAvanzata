@@ -1,8 +1,9 @@
 package model.utility;
-
-// Classe contenente le inforamzioni relative ai player
-
 import java.io.Serializable;
+
+/**
+ * Classe contenente le inforamzioni relative ai player.
+ */
 
 public class Player implements Serializable{
     
