@@ -256,7 +256,16 @@ public class GameController implements Initializable {
             if (secondiRimanenti <= 0) {
                 timelineTimer.stop();
                 System.out.println("Tempo scaduto!");
-                confirmAnswer(); // Simula la pressione del tasto conferma automaticamente!
+                
+                List<String> ss = new ArrayList<>();
+                for(TextField tf : listaInput){
+                    ss.add(tf.getText().isEmpty() ? "" : tf.getText());
+                }
+                
+                ss.add(String.valueOf(durataIniziale-secondiRimanenti));    // Salvo il tempo impiegato ad inviare la risposta
+                try{
+                Sessione.getClient().send(new PacchettoRisposta("VALIDATION_REQUEST",ss));  // Mando il messaggio di validazione al server
+                }catch (IOException ex){System.err.println("Errore durante l'invio del messaggio");}
             }
         }));
         

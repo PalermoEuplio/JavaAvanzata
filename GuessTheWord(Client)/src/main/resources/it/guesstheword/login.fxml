@@ -129,7 +129,7 @@
                         </Label>
                      </children>
                   </StackPane>
-                  <Button fx:id="btnRegister" defaultButton="true" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#register" prefHeight="40.0" text="REGISTRATI">
+                  <Button fx:id="btnRegister" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#register" prefHeight="40.0" text="REGISTRATI">
                      <font>
                         <Font size="14.0" />
                      </font>

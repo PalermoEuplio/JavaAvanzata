@@ -317,7 +317,7 @@ public class Sessione {
                                         int tempo1 = Integer.parseInt(pachList[0].get(pachList[0].size() - 1));
                                         int tempo2 = Integer.parseInt(pachList[1].get(pachList[1].size() - 1));
 
-                                        currentGame.setDurata( tempo1 > tempo2 ? currentGame.getDurata()-tempo1 : currentGame.getDurata()-tempo2);
+                                        currentGame.setDurata( tempo1 > tempo2 ? tempo1 : tempo2);
                                         
                                         // Controllo le risposte
                                         for (int j = 0; j < risposteVere.length; j++) {
