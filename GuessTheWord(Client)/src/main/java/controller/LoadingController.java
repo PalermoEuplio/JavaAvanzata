@@ -30,6 +30,7 @@ public class LoadingController implements Initializable{
     @FXML private Label status;
     
     private Timeline timerPing;
+    private SequentialTransition sequenza;
     
     /**
      * Inizializza il controller.
@@ -66,9 +67,10 @@ public class LoadingController implements Initializable{
         
         switch(pacchetto.getComando()){
             case "START_GAME":
-                if (timerPing != null) {
+                if (timerPing != null)
                     timerPing.stop();
-                }
+                if (sequenza != null)
+                    sequenza.stop();
                 try {
                     System.out.println("Inizio partita");
                     
@@ -95,7 +97,7 @@ public class LoadingController implements Initializable{
      */
     private void avviaAnimazionePallini() {
         Circle[] dots = {dot1, dot2, dot3, dot4};
-        SequentialTransition sequenza = new SequentialTransition();
+        sequenza = new SequentialTransition();
 
         // Creiamo una transizione di "Fade" (Scomparsa/Comparsa) per ogni pallino
         for (Circle dot : dots) {
@@ -124,6 +126,10 @@ public class LoadingController implements Initializable{
      */
     @FXML
     private void back() throws IOException{
+        if (timerPing != null)
+            timerPing.stop();
+        if (sequenza != null)
+            sequenza.stop();
         Main.setRoot("playerDashboard");
     }
     
