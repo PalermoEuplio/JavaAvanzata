@@ -183,7 +183,7 @@ public class DBConnector<T> implements DAO<T> {
                 }
             }
         } else
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Errore: Tipo non gestito");
     }
 
     /**
@@ -193,8 +193,8 @@ public class DBConnector<T> implements DAO<T> {
      * @throws SQLException In caso di errori SQL.
      */
     @Override
-    public List<T> elencaTuttiPlayer() throws SQLException {
-
+    public List<Player> elencaTuttiPlayer() throws SQLException {
+        
         List<Player> elenco = new ArrayList<>();
 
         try (Connection c = DriverManager.getConnection(dbURL, dbUsername, dbPassword);
@@ -209,7 +209,7 @@ public class DBConnector<T> implements DAO<T> {
             }
         }
 
-        return (List<T>) elenco;
+        return elenco;
 
     }
 
@@ -221,7 +221,7 @@ public class DBConnector<T> implements DAO<T> {
      * @throws SQLException In caso di errori SQL.
      */
     @Override
-    public List<T> caricaSfide(int idPlayer) throws SQLException {
+    public List<Sfida> caricaSfide(int idPlayer) throws SQLException {
 
         List<Sfida> sfide = new ArrayList<>();
 
@@ -278,7 +278,7 @@ public class DBConnector<T> implements DAO<T> {
             }
         }
 
-        return (List<T>) sfide;
+        return sfide;
     }
 
     /**

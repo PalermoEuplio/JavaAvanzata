@@ -31,7 +31,8 @@ public class LoadingController implements Initializable{
     @FXML private Circle dot4;
     @FXML private Label status;
     
-    private Timeline monitor;   // Timeline per l'animazione d'attesa
+    private Timeline monitor;   // Timeline per l'aggiornamento grafico di playerCount
+    private SequentialTransition sequenza;  // Transizione sequenziale perl'animazione dei pallini
     
     /**
      * Inizializza il controller.
@@ -48,7 +49,12 @@ public class LoadingController implements Initializable{
         
         Sessione.setOnGameReady(() -> { // Specifico il comportamento dell'oggetto Runnable che permetterà di far cambiare l'interfaccia all'Admin quando il server rileva i 2 giocatori 
             
-            if (monitor != null) monitor.stop();    // Fermo la timeline
+            if (monitor != null) 
+                monitor.stop();    // Fermo la timeline
+            
+            if (sequenza != null) 
+                sequenza.stop();  // Fermo l'animazione dei pallini
+            
             try {
                 Main.setRoot("gameWait");   // Mi sposto alla pagina d'attesa fine gioco
             } catch (IOException ex) { System.out.println("Pagina non trovata"); }
@@ -80,7 +86,7 @@ public class LoadingController implements Initializable{
     private void avviaAnimazionePallini() {
         
         Circle[] dots = {dot1, dot2, dot3, dot4};   // Seleziono i 4 pallini a video
-        SequentialTransition sequenza = new SequentialTransition(); // Creo una nuova transizione sequenziale
+        sequenza = new SequentialTransition(); // Creo una nuova transizione sequenziale
 
         // Creiamo una transizione (Scomparsa/Comparsa) per ogni pallino
         for (Circle dot : dots) {
@@ -110,6 +116,10 @@ public class LoadingController implements Initializable{
      */
     @FXML
     private void back() throws IOException{
+        if (monitor != null) 
+            monitor.stop();    // Fermo la timeline
+        if (sequenza != null) 
+            sequenza.stop();  // Fermo l'animazione dei pallini
         Main.setRoot("gameSettings");   // Ritorno alla pagina d'impostazioni partita
         TextEditor.setModifiedText("");   // Cancello il testo preparato per questa partita
         Sessione.setClientAttesa(null); // Dealloco la lista d'attesa giocatori per la partita
