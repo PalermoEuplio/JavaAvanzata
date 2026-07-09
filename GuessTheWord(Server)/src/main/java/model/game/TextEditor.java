@@ -4,10 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -19,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 /**
  * Classe TextEditor che si occupa di gestire i testi da analizzare
@@ -26,8 +24,6 @@ import java.util.stream.Collectors;
 public class TextEditor {
 
     private List<Testo> title; // Lista dei titoli disponibili e se sono già analizzati
-
-    private HashMap<Integer, String> titleMap;
 
     private HashMap<String, Integer> frequency; // Parole disponibili nel testo e con che frequenza
 
@@ -39,19 +35,14 @@ public class TextEditor {
 
     public TextEditor() {
         title = new ArrayList<>();
-        titleMap = new HashMap<>();
         frequency = new HashMap<>();
         selectedText = "";
     }
 
-    // --------------- Metodi Getter ---------------
+    // --------------- Metodi Getter e Setter ---------------
     public List<Testo> getTitle() {
         return title;
-    }
-
-    public HashMap<Integer, String> getTitleMap() {
-        return titleMap;
-    }
+    }  
 
     public HashMap<String, Integer> getFrequency() {
         return frequency;
@@ -87,21 +78,21 @@ public class TextEditor {
      */
     public String caricaTesto(String fileName) {
 
-        File file = new File("testi/" + fileName + ".txt");
+        Path file = Paths.get("testi", fileName + ".txt");
 
-        if (!file.exists()) {
+        if (!Files.exists(file)) {
             return "Attenzione: Il file non è stato trovato nel percorso specificato.";
         }
 
         // Forzo la lettura con UTF_8
-        try (BufferedReader br = Files.newBufferedReader(file.toPath(), StandardCharsets.UTF_8)) {
+        try (BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             selectedText = ""; // Cancello il testo precedente
 
             String line;
             while ((line = br.readLine()) != null) {
                 selectedText = selectedText.concat(" " + line); // Leggo il testo riga per riga
             }
-
+            br.close();
         } catch (IOException io) {
             System.err.println("Errore durante la lettura del file: " + io);
         }
@@ -112,17 +103,16 @@ public class TextEditor {
     /**
      * Metodo per leggere il Report e caricare i dati nella lista title.
      */
-    // Metodo per leggere il Report e caricare i dati nella lista title
     public void leggiReport() {
 
-        File fileCsv = new File("analisiTesti/report.csv");
+        Path fileCsv = Paths.get("analisiTesti", "report.csv");
 
-        if (!fileCsv.exists()) {
+        if (!Files.exists(fileCsv)) {
             System.err.println("File CSV non trovato!");
             return;
         }
 
-        try (BufferedReader br = Files.newBufferedReader(fileCsv.toPath(), StandardCharsets.UTF_8)) {
+        try (BufferedReader br = Files.newBufferedReader(fileCsv, StandardCharsets.UTF_8)) {
 
             String linea;
             br.readLine();
@@ -134,14 +124,13 @@ public class TextEditor {
                     try {
                         Testo t = new Testo(campi[1].trim(), Integer.parseInt(campi[0].trim()),
                                 campi[2].trim().equals("1"));
-                        this.titleMap.put(Integer.parseInt(campi[0].trim()), campi[1].trim());
-                        this.title.add(t);
+                        title.add(t);
                     } catch (NumberFormatException e) {
                         System.err.println("Errore di conversione numeri alla riga: " + linea);
                     }
                 }
             }
-
+            br.close();
         } catch (Exception e) {
             System.err.println("Errore nel caricamento del report: " + e);
         }
@@ -154,12 +143,14 @@ public class TextEditor {
      */
     public void caricaAnalisi(Integer txtId) {
 
-        String filename = "analisiTesti/" + String.valueOf(txtId) + "_" + title.stream()
+        String filename = String.valueOf(txtId) + "_" + title.stream()
                 .filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto")
                 + "-Analisi.dat";
+        Path filepath = Paths.get("analisiTesti", filename);
+        
         try (ObjectInputStream ob = new ObjectInputStream(
                 new BufferedInputStream(
-                        new FileInputStream(filename)))) {
+                        Files.newInputStream(filepath)))) {
 
             frequency = (HashMap<String, Integer>) ob.readObject();
             ob.close();
@@ -177,16 +168,18 @@ public class TextEditor {
     public boolean analizzaTesto(Integer txtId) {
 
         // Salvo il nome che il file d'analisi dovrà avere
-        String filename = "analisiTesti/" + String.valueOf(txtId) + "_" + title.stream()
+        String filename = String.valueOf(txtId) + "_" + title.stream()
                 .filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto")
                 + "-Analisi.dat";
+        Path filepath = Paths.get("analisiTesti", filename);
 
-        try (ObjectOutputStream ob = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(filename)))) {
+        try (ObjectOutputStream ob = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(filepath)))) {
 
             List<String> stopwords = new ArrayList<>();
 
             // Leggo il file contenente le stopword
-            try (BufferedReader br = new BufferedReader(new FileReader("analisiTesti/stopwords.txt"))) {
+            Path stopwordsPath = Paths.get("analisiTesti", "stopwords.txt");
+            try (BufferedReader br = Files.newBufferedReader(stopwordsPath)) {
 
                 String word;
                 while ((word = br.readLine()) != null)
@@ -201,13 +194,10 @@ public class TextEditor {
                 return false;
             }
 
-            frequency = Arrays.stream(this.selectedText.toLowerCase().split("\\W+")) // minuscolo e divido per
-                                                                                     // non-lettere (spazi, virgole,
-                                                                                     // punti)
+            frequency = Arrays.stream(this.selectedText.toLowerCase().split("\\W+")) // minuscolo e divido per non-lettere (spazi, virgole, punti)
                     .filter(w -> !w.isEmpty()) // scarto eventuali stringhe vuote
                     .filter(w -> !stopwords.contains(w)) // scarto le stopword
-                    .collect(Collectors.groupingBy( // Raggruppo le parole identiche e conto le occorrenze (Di base
-                                                    // restituisce solo Map)
+                    .collect(Collectors.groupingBy( // Raggruppo le parole identiche e conto le occorrenze (Di base restituisce solo Map)
                             w -> w,
                             HashMap::new, // Richiamo il costruttore di hashMap per ricavare la collezione specifica
                             Collectors.summingInt(w -> 1)));
@@ -234,14 +224,14 @@ public class TextEditor {
 
         title.stream().filter(t -> t.getTxtId() == txtId).forEach(t -> t.setIsAnalized(true));
 
-        File fileCsv = new File("analisiTesti/report.csv");
+        Path fileCsv = Paths.get("analisiTesti", "report.csv");
 
-        if (!fileCsv.exists()) {
+        if (!Files.exists(fileCsv)) {
             System.err.println("File CSV non trovato!");
             return;
         }
 
-        try (BufferedWriter br = Files.newBufferedWriter(fileCsv.toPath())) {
+        try (BufferedWriter br = Files.newBufferedWriter(fileCsv)) {
 
             br.write("Id");
             br.write(";");
@@ -285,16 +275,13 @@ public class TextEditor {
 
         // Usiamo una Regex avanzata con Stream per "tagliare" il testo preservando gli
         // spazi e la punteggiatura.
-        // (?U) attiva il supporto Unicode (fondamentale per riconoscere lettere
-        // accentate italiane come à, è).
-        // Il pattern taglia il testo nel punto esatto di confine tra una parola e un
-        // simbolo/spazio.
+        // (?U) attiva il supporto Unicode fondamentale per riconoscere lettere accentate 
+        // Il pattern taglia il testo nel punto esatto di confine tra una parola e un simbolo/spazio.
         modifiedText = Pattern.compile("(?U)(?<=\\w)(?=\\W)|(?<=\\W)(?=\\w)")
                 .splitAsStream(selectedText)
                 .map(token -> {
 
-                    // Se il frammento corrente è esattamente una delle parole che dobbiamo
-                    // cifrare...
+                    // Verifico se la parola corrente è una di quelle da cifrare
                     if (paroleDaCifrare.contains(token.toLowerCase())) {
 
                         // Cifriamo la singola parola carattere per carattere con lo Stream

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task; 
 import javafx.fxml.FXML;
@@ -136,23 +137,38 @@ public class SettingsController implements Initializable{
 
                 if (testoSelezionato != null) {
                     
-                    areaTesto.setText(te.caricaTesto(testoSelezionato.getTitolo()));    // Aggiungo il testo
-                    
-                    if (!testoSelezionato.isAnalized()) {   // Verifico se il testo selezionato sia già stato analizzato o meno
-                        risultatoAnalisi.setText("Il testo selezionato non è ancora stato analizzato.\nPremi il tasto 'Analizza' per generare le statistiche.");
-                    } else {
-                        // Nel caso in cui il testo fosse già analizzato, procedo col caricamento a video dell'analisi
-                        risultatoAnalisi.clear();
+                    // Caricamento asincrono sia del testo che dell'analisi
+                    new Thread(() -> {
+                        // 1. Lavoro pesante (Lettura dal disco)
+                        String testoCaricato = te.caricaTesto(testoSelezionato.getTitolo());
                         
-                        te.caricaAnalisi(testoSelezionato.getTxtId());  // Carico l'analisi a partire dall'id del testo
-                        Map<String, Integer> mappaRisultati = te.getFrequency();    // Ricavo la mappa con le statistiche dell'analisi
-
-                        if (mappaRisultati != null && !mappaRisultati.isEmpty()) {
-                            formattazioneRisultatoanalisi(mappaRisultati,risultatoAnalisi); // Richiamo il metodo che permette di mostrare in maniera schematizzata i risultati dell'analisi
-                        } else { 
-                            risultatoAnalisi.setText("Errore: Impossibile caricare l'analisi per questo file (File .dat mancante o corrotto).");    // Errore generico
+                        boolean isAnalizzato = testoSelezionato.isAnalized();
+                        Map<String, Integer> mappaRisultati = null;
+                        
+                        if (isAnalizzato) {
+                            te.caricaAnalisi(testoSelezionato.getTxtId());
+                            mappaRisultati = te.getFrequency();
                         }
-                    }
+                        
+                        // Necessario perché le variabili usate nelle lambda devono essere effettivamente final
+                        final Map<String, Integer> mappaFinale = mappaRisultati;
+
+                        // 2. Aggiornamento UI sul Thread di JavaFX
+                        Platform.runLater(() -> {
+                            areaTesto.setText(testoCaricato);
+                            
+                            if (!isAnalizzato) {
+                                risultatoAnalisi.setText("Il testo selezionato non è ancora stato analizzato.\nPremi il tasto 'Analizza' per generare le statistiche.");
+                            } else {
+                                risultatoAnalisi.clear();
+                                if (mappaFinale != null && !mappaFinale.isEmpty()) {
+                                    formattazioneRisultatoanalisi(mappaFinale, risultatoAnalisi);
+                                } else { 
+                                    risultatoAnalisi.setText("Errore: Impossibile caricare l'analisi per questo file (File .dat mancante o corrotto).");
+                                }
+                            }
+                        });
+                    }).start();
                 }
             }
         });

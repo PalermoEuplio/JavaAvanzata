@@ -11,10 +11,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 import model.connection.Sessione;
+import model.game.Testo;
 import model.utility.Esito;
 import model.utility.Sfida;
 import model.game.TextEditor;
@@ -253,7 +253,7 @@ public class DBConnector<T> implements DAO<T> {
                     TextEditor te = new TextEditor();
                     te.leggiReport();
 
-                    HashMap<Integer, String> x = te.getTitleMap();
+                    List<Testo> x = te.getTitle();
 
                     while (rs.next()) {
                         String soluzioni = rs.getString("ElencoSoluzioni");
@@ -266,10 +266,11 @@ public class DBConnector<T> implements DAO<T> {
                                 rs.getInt("id_P1"), rs.getInt("id_P2"), rs.getString("UsernameAvversario"),
                                 rs.getInt("MioRisultato") == 1 ? Esito.Vittoria : Esito.Sconfitta, soluzioni);
 
-                        s.setTitoloTesto(x.get(rs.getInt("Id_Documento")));
+                        int id = rs.getInt("Id_Documento");
+                        s.setTitoloTesto(x.stream().filter(t -> t.getTxtId() == id).map(t -> t.getTitolo()).findFirst().orElse(""));    // Ricavo il titolo a partire dall'id del testo
 
                         sfide.add(s);
-                    }
+                    }       
 
                 } catch (Exception e) {
                     System.err.println("Errore durante l'esecuzione della query: " + e);
