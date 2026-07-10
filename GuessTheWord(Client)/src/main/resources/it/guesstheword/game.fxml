@@ -35,7 +35,7 @@
                         </Label>
                         <HBox alignment="CENTER_LEFT" spacing="15.0">
                            <children>
-                              <Label fx:id="timer" text="05:00" textFill="#f1c40f">
+                              <Label fx:id="timer" textFill="#f1c40f">
                                  <font>
                                     <Font name="System Bold" size="24.0" />
                                  </font>
@@ -46,6 +46,17 @@
                      </children>
                   </VBox>
                   <Label fx:id="oppUsername" text="Sfidante: OpponentUsername" textFill="#7f8c8d">
+                     <font>
+                        <Font name="System Bold" size="20.0" />
+                     </font>
+                     <padding>
+                        <Insets top="20.0" />
+                     </padding>
+                  </Label>
+                  <Label fx:id="difficoltà" text="Difficoltà: ?" textFill="#7f8c8d">
+                     <padding>
+                        <Insets top="20.0" />
+                     </padding>
                      <font>
                         <Font name="System Bold" size="20.0" />
                      </font>
@@ -91,7 +102,7 @@
                   <Insets bottom="25.0" left="40.0" right="40.0" top="20.0" />
                </padding>
                <children>
-                  <Label text="Inserisci le tue risposte nell'ordine esatto:" alignment="CENTER" textFill="#ffffff">
+                  <Label alignment="CENTER" text="Inserisci le tue risposte nell'ordine esatto:" textFill="#ffffff">
                      <font>
                         <Font name="System Bold" size="16.0" />
                      </font>
@@ -114,7 +125,7 @@
             </VBox>
          </bottom>
       </BorderPane>
-      <VBox fx:id="overlayFinePartita" alignment="CENTER"  visible="false">
+      <VBox fx:id="overlayFinePartita" alignment="CENTER" visible="false">
          <children>
             <VBox alignment="CENTER" maxWidth="650.0" spacing="25.0">
                <children>
@@ -214,7 +225,7 @@
                               <Font size="14.0" />
                            </font>
                         </Button>
-                        <Button fx:id="btnPartita" mnemonicParsing="false" onAction="#newGame"  text="NUOVA PARTITA">
+                        <Button fx:id="btnPartita" mnemonicParsing="false" onAction="#newGame" text="NUOVA PARTITA">
                            <font>
                               <Font size="14.0" />
                            </font>

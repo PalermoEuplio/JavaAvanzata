@@ -2,11 +2,13 @@ package model.connection;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javafx.application.Platform;
 import model.connection.ServerConnection.ClientHandler;
 import model.db.DBConnector;
@@ -228,8 +230,8 @@ public class Sessione {
                                                 int nSoluzioni = TextEditor.getRisposte().length;   // Agli utenti arriva solo il numero di parole da indovinare
                                                 String testoModificato = TextEditor.getModifiedText();
                                                 
-                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP2, Esito.None, String.valueOf(nSoluzioni));
-                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP1, Esito.None, String.valueOf(nSoluzioni));
+                                                Sfida sfidaP1 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP2, Esito.None, String.valueOf(nSoluzioni), currentGame.getDifficoltà());
+                                                Sfida sfidaP2 = new Sfida(currentGame.getIdDocumento(), currentGame.getDurata(), 0, 0, idGiocatore1, idGiocatore2, userP1, Esito.None, String.valueOf(nSoluzioni), currentGame.getDifficoltà());
 
                                                 sfidaP1.setTitoloTesto(currentGame.getTitoloTesto());
                                                 sfidaP2.setTitoloTesto(currentGame.getTitoloTesto());
@@ -319,16 +321,28 @@ public class Sessione {
 
                                         currentGame.setDurata( tempo1 > tempo2 ? tempo1 : tempo2);
                                         
-                                        // Controllo le risposte
-                                        for (int j = 0; j < risposteVere.length; j++) {
-                                            String rispostaVera = risposteVere[j].trim();
+                                        // Controllo le risposte (Indipendentemente dall'ordine inserito)
+                                        List<String> listVere = Arrays.stream(risposteVere)
+                                                .map(String::trim).map(String::toUpperCase)
+                                                .collect(Collectors.toList());
 
-                                            // Verifichiamo che l'indice j sia valido (escludendo l'ultimo elemento che è il tempo)
-                                            if (j < pachList[0].size() - 1 && pachList[0].get(j).trim().toUpperCase().equalsIgnoreCase(rispostaVera)) {
+                                        // Per effettuare il controllo creo una lista e rimuovo di volta in volta i suoi elementi
+                                        // Questo serve per evitare che se un Player scriva più volte la stessa parola, venga contata più volte
+                                        List<String> tempVere1 = new ArrayList<>(listVere);
+                                        for (int j = 0; j < pachList[0].size() - 1; j++) {
+                                            String p1Ans = pachList[0].get(j).trim().toUpperCase();
+                                            if (tempVere1.contains(p1Ans)) {
                                                 nCorrette1++;
+                                                tempVere1.remove(p1Ans);
                                             }
-                                            if (j < pachList[1].size() - 1 && pachList[1].get(j).trim().toUpperCase().equalsIgnoreCase(rispostaVera)) {
+                                        }
+
+                                        List<String> tempVere2 = new ArrayList<>(listVere);
+                                        for (int j = 0; j < pachList[1].size() - 1; j++) {
+                                            String p2Ans = pachList[1].get(j).trim().toUpperCase();
+                                            if (tempVere2.contains(p2Ans)) {
                                                 nCorrette2++;
+                                                tempVere2.remove(p2Ans);
                                             }
                                         }
                                         

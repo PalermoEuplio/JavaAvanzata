@@ -66,6 +66,9 @@ public class SettingsController implements Initializable{
     private Spinner<Integer> shift;
     
     @FXML
+    private ComboBox<String> comboDurata;
+    
+    @FXML
     private Label difficoltà;
     
     @FXML
@@ -80,7 +83,7 @@ public class SettingsController implements Initializable{
     
     private String testoSelezionato = "";   // Variabile Contenente il testo selezionato 
     
-    private final int durataPartita = 300;   // Variabile per cambiare la durata della partita in secondi
+    private int durataPartita = 300;   // Variabile per cambiare la durata della partita in secondi
     
     private final int nParoleMinimo = 60;   // Variabile per cambiare il numero minimo di parole del testo per la partita per evitare l'utilizzo di testi troppo corti
     
@@ -173,6 +176,33 @@ public class SettingsController implements Initializable{
             }
         });
         
+        comboDurata.setItems(FXCollections.observableArrayList( // Preparo il combobox con le durate prestabilite
+            "01:00", "02:00", "03:00", "05:00", "10:00"
+        ));
+        comboDurata.setValue("05:00");
+        
+        // Aggiungo il listner per l'aggiornamento dinamico del tempo da utilizzare durante la partita
+        comboDurata.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue != null) {
+                try {
+                    
+                    String[] partiTempo = newValue.split(":");
+
+                    int minuti = Integer.parseInt(partiTempo[0]);
+                    int secondi = Integer.parseInt(partiTempo[1]);
+
+                    // Formula matematica di conversione
+                    durataPartita = (minuti * 60) + secondi;
+                    
+                    calcolaDifficolta();
+                    
+                } catch (Exception e) {
+                    System.err.println("Errore nel parsing del tempo: " + e.getMessage());
+                }
+            }
+        });
+        
+        
         //  Disabilito il pulsante di inizio partita se non sono ancora state generate delle parole e se il testo selezionato sia vuoto
         startGame.disableProperty().bind(paroleScelte.textProperty().isEmpty().and(areaTesto.selectedTextProperty().isEmpty()));    
         
@@ -231,6 +261,7 @@ public class SettingsController implements Initializable{
         int freqVal = (int) frequenza.getValue(); // Range: 1 - 3 (1=Rara, 3=Comune)
         int shiftVal = shift.getValue(); // Range: 1 - 25
         int lungVal = (int) lunghezza.getValue(); // Range: 4 - 15
+        int durataVal = durataPartita;
 
         // Normalizzazione dei valori su una scala da 0.0 (Più Facile) a 1.0 (Più Difficile)
         double normN = (numParoleVal - 1.0) / 4.0;
@@ -240,9 +271,31 @@ public class SettingsController implements Initializable{
         
         double normS = (shiftVal - 1.0) / 24.0;
         double normL = (lungVal - 4.0) / 11.0;
+        
+        double normD;
+        switch (durataVal) {
+            case 60 :   // 1 Minuto (Estremo)
+                normD = 1.0;
+                break;
+            case 120:  // 2 Minuti (Molto Difficile)
+                normD = 0.75;
+                break;
+            case 180:  // 3 Minuti (Medio-Difficile)
+                normD = 0.50;
+                break;
+            case 300:  // 5 Minuti (Normale)
+                normD = 0.25;
+                break;
+            case 600:  // 10 Minuti (Molto Facile)
+                normD = 0.0;
+                break;
+            default:   // Valore di sicurezza
+                normD = 0.5;
+                break;
+        }
 
         // Moltiplicazione per i pesi decrescenti
-        double punteggio = (normN * 0.31) + (normF * 0.27) + (normS * 0.23) + (normL * 0.19);
+       double punteggio = (normD * 0.35) + (normN * 0.20) + (normF * 0.20) + (normL * 0.15) + (normS * 0.10);
 
         // Divisione matematica in 3 scaglioni esatti (1/3)
         if (punteggio < 0.333) {
@@ -287,7 +340,7 @@ public class SettingsController implements Initializable{
         Testo t = te.getTitle().stream().filter(t0 -> t0.getTitolo().equals(comboTesti.getValue())).findFirst().orElse(null);
         
         // Inizializzo la variabile sfidaCorrente con solo l'id del testo da usare e la durata della partita
-        Sessione.setCurrentGame(new Sfida(t.getTxtId(),durataPartita,0,0,0,0,"",Esito.None,""));
+        Sessione.setCurrentGame(new Sfida(t.getTxtId(),durataPartita,0,0,0,0,"",Esito.None,"",difficoltà.getText()));
         Sessione.getCurrentGame().setTitoloTesto(t.getTitolo());
         
         // Richiamo il metodo per la cifratura del testo. Questo metodo salva anche le parole selezionate
@@ -403,7 +456,7 @@ public class SettingsController implements Initializable{
         paroleScelte.setText(risultatoFinale);
         
         if (paroleFinali.size() < numeroParoleVolute) { // Formato stampa nel caso in cui vengono trovate meno parole di quelle richieste
-            paroleScelte.setText(risultatoFinale + " (Trovate " + paroleFinali.size() + "/" + numeroParoleVolute + ")");
+            risultatoAnalisiLocale.appendText("\n\nATTENZIONE: Trovate " + paroleFinali.size() + "/" + numeroParoleVolute + " parole.");
         }
     }
     

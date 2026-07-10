@@ -17,8 +17,9 @@ public class Sfida implements Serializable{
     private String oppUsername;
     private Esito risultato;
     private String soluzione;
+    private String difficoltà;
 
-    public Sfida(int idDocumento, int durata, int tRisposta1, int tRisposta2, int id1, int id2, String oppUsername, Esito risultato, String soluzione) {
+    public Sfida(int idDocumento, int durata, int tRisposta1, int tRisposta2, int id1, int id2, String oppUsername, Esito risultato, String soluzione, String diff) {
         this.idDocumento = idDocumento;
         this.durata = durata;
         this.tRisposta1 = tRisposta1;
@@ -28,6 +29,7 @@ public class Sfida implements Serializable{
         this.oppUsername=oppUsername;
         this.risultato = risultato;
         this.soluzione = soluzione;
+        this.difficoltà=diff;
     }
 
     public String getTitoloTesto() {
@@ -70,6 +72,10 @@ public class Sfida implements Serializable{
         return soluzione;
     }
 
+    public String getDifficoltà() {
+        return difficoltà;
+    }
+
     public void setTitoloTesto(String titoloTesto) {
         this.titoloTesto = titoloTesto;
     }
@@ -109,10 +115,10 @@ public class Sfida implements Serializable{
     public void setSoluzione(String soluzione) {
         this.soluzione = soluzione;
     }
-
+    
     @Override
     public String toString() {
         return titoloTesto + ", " + idDocumento + ", " + durata + ", " + tRisposta1 + ", " + 
-                tRisposta2 + ", " + id1 + ", " + id2 + ", " + oppUsername + ", " + risultato + ", " + soluzione;
+                tRisposta2 + ", " + id1 + ", " + id2 + ", " + oppUsername + ", " + risultato + ", " + soluzione + ", " + difficoltà;
     }
 }

@@ -50,6 +50,9 @@ public class GameController implements Initializable {
     private Label oppUsername;
     
     @FXML
+    private Label difficoltà;
+    
+    @FXML
     private TextFlow testo;
     
     @FXML
@@ -132,6 +135,20 @@ public class GameController implements Initializable {
                     
                     oppUsername.setText("Avversario: " + currentGame.getOppUsername());
                     titoloTesto.setText("Titolo: " + currentGame.getTitoloTesto());
+                    difficoltà.setText("Difficoltà: "+currentGame.getDifficoltà());
+                    
+                    switch(currentGame.getDifficoltà()){
+                        case ("FACILE"):
+                            difficoltà.setStyle("-fx-text-fill: #27ae60;"); // Colore Verde
+                            break;
+                        case ("MEDIA"):
+                            difficoltà.setStyle("-fx-text-fill: #e67e22;"); // Colore Arancione
+                            break;
+                        case ("DIFFICILE"):
+                            difficoltà.setStyle("-fx-text-fill: #c0392b;"); // Colore Rosso
+                            break;
+                        
+                    }
                     
                     // 1. Creiamo dinamicamente i TextField in base al numero di parole cifrate
                     nRisposte = Integer.parseInt(currentGame.getSoluzione());

@@ -264,7 +264,7 @@ public class DBConnector<T> implements DAO<T> {
                         Sfida s = new Sfida(rs.getInt("Id_Documento"), rs.getInt("Durata"), rs.getInt("MioTempo"),
                                 rs.getInt("SuoTempo"),
                                 rs.getInt("id_P1"), rs.getInt("id_P2"), rs.getString("UsernameAvversario"),
-                                rs.getInt("MioRisultato") == 1 ? Esito.Vittoria : Esito.Sconfitta, soluzioni);
+                                rs.getInt("MioRisultato") == 1 ? Esito.Vittoria : Esito.Sconfitta, soluzioni, "");
 
                         int id = rs.getInt("Id_Documento");
                         s.setTitoloTesto(x.stream().filter(t -> t.getTxtId() == id).map(t -> t.getTitolo()).findFirst().orElse(""));    // Ricavo il titolo a partire dall'id del testo
