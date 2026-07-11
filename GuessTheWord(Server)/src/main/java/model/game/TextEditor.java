@@ -78,7 +78,7 @@ public class TextEditor {
      */
     public String caricaTesto(String fileName) {
 
-        Path file = Paths.get("testi", fileName + ".txt");
+        Path file = Paths.get("documents", fileName + ".txt");
 
         if (!Files.exists(file)) {
             return "Attenzione: Il file non è stato trovato nel percorso specificato.";
@@ -105,7 +105,7 @@ public class TextEditor {
      */
     public void leggiReport() {
 
-        Path fileCsv = Paths.get("analisiTesti", "report.csv");
+        Path fileCsv = Paths.get("data", "report.csv");
 
         if (!Files.exists(fileCsv)) {
             System.err.println("File CSV non trovato!");
@@ -146,7 +146,7 @@ public class TextEditor {
         String filename = String.valueOf(txtId) + "_" + title.stream()
                 .filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto")
                 + "-Analisi.dat";
-        Path filepath = Paths.get("analisiTesti", filename);
+        Path filepath = Paths.get("data", filename);
         
         try (ObjectInputStream ob = new ObjectInputStream(
                 new BufferedInputStream(
@@ -171,7 +171,7 @@ public class TextEditor {
         String filename = String.valueOf(txtId) + "_" + title.stream()
                 .filter(a -> a.getTxtId() == txtId).map(a -> a.getTitolo()).findFirst().orElse("Testo Sconosciuto")
                 + "-Analisi.dat";
-        Path filepath = Paths.get("analisiTesti", filename);
+        Path filepath = Paths.get("data", filename);
 
         try (ObjectOutputStream ob = new ObjectOutputStream(new BufferedOutputStream(Files.newOutputStream(filepath)))) {
 
@@ -224,7 +224,7 @@ public class TextEditor {
 
         title.stream().filter(t -> t.getTxtId() == txtId).forEach(t -> t.setIsAnalized(true));
 
-        Path fileCsv = Paths.get("analisiTesti", "report.csv");
+        Path fileCsv = Paths.get("data", "report.csv");
 
         if (!Files.exists(fileCsv)) {
             System.err.println("File CSV non trovato!");

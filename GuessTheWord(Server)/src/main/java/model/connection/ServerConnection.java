@@ -49,7 +49,7 @@ public class ServerConnection {
      */
     private void caricaConfigurazione() {
         Properties props = new Properties();
-        try (InputStream input = new FileInputStream("server.properties")) {
+        try (InputStream input = new FileInputStream("properties/server.properties")) {
             props.load(input);
             this.port = Integer.parseInt(props.getProperty("server.port", "55555"));
         } catch (Exception e) {

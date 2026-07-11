@@ -45,7 +45,7 @@ public class ClientConnection {
         Properties props = new Properties();
         
         // Cerca il file "config_client.properties" nella cartella principale del progetto
-        try (InputStream input = new FileInputStream("client.properties")) {
+        try (InputStream input = new FileInputStream("properties/client.properties")) {
             props.load(input);
             
             // Legge i valori, se non li trova usa localhost e 55555 come fallback

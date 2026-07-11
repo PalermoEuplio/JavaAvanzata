@@ -23,7 +23,7 @@ import model.utility.Player;
 
 public class DBConnector<T> implements DAO<T> {
 
-    private final String dbURL = "jdbc:sqlite:GuessTheWord.db";
+    private final String dbURL = "jdbc:sqlite:db/GuessTheWord.db";
     private final String dbUsername = "";
     private final String dbPassword = "";
 
