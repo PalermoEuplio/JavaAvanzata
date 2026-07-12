@@ -84,6 +84,17 @@ public class TextEditor {
             return "Attenzione: Il file non è stato trovato nel percorso specificato.";
         }
 
+        /*     Altro modo per la lettura del testo usando le stream; In particolare ci sono due vie: 
+                                    la Collectors.joining, che utilizza lo StringBuilder
+                                    la funzione reduce delle stream che permette di ridurre tutta una stream in un solo elemento
+            try{
+                selectedText = Files.lines(file, StandardCharsets.UTF_8).collect(Collectors.joining(" "));
+                selectedText = Files.lines(file, StandardCharsets.UTF_8).reduce("", (a,b) -> a+b);
+            }catch(IOException e){}
+        */
+        
+        
+        
         // Forzo la lettura con UTF_8
         try (BufferedReader br = Files.newBufferedReader(file, StandardCharsets.UTF_8)) {
             selectedText = ""; // Cancello il testo precedente
@@ -111,7 +122,16 @@ public class TextEditor {
             System.err.println("File CSV non trovato!");
             return;
         }
-
+       
+        /*   Metodo alternativo per leggere da csv mediante stream API e Files.lines
+            try {
+                title = Files.lines(fileCsv).skip(1).map(t -> {
+                    String[] temp = t.split(";");
+                    return new Testo(temp[1],Integer.parseInt(temp[0]),temp[2].equals("1"));
+                }).collect(Collectors.toList());
+            } catch (IOException e) {System.out.println("Errore"+e);}
+        */
+        
         try (BufferedReader br = Files.newBufferedReader(fileCsv, StandardCharsets.UTF_8)) {
 
             String linea;
@@ -201,8 +221,6 @@ public class TextEditor {
                             w -> w,
                             HashMap::new, // Richiamo il costruttore di hashMap per ricavare la collezione specifica
                             Collectors.summingInt(w -> 1)));
-
-            ob.writeObject(frequency);
 
             ob.close();
         } catch (Exception e) {
